@@ -9,7 +9,7 @@ const loading = () => {
   return (
     <div
       className={`flex flex-col items-center justify-center ${
-        isAuthenticated ? "h-[80vh]" : "absolute left-0 top-0 h-full"
+        isAuthenticated ? "h-[80vh]" : "absolute top-0 left-0 h-full"
       } w-full`}
     >
       <Image

@@ -1,4 +1,4 @@
-import { DefaultSession } from "next-auth";
+import { Session } from "next-auth";
 
 export type NavLinkProps = {
   link: string;
@@ -6,3 +6,10 @@ export type NavLinkProps = {
   name: string;
   active: boolean;
 };
+
+export interface CustomUserData {
+  firstName: string;
+  lastName: string;
+  isAdmin: boolean;
+  username: string;
+}

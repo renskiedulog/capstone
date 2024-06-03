@@ -5,7 +5,7 @@ import {
 
 const page = async () => {
   const session = await checkSession();
-  redirectToTeller(session?.role);
+  redirectToTeller(session?.user?.isAdmin as boolean);
 
   return <div></div>;
 };

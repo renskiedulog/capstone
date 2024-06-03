@@ -21,5 +21,5 @@ export const redirectToAdmin = (isAdmin: boolean) => {
 };
 
 export const redirectToTeller = (isAdmin: boolean) => {
-  if (isAdmin) redirect("/dashboard");
+  if (!isAdmin) redirect("/dashboard");
 };

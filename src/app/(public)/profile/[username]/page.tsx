@@ -1,3 +1,5 @@
+import { checkSession } from "@/components/utils/Authenticator";
+
 type ProfileParams = {
   params: {
     username: string;
@@ -11,7 +13,7 @@ export async function generateMetadata({ params }: ProfileParams) {
 }
 
 const page = async ({ params }: ProfileParams) => {
-  // const session = await checkSession();
+  const session = await checkSession();
   return <div>{params?.username}</div>;
 };
 

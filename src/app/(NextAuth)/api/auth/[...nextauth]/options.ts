@@ -10,7 +10,7 @@ interface CustomUser extends UserTypes {
 
 export interface CustomSessionType {
   user?: {
-    name?: string;
+    username?: string;
     firstName?: string;
     lastName?: string;
     password?: string;
@@ -25,7 +25,7 @@ export const options: any = {
       credentials: {},
       async authorize(
         credentials: Record<string, string> | undefined,
-        req: Pick<RequestInternal, "body" | "query" | "headers" | "method">,
+        req: Pick<RequestInternal, "body" | "query" | "headers" | "method">
       ): Promise<CustomUser | null> {
         if (credentials) {
           const { username, password } = credentials;
@@ -61,10 +61,16 @@ export const options: any = {
     signIn: "/login",
   },
   callbacks: {
-    async session({ session }: { session: CustomSessionType; token: JWT }) {
+    async session({
+      session,
+      token,
+    }: {
+      session: CustomSessionType;
+      token: JWT;
+    }) {
       if (session) {
         const userDocument: any = await User.findOne({
-          username: session?.user?.name,
+          username: token?.name,
         }).select("-password -_id");
         session.user = userDocument?.toObject();
         return session;

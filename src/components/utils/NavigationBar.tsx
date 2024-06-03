@@ -14,15 +14,12 @@ import Avatar from "./Avatar";
 import { NavLinkProps } from "@/lib/types";
 
 const NavigationBar = () => {
-  const session = useSession<CustomSession>() || null;
+  const session: any = useSession() || null;
   const username = session?.data?.user?.username;
 
   const links = React.useMemo(() => {
-    if (session?.data?.role) {
-      return session?.data?.role === "admin" ? adminLinks : navLinks;
-    }
-    return [];
-  }, [session?.data?.role]);
+    return session?.data?.user?.isAdmin ? adminLinks : navLinks;
+  }, [session?.data?.user?.isAdmin]);
 
   const pathname = usePathname();
 
@@ -35,7 +32,7 @@ const NavigationBar = () => {
               href={`/profile/${username}`}
               className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground hover:scale-105 md:h-10 md:w-10 md:text-base"
             >
-              <Avatar name={username} className="text-primary" />
+              <Avatar name={username as string} className="text-primary" />
             </Link>
             {links?.map((link, idx) => (
               <NavLink
@@ -65,7 +62,7 @@ const NavigationBar = () => {
           </nav>
         </aside>
       ),
-    [session?.status, username, links, pathname],
+    [session?.status, username, links, pathname]
   );
 };
 
@@ -73,7 +70,7 @@ const NavLink = ({ link, icon, name, active }: NavLinkProps) => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Link
+        <a
           href={link}
           className={`flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10 ${
             active && "bg-accent"
@@ -81,7 +78,7 @@ const NavLink = ({ link, icon, name, active }: NavLinkProps) => {
         >
           {icon}
           <span className="sr-only">{name}</span>
-        </Link>
+        </a>
       </TooltipTrigger>
       <TooltipContent side="right">{name}</TooltipContent>
     </Tooltip>

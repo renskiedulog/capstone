@@ -11,6 +11,7 @@ const page = async () => {
   const session = await checkSession();
   redirectToAdmin(session?.user?.isAdmin as boolean);
 
+  if (!session) return null;
   return <div>page</div>;
 };
 

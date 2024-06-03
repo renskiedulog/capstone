@@ -68,7 +68,7 @@ export default function LoginPage() {
         return;
       }
     },
-    [userInputs],
+    [userInputs]
   );
 
   return (
