@@ -11,6 +11,8 @@ export const metadata = {
 
 const page = async () => {
   const session = await checkSession();
+  redirectToAdmin(session?.user?.isAdmin as boolean);
+
   return (
     <div className="h-screen w-full text-black">
       <Board />

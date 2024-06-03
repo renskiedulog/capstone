@@ -12,7 +12,8 @@ export const metadata = {
 
 const page = async () => {
   const session = await checkSession();
-  redirectToAdmin(session?.role);
+  redirectToAdmin(session?.user?.isAdmin as boolean);
+
   return (
     <div>
       <BoatTable />
