@@ -1,4 +1,5 @@
 import { checkSession } from "@/components/utils/Authenticator";
+import { redirect } from "next/navigation";
 
 type ProfileParams = {
   params: {
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }: ProfileParams) {
 
 const page = async ({ params }: ProfileParams) => {
   const session = await checkSession();
+  if (!session) return redirect("/login");
   return <div>{params?.username}</div>;
 };
 

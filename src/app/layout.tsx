@@ -4,10 +4,9 @@ import { getServerSession } from "next-auth";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NavigationBar from "@/components/utils/NavigationBar";
 import TopNav from "@/components/utils/TopNav";
-import { redirect } from "next/navigation";
 import SessionProvider from "@/components/utils/SessionProvider";
-import { checkSession } from "@/components/utils/Authenticator";
 import { options } from "./(NextAuth)/api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 

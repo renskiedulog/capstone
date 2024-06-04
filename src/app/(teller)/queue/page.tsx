@@ -4,18 +4,15 @@ import {
 } from "@/components/utils/Authenticator";
 
 import Board from "./Board";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   title: "Queue",
 };
 
 const page = async () => {
-  let session;
-  try {
-    session = await checkSession();
-  } catch (e) {
-    console.log(e);
-  }
+  let session = await checkSession();
+  if (!session) return redirect("/login");
   redirectToAdmin(session?.user?.isAdmin as boolean);
 
   return (
