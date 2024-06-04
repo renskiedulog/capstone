@@ -8,7 +8,12 @@ export const metadata = {
 };
 
 const page = async () => {
-  const session = await checkSession();
+  let session;
+  try {
+    session = await checkSession();
+  } catch (e) {
+    console.log(e);
+  }
   redirectToAdmin(session?.user?.isAdmin as boolean);
 
   return <div>page</div>;

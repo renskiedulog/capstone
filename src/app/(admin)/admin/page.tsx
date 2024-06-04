@@ -4,7 +4,12 @@ import {
 } from "@/components/utils/Authenticator";
 
 const page = async () => {
-  const session = await checkSession();
+  let session;
+  try {
+    session = await checkSession();
+  } catch (e) {
+    console.log(e);
+  }
   redirectToTeller(session?.user?.isAdmin as boolean);
 
   return <div></div>;

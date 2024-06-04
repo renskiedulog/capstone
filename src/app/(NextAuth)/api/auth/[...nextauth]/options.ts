@@ -38,7 +38,7 @@ export const options: any = {
             }
 
             if (checkUser.password !== password) {
-              return null;
+              return null; // wrong password
             }
 
             return {
