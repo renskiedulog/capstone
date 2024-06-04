@@ -5,12 +5,8 @@ import {
 import React from "react";
 
 const page = async () => {
-  let session;
-  try {
-    session = await checkSession();
-  } catch (e) {
-    console.log(e);
-  }
+  let session = await checkSession();
+  if (!session) return redirect("/login");
   redirectToTeller(session?.user?.isAdmin as boolean);
   return <div>page</div>;
 };

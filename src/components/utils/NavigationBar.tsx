@@ -70,7 +70,7 @@ const NavLink = ({ link, icon, name, active }: NavLinkProps) => {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <a
+        <Link
           href={link}
           className={`flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10 ${
             active && "bg-accent"
@@ -78,7 +78,7 @@ const NavLink = ({ link, icon, name, active }: NavLinkProps) => {
         >
           {icon}
           <span className="sr-only">{name}</span>
-        </a>
+        </Link>
       </TooltipTrigger>
       <TooltipContent side="right">{name}</TooltipContent>
     </Tooltip>

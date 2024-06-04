@@ -2,14 +2,11 @@ import {
   checkSession,
   redirectToTeller,
 } from "@/components/utils/Authenticator";
+import { redirect } from "next/navigation";
 
 const page = async () => {
-  let session;
-  try {
-    session = await checkSession();
-  } catch (e) {
-    console.log(e);
-  }
+  let session = await checkSession();
+  if (!session) return redirect("/login");
   redirectToTeller(session?.user?.isAdmin as boolean);
 
   return <div></div>;

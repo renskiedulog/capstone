@@ -17,7 +17,7 @@ const notFound = () => {
         alt="not-found-image"
         src="/images/not-found.png"
         width={300}
-        height={300}
+        height={200}
       />
       <h1 className="text-3xl font-bold tracking-wide text-primary/70">
         Page Not Found.
