@@ -1,4 +1,3 @@
-"use server";
 import {
   CustomSessionType,
   options,
@@ -10,12 +9,4 @@ export const checkSession = async () => {
   let session: CustomSessionType | null =
     (await getServerSession(options)) || null;
   return session;
-};
-
-export const redirectToAdmin = (isAdmin: boolean) => {
-  if (isAdmin) redirect("/admin");
-};
-
-export const redirectToTeller = (isAdmin: boolean) => {
-  if (!isAdmin) redirect("/dashboard");
 };

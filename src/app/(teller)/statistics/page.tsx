@@ -1,7 +1,4 @@
-import {
-  checkSession,
-  redirectToAdmin,
-} from "@/components/utils/Authenticator";
+import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -9,11 +6,11 @@ export const metadata = {
 };
 
 const page = async () => {
-  let session = await checkSession();
-  if (!session) return redirect("/login");
-  redirectToAdmin(session?.user?.isAdmin as boolean);
+  let session = await checkSession(); //! 1. Validate Session
+  if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
+  if(session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
-  return <div>page</div>;
+  return session && <div>page</div>;
 };
 
 export default page;

@@ -1,8 +1,4 @@
-import React from "react";
-import {
-  checkSession,
-  redirectToAdmin,
-} from "@/components/utils/Authenticator";
+import { checkSession } from "@/components/utils/Authenticator";
 
 import BoatTable from "./BoatTable";
 import { redirect } from "next/navigation";
@@ -12,14 +8,16 @@ export const metadata = {
 };
 
 const page = async () => {
-  let session = await checkSession();
-  if (!session) return redirect("/login");
-  redirectToAdmin(session?.user?.isAdmin as boolean);
+  let session = await checkSession(); //! 1. Validate Session
+  if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
+  if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
   return (
-    <div>
-      <BoatTable />
-    </div>
+    session && (
+      <div>
+        <BoatTable />
+      </div>
+    )
   );
 };
 
