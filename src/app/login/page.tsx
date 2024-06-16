@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useState, useCallback } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function LoginPage() {
   let session;
@@ -77,9 +78,20 @@ export default function LoginPage() {
         <CardHeader className="pb-2">
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>Enter your username and password.</CardDescription>
-          {error && (
-            <CardDescription className="text-red-400">{error}</CardDescription>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <CardDescription className="text-red-400">
+                  {error}
+                </CardDescription>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </CardHeader>
         <CardContent>
           <form className="flex flex-col gap-3" onSubmit={handleLoginSubmit}>
