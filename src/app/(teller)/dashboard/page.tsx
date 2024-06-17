@@ -2,6 +2,7 @@ import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import StatCards from "./StatCards";
 import { DollarSign } from "lucide-react";
+import QueuedTable from "./QueuedTable";
 
 export const metadata = {
   title: "Dashboard",
@@ -41,8 +42,9 @@ const page = async () => {
 
   return (
     session && (
-      <div>
+      <div className="flex flex-col gap-5">
         <StatCards data={cards} />
+        <QueuedTable />
       </div>
     )
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import {
   CaretSortIcon,
@@ -8,6 +6,9 @@ import {
 } from "@radix-ui/react-icons";
 import {
   ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -157,7 +158,7 @@ export const columns: ColumnDef<Queue>[] = [
     },
     cell: ({ row }) => {
       const statusBgs = {
-        queueing: "bg-green-700",
+        queued: "bg-green-700",
         sailing: "bg-blue-500",
         waiting: "bg-gray-500",
       };
@@ -208,14 +209,17 @@ export const columns: ColumnDef<Queue>[] = [
 ];
 
 export default function BoatTable() {
-  let maxPerPage = 10;
-  const [sorting, setSorting] = React.useState([]);
-  const [columnFilters, setColumnFilters] = React.useState([]);
-  const [columnVisibility, setColumnVisibility] = React.useState({});
-  const [pages, setPages] = React.useState(
-    Math.ceil(data?.length / maxPerPage)
+  const maxPerPage = 10;
+  const [sorting, setSorting] = React.useState<SortingState[]>([]);
+  const [columnFilters, setColumnFilters] = React.useState<
+    ColumnFiltersState[]
+  >([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [pages, setPages] = React.useState<number>(
+    Math.ceil(data.length / maxPerPage)
   );
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = React.useState<number>(1);
 
   const table = useReactTable({
     data,
@@ -311,28 +315,18 @@ export default function BoatTable() {
       </div>
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="text-xs">
-          Page {page} out of {pages} page/s.
+          Page {page} of {pages}
         </div>
-        <div className="space-x-2">
+        <div className="flex items-center space-x-2">
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              table.previousPage();
-              setPage(page - 1);
-            }}
-            disabled={!table.getCanPreviousPage()}
+            onClick={() => setPage((prevPage) => Math.max(prevPage - 1, 1))}
+            disabled={page === 1}
           >
-            Previous
+            Prev
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              table.nextPage();
-              setPage(page + 1);
-            }}
-            disabled={!table.getCanNextPage()}
+            onClick={() => setPage((prevPage) => Math.min(prevPage + 1, pages))}
+            disabled={page === pages}
           >
             Next
           </Button>

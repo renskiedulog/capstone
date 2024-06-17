@@ -18,12 +18,12 @@ const DashboardCard = ({
   info,
 }: DashboardCardTypes) => {
   return (
-    <Card className="w-[45%] md:w-[23%] min-w-40">
+    <Card className="flex-1 min-w-48 md:min-w-36">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{cardTitle}</CardTitle>
         {icon}
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-4 md:pb-6">
         <div className="text-xl md:text-2xl font-bold break-all">{stats}</div>
         <p className="text-xs text-muted-foreground">{info}</p>
       </CardContent>

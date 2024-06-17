@@ -1,11 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
   flexRender,
@@ -25,7 +21,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -35,6 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export type Queue = {
   id: string;
@@ -97,47 +93,9 @@ export const columns: ColumnDef<Queue>[] = [
   {
     id: "name",
     accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-max"
-        >
-          Name
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: "Boat Name",
     cell: ({ row }) => (
       <div className="text-left lowercase">{row.getValue("name")}</div>
-    ),
-  },
-  {
-    id: "Registration Status",
-    accessorKey: "registrationStatus",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-full p-0 text-center hover:bg-transparent"
-        >
-          Registration Status
-          <CaretSortIcon className="ml-1 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div
-        className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${
-          row?.getValue("Registration Status")?.toLowerCase() === "completed"
-            ? "bg-green-500"
-            : "bg-orange-400"
-        }`}
-      >
-        {row.getValue("Registration Status")}
-      </div>
     ),
   },
   {
@@ -145,14 +103,9 @@ export const columns: ColumnDef<Queue>[] = [
     accessorKey: "queueStatus",
     header: ({ column }) => {
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-full p-0 text-center hover:bg-transparent"
-        >
+        <p className="w-full p-0 text-center hover:bg-transparent">
           Queue Status
-          <CaretSortIcon className="ml-1 h-4 w-4" />
-        </Button>
+        </p>
       );
     },
     cell: ({ row }) => {
@@ -172,42 +125,9 @@ export const columns: ColumnDef<Queue>[] = [
       );
     },
   },
-  {
-    id: "actions",
-    header: () => <div className="w-full text-center">Actions</div>,
-    enableHiding: false,
-    cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link
-              href={`/boats/${row?.original?.name}`}
-              className="text-black/80 group-hover:text-black"
-            >
-              <DropdownMenuItem className="cursor-pointer">
-                Boat Profile
-              </DropdownMenuItem>
-            </Link>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer text-red-500 hover:!text-red-500">
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
 ];
 
-export default function BoatTable() {
+export default function QueuedTable() {
   let maxPerPage = 10;
   const [sorting, setSorting] = React.useState([]);
   const [columnFilters, setColumnFilters] = React.useState([]);
@@ -235,23 +155,16 @@ export default function BoatTable() {
   });
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Search a boat..."
-          value={table.getColumn("name")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="w-[200px] max-w-sm md:w-full"
-        />
-        <div className="flex items-center gap-2">
-          <Link href="/boats/add">
-            <Button>Add Boat</Button>
-          </Link>
-        </div>
-      </div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      layout
+      className="w-full"
+    >
       <div className="rounded-md border">
+        <h1 className="p-4 pb-0 text-3xl font-semibold">Queue Table</h1>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -338,6 +251,6 @@ export default function BoatTable() {
           </Button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
