@@ -18,13 +18,13 @@ const DashboardCard = ({
   info,
 }: DashboardCardTypes) => {
   return (
-    <Card className="flex-1 min-w-48 md:min-w-36">
+    <Card className="flex-1 min-w-fit md:min-w-32">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{cardTitle}</CardTitle>
+        <CardTitle className="md:text-sm font-medium">{cardTitle}</CardTitle>
         {icon}
       </CardHeader>
       <CardContent className="pb-4 md:pb-6">
-        <div className="text-xl md:text-2xl font-bold break-all">{stats}</div>
+        <div className="text-xl xl:text-2xl font-bold break-all">{stats}</div>
         <p className="text-xs text-muted-foreground">{info}</p>
       </CardContent>
     </Card>
@@ -39,7 +39,7 @@ const StatCards = ({ data }: { data: DashboardCardTypes[] }) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       layout
-      className="flex gap-3 md:gap-5 justify-center flex-wrap md:flex-nowrap"
+      className="flex gap-3 md:gap-5 justify-center flex-wrap"
     >
       {data.map((card: DashboardCardTypes, idx: number) => (
         <DashboardCard key={idx} {...card} />

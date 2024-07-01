@@ -3,6 +3,15 @@ import { redirect } from "next/navigation";
 import StatCards from "./StatCards";
 import { DollarSign } from "lucide-react";
 import QueuedTable from "./QueuedTable";
+import LineChart from "./LineChart";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import PieChart from "./PieChart";
 
 export const metadata = {
   title: "Dashboard",
@@ -42,9 +51,35 @@ const page = async () => {
 
   return (
     session && (
-      <div className="flex flex-col gap-5">
-        <StatCards data={cards} />
-        <QueuedTable />
+      <div className="grid grid-cols-1 lg:grid-cols-[65%,35%] gap-2">
+        <div className="flex flex-col gap-5 z-10">
+          <StatCards data={cards} />
+          <Card>
+            <CardHeader>
+              <CardTitle>Total Users</CardTitle>
+              <CardDescription>
+                The total number of registered users on the platform.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LineChart className="aspect-[1/0.4]" />
+            </CardContent>
+          </Card>
+          <QueuedTable />
+        </div>
+        <div className="">
+          <Card className="z-10">
+            <CardHeader>
+              <CardTitle>Total Users</CardTitle>
+              <CardDescription>
+                The total number of registered users on the platform.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <PieChart />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     )
   );
