@@ -2,8 +2,8 @@
 export default function Component() {
   return (
     <div className="w-full pb-5">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-[40%,55%]">
-        <div>
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="lg:max-w-xl">
           <img
             src="https://th.bing.com/th/id/OIP.tw-cH024cHORVIVEMH1iGwHaE8?w=6000&h=4000&rs=1&pid=ImgDetMain"
             width={600}
@@ -17,21 +17,21 @@ export default function Component() {
               width={150}
               height={100}
               alt="Additional Image"
-              className="h-24 w-full rounded-lg object-cover"
+              className="lg:h-24 w-full rounded-lg object-cover"
             />
             <img
               src="https://th.bing.com/th/id/OIP.tw-cH024cHORVIVEMH1iGwHaE8?w=6000&h=4000&rs=1&pid=ImgDetMain"
               width={150}
               height={100}
               alt="Additional Image"
-              className="h-24 w-full rounded-lg object-cover"
+              className="lg:h-24 w-full rounded-lg object-cover"
             />
             <img
               src="https://th.bing.com/th/id/OIP.tw-cH024cHORVIVEMH1iGwHaE8?w=6000&h=4000&rs=1&pid=ImgDetMain"
               width={150}
               height={100}
               alt="Additional Image"
-              className="h-24 w-full rounded-lg object-cover"
+              className="lg:h-24 w-full rounded-lg object-cover"
             />
           </div>
         </div>

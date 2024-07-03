@@ -8,10 +8,12 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import PieChart from "./PieChart";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Dashboard",
@@ -67,16 +69,46 @@ const page = async () => {
           </Card>
           <QueuedTable />
         </div>
-        <div className="">
-          <Card className="z-10">
+        <div className="space-y-2">
+          <Card className="z-10 overflow-hidden">
             <CardHeader>
               <CardTitle>Total Users</CardTitle>
               <CardDescription>
                 The total number of registered users on the platform.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
+            <CardContent className="p-0 overflow-hidden">
               <PieChart />
+            </CardContent>
+          </Card>
+          <Card className="w-full">
+            <CardHeader>
+              <CardTitle>Current Queue</CardTitle>
+              <CardDescription className="text-lg">SS Majestic</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Concurrent Time:</div>
+                <div>45 minutes</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Passengers:</div>
+                <div>342 / 500</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Departure:</div>
+                <div>4:30 PM</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Destination:</div>
+                <div>New York City</div>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="text-muted-foreground">Status:</div>
+                <div className="bg-green-500 px-2 py-1 text-white rounded-md text-foreground">
+                  Boarding
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

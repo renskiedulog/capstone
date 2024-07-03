@@ -18,7 +18,7 @@ const DashboardCard = ({
   info,
 }: DashboardCardTypes) => {
   return (
-    <Card className="flex-1 min-w-fit md:min-w-32">
+    <Card className="flex-1 min-w-max md:min-w-max">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="md:text-sm font-medium">{cardTitle}</CardTitle>
         {icon}

@@ -11,7 +11,6 @@ export const data = [
 ];
 
 export const options = {
-  title: "My Daily Activities",
   is3D: true,
 };
 
@@ -23,7 +22,7 @@ const PieChart = () => {
       options={options}
       width={"100%"}
       height={"400px"}
-      className=""
+      className="scale-[1.3] md:scale-125"
     />
   );
 };
