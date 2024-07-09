@@ -1,9 +1,8 @@
-import {
-  checkSession,
-} from "@/components/utils/Authenticator";
+import { checkSession } from "@/components/utils/Authenticator";
 
 import Board from "./Board";
 import { redirect } from "next/navigation";
+import HistoryTable from "./HistoryTable";
 
 export const metadata = {
   title: "Queue",
@@ -12,12 +11,13 @@ export const metadata = {
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
-  if(session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
+  if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
   return (
     session && (
       <div className="h-screen w-full text-black">
         <Board />
+        <HistoryTable />
       </div>
     )
   );

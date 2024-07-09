@@ -54,7 +54,7 @@ const page = async () => {
   return (
     session && (
       <div className="grid grid-cols-1 lg:grid-cols-[65%,35%] gap-2">
-        <div className="flex flex-col gap-5 z-10">
+        <div className="flex flex-col gap-2 z-10">
           <StatCards data={cards} />
           <Card>
             <CardHeader>
