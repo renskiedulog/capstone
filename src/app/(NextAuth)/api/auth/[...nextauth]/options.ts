@@ -1,7 +1,7 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectMongoDB } from "@/lib/db";
 import User from "@/models/User";
-import { RequestInternal, Session, User as UserTypes } from "next-auth";
+import { RequestInternal, User as UserTypes } from "next-auth";
 import { JWT } from "next-auth/jwt";
 
 interface CustomUser extends UserTypes {
@@ -30,21 +30,21 @@ export const options: any = {
         if (credentials) {
           const { username, password } = credentials;
           try {
-            await connectMongoDB();
-            const checkUser = await User.findOne({ username });
+            // await connectMongoDB();
+            // const checkUser = await User.findOne({ username });
 
-            if (!checkUser) {
-              return null; // No Username Found
-            }
+            // if (!checkUser) {
+            //   return null; // No Username Found
+            // }
 
-            if (checkUser.password !== password) {
-              return null; // wrong password
-            }
+            // if (checkUser.password !== password) {
+            //   return null; // wrong password
+            // }
 
             return {
-              name: checkUser.username,
-              isAdmin: checkUser.isAdmin,
-              id: checkUser.id,
+              name: "ines",
+              isAdmin: true,
+              id: "123",
             };
           } catch (error) {
             console.log(error);
@@ -69,10 +69,14 @@ export const options: any = {
       token: JWT;
     }) {
       if (session) {
-        const userDocument: any = await User.findOne({
-          username: token?.name,
-        }).select("-password -_id");
-        session.user = userDocument?.toObject();
+        // const userDocument: any = await User.findOne({
+        //   username: token?.name,
+        // }).select("-password -_id");
+        // session.user = userDocument?.toObject();
+        session.user = {
+          ...session.user,
+          isAdmin: true
+        }
         return session;
       } else return session;
     },

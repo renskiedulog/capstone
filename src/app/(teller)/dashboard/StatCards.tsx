@@ -39,7 +39,7 @@ const StatCards = ({ data }: { data: DashboardCardTypes[] }) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
       layout
-      className="flex gap-3 md:gap-5 justify-center flex-wrap"
+      className="flex gap-2 justify-center flex-wrap"
     >
       {data.map((card: DashboardCardTypes, idx: number) => (
         <DashboardCard key={idx} {...card} />

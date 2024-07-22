@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import PieChart from "./PieChart";
+import { DashboardPieChart } from "./DashboardPieChart";
 import { Button } from "@/components/ui/button";
 
 export const metadata = {
@@ -70,17 +70,7 @@ const page = async () => {
           <QueuedTable />
         </div>
         <div className="space-y-2">
-          <Card className="z-10 overflow-hidden">
-            <CardHeader>
-              <CardTitle>Total Users</CardTitle>
-              <CardDescription>
-                The total number of registered users on the platform.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0 overflow-hidden">
-              <PieChart />
-            </CardContent>
-          </Card>
+          <DashboardPieChart />
           <Card className="w-full">
             <CardHeader>
               <CardTitle>Current Queue</CardTitle>
