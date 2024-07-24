@@ -43,7 +43,7 @@ export const options: any = {
 
             return {
               name: "ines",
-              isAdmin: true,
+              isAdmin: false,
               id: "123",
             };
           } catch (error) {
@@ -75,8 +75,8 @@ export const options: any = {
         // session.user = userDocument?.toObject();
         session.user = {
           ...session.user,
-          isAdmin: true
-        }
+          isAdmin: false,
+        };
         return session;
       } else return session;
     },

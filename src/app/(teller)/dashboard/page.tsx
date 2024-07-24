@@ -53,7 +53,7 @@ const page = async () => {
 
   return (
     session && (
-      <div className="grid grid-cols-1 lg:grid-cols-[65%,35%] gap-2">
+      <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[75%,25%] gap-2">
         <div className="flex flex-col gap-2 z-10">
           <StatCards data={cards} />
           <Card>
@@ -63,15 +63,15 @@ const page = async () => {
                 The total number of registered users on the platform.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-2">
               <LineChart className="aspect-[1/0.4]" />
             </CardContent>
           </Card>
           <QueuedTable />
         </div>
-        <div className="space-y-2">
+        <div className="sm:space-y-0 space-y-2 lg:space-y-2 sm:space-x-2 lg:space-x-0 relative sm:flex lg:block items-start">
           <DashboardPieChart />
-          <Card className="w-full">
+          <Card className="flex-1 w-full lg:sticky lg:top-1 mt-0">
             <CardHeader>
               <CardTitle>Current Queue</CardTitle>
               <CardDescription className="text-lg">SS Majestic</CardDescription>
