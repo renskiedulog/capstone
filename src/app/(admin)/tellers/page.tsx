@@ -3,6 +3,7 @@ import { checkSession } from "@/components/utils/Authenticator";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
+import AddTellerModal from "./AddTellerButton";
 
 export const metadata = {
   title: "Tellers",
@@ -15,9 +16,7 @@ const page = async () => {
 
   return (
     <div>
-      <Button>
-        <Link href="/tellers/add-teller">Add Account</Link>
-      </Button>
+      <AddTellerModal />
     </div>
   );
 };

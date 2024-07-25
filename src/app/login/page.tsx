@@ -95,7 +95,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form className="flex flex-col gap-3" onSubmit={handleLoginSubmit}>
-            <div className="grid w-full items-center gap-4">
+            <div className="w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="username">Name</Label>
                 <Input
@@ -108,7 +108,7 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-            <div className="grid w-full items-center gap-4">
+            <div className="w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="password">Password</Label>
                 <Input
