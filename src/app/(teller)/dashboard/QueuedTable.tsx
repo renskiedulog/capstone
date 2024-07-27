@@ -63,6 +63,90 @@ const data: Queue[] = [
     name: "ken99@yahoo.com",
     queueStatus: "queued",
   },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "pending",
+    name: "ken99@yahoo.com",
+    queueStatus: "sailing",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "completed",
+    name: "ken99@yahoo.com",
+    queueStatus: "queued",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "pending",
+    name: "ken99@yahoo.com",
+    queueStatus: "sailing",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "completed",
+    name: "ken99@yahoo.com",
+    queueStatus: "queued",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "pending",
+    name: "ken99@yahoo.com",
+    queueStatus: "sailing",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "completed",
+    name: "ken99@yahoo.com",
+    queueStatus: "queued",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "pending",
+    name: "ken99@yahoo.com",
+    queueStatus: "sailing",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "completed",
+    name: "ken99@yahoo.com",
+    queueStatus: "queued",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "pending",
+    name: "ken99@yahoo.com",
+    queueStatus: "sailing",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "completed",
+    name: "ken99@yahoo.com",
+    queueStatus: "queued",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "pending",
+    name: "ken99@yahoo.com",
+    queueStatus: "sailing",
+  },
+  {
+    id: "m5gr84i9",
+    boatImage: "",
+    registrationStatus: "completed",
+    name: "ken99@yahoo.com",
+    queueStatus: "queued",
+  },
 ];
 
 export const columns: ColumnDef<Queue>[] = [
@@ -75,7 +159,7 @@ export const columns: ColumnDef<Queue>[] = [
         <div className="size-12">
           <Link
             href={`${row.getValue("image") || "/images/default-image.jpg"}`}
-            className="size-12"
+            className="size-8"
             target="_blank"
           >
             <img
@@ -160,7 +244,6 @@ export default function QueuedTable() {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      layout
       className="w-full"
     >
       <div className="rounded-md border">
@@ -198,7 +281,7 @@ export default function QueuedTable() {
                         key={cell.id}
                         className={`${
                           cell?.column?.id === "actions" && "w-24"
-                        }`}
+                        } p-2`}
                       >
                         {flexRender(
                           cell.column.columnDef.cell,

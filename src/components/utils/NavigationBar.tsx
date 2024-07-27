@@ -12,6 +12,7 @@ import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import Avatar from "./Avatar";
 import { NavLinkProps } from "@/lib/types";
+import Alert from "./Alert";
 
 const NavigationBar = () => {
   const session: any = useSession() || null;
@@ -26,7 +27,7 @@ const NavigationBar = () => {
   return React.useMemo(
     () =>
       session?.status === "authenticated" && (
-        <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+        <aside className="fixed inset-y-0 left-0 z-50 hidden w-14 flex-col border-r bg-background sm:flex">
           <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
             <Link
               href={`/profile/${username}`}
@@ -46,15 +47,19 @@ const NavigationBar = () => {
           </nav>
           <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
             <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10"
-                  onClick={() => signOut()}
-                >
-                  <LogOutIcon />
-                  <span className="sr-only">Logout</span>
-                </button>
-              </TooltipTrigger>
+              <Alert
+                title="Are you sure you want to logout?"
+                description="Logging out will end your current session and any unsaved changes will be lost. Do you wish to proceed?"
+                onConfirm={() => signOut()}
+                primaryBtn="Logout"
+              >
+                <TooltipTrigger asChild>
+                  <button className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10">
+                    <LogOutIcon />
+                    <span className="sr-only">Logout</span>
+                  </button>
+                </TooltipTrigger>
+              </Alert>
               <TooltipContent side="right" className="left-10">
                 Logout
               </TooltipContent>

@@ -3,7 +3,7 @@ import { checkSession } from "@/components/utils/Authenticator";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
-import AddTellerModal from "./AddTellerButton";
+import AddTellerModal from "./AddTellerModal";
 
 export const metadata = {
   title: "Tellers",

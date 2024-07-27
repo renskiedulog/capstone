@@ -12,14 +12,45 @@ import {
 import { useCallback, useState } from "react";
 import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Alert from "@/components/utils/Alert";
 
 export default function AddTellerModal() {
   const [imagePreview, setImagePreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [inputs, setInputs] = useState({ username: "", password: "" });
+  const [inputs, setInputs] = useState({
+    username: "",
+    password: "",
+    address: "",
+    contact: "",
+    birthdate: "",
+  });
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [pendingModalClose, setPendingModalClose] = useState(false);
 
   const handleModal = () => {
-    setIsModalOpen((prev) => !prev);
+    const hasValues = Object.values(inputs).some(
+      (value) => value.trim() !== ""
+    );
+    if (isModalOpen && hasValues) {
+      setIsAlertOpen(true);
+      setPendingModalClose(true);
+    } else {
+      setIsModalOpen((prev) => !prev);
+    }
+  };
+
+  const handleAlertConfirm = () => {
+    handleReset();
+    setIsAlertOpen(false);
+    if (pendingModalClose) {
+      setIsModalOpen(false);
+      setPendingModalClose(false);
+    }
+  };
+
+  const handleAlertCancel = () => {
+    setIsAlertOpen(false);
+    setPendingModalClose(false);
   };
 
   const handleImageUpload = (event: any) => {
@@ -45,14 +76,10 @@ export default function AddTellerModal() {
     return result;
   };
 
-  const handleGenerateCredentials = () => {
-    const randomNumber = Math.floor(Math.random() * 1000); // Generate a random number between 0 and 999
-    const newUsername = `teller${randomNumber}`;
+  const handleGeneratePassword = () => {
     const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5); // Generate a password between 5 and 10 characters
-    console.log(newPassword, newUsername);
     setInputs((prevInputs) => ({
       ...prevInputs,
-      username: newUsername,
       password: newPassword,
     }));
   };
@@ -66,6 +93,7 @@ export default function AddTellerModal() {
   }, []);
 
   const handleReset = () => {
+    setImagePreview(null);
     setInputs((prevInputs) => {
       const resetInputs: any = {};
       Object.keys(prevInputs).forEach((key) => {
@@ -75,8 +103,18 @@ export default function AddTellerModal() {
     });
   };
 
+  console.log(inputs)
+
   return (
     <>
+      <Alert
+        title="Are you sure you want to exit?"
+        description="Everything in this form will be deleted once you close this modal."
+        open={isAlertOpen}
+        openChange={setIsAlertOpen}
+        onConfirm={handleAlertConfirm}
+        onCancel={handleAlertCancel}
+      />
       <Button onClick={handleModal}>Add Teller</Button>
       {isModalOpen && (
         <section
@@ -166,6 +204,8 @@ export default function AddTellerModal() {
                       required
                       type="text"
                       placeholder="Enter permanent address"
+                      value={inputs?.address}
+                      onChange={handleInputChange}
                     />
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2">
@@ -177,6 +217,8 @@ export default function AddTellerModal() {
                         required
                         type="text"
                         placeholder="Enter contact number"
+                        value={inputs?.contact}
+                        onChange={handleInputChange}
                       />
                     </div>
                     <div className="flex-1">
@@ -186,6 +228,8 @@ export default function AddTellerModal() {
                         name="birthdate"
                         required
                         type="date"
+                        value={inputs?.birthdate}
+                        onChange={handleInputChange}
                       />
                     </div>
                   </div>
@@ -197,9 +241,9 @@ export default function AddTellerModal() {
                 <Button
                   variant="outline"
                   className="!text-xs"
-                  onClick={handleGenerateCredentials}
+                  onClick={handleGeneratePassword}
                 >
-                  Generate Username and Password
+                  Generate Password
                 </Button>
                 <Button
                   variant="ghost"
