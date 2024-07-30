@@ -9,29 +9,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
+import { generateRandomString } from "@/lib/utils";
+import { createTeller } from "@/lib/actions";
+import { useFormState, useFormStatus } from "react-dom";
+
+const initialInputs = {
+  firstName: "",
+  lastName: "",
+  username: "",
+  password: "",
+  address: "",
+  contact: "",
+  birthdate: "",
+};
 
 export default function AddTellerModal() {
   const [imagePreview, setImagePreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [inputs, setInputs] = useState({
-    username: "",
-    password: "",
-    address: "",
-    contact: "",
-    birthdate: "",
-  });
+  const [inputs, setInputs] = useState(initialInputs);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
+  const [state, formAction] = useFormState(createTeller, null);
 
   const handleModal = () => {
     const hasValues = Object.values(inputs).some(
       (value) => value.trim() !== ""
     );
-    if (isModalOpen && hasValues) {
+    if (isModalOpen && (hasValues || imagePreview)) {
       setIsAlertOpen(true);
       setPendingModalClose(true);
     } else {
@@ -58,22 +66,10 @@ export default function AddTellerModal() {
     if (file) {
       const reader: any = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader?.result);
+        setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const generateRandomString = (length: any) => {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
-    }
-    return result;
   };
 
   const handleGeneratePassword = () => {
@@ -94,16 +90,15 @@ export default function AddTellerModal() {
 
   const handleReset = () => {
     setImagePreview(null);
-    setInputs((prevInputs) => {
-      const resetInputs: any = {};
-      Object.keys(prevInputs).forEach((key) => {
-        resetInputs[key] = "";
-      });
-      return resetInputs;
-    });
+    setInputs(initialInputs);
   };
 
-  console.log(inputs)
+  useEffect(() => {
+    if (state?.success) {
+      handleReset();
+      setIsModalOpen(false);
+    }
+  }, [state?.success]);
 
   return (
     <>
@@ -117,7 +112,8 @@ export default function AddTellerModal() {
       />
       <Button onClick={handleModal}>Add Teller</Button>
       {isModalOpen && (
-        <section
+        <form
+          action={formAction}
           className="bg-black/50 w-full h-screen fixed top-0 left-0 z-50 flex items-center justify-center"
           onClick={handleModal}
         >
@@ -169,29 +165,52 @@ export default function AddTellerModal() {
                 <div className="w-full mx-5 space-y-2">
                   <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
-                      <Label htmlFor="username">Name</Label>
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        name="firstName"
+                        required
+                        type="text"
+                        placeholder="Enter your name"
+                        value={inputs.firstName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        required
+                        type="text"
+                        placeholder="Enter your last name"
+                        value={inputs.lastName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex sm:flex-row flex-col gap-2">
+                    <div className="flex-1">
+                      <Label htmlFor="username">Username</Label>
                       <Input
                         id="username"
                         name="username"
                         required
                         type="text"
                         placeholder="Enter your username"
-                        value={inputs?.username}
+                        value={inputs.username}
                         onChange={handleInputChange}
                       />
                     </div>
                     <div className="flex-1">
-                      <Label htmlFor="password">
-                        Password
-                        <span className="w-max ml-auto">asd</span>
-                      </Label>
+                      <Label htmlFor="password">Password</Label>
                       <Input
                         id="password"
                         name="password"
                         required
                         type="text"
                         placeholder="Enter your password"
-                        value={inputs?.password}
+                        value={inputs.password}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -204,7 +223,7 @@ export default function AddTellerModal() {
                       required
                       type="text"
                       placeholder="Enter permanent address"
-                      value={inputs?.address}
+                      value={inputs.address}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -217,7 +236,7 @@ export default function AddTellerModal() {
                         required
                         type="text"
                         placeholder="Enter contact number"
-                        value={inputs?.contact}
+                        value={inputs.contact}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -228,7 +247,7 @@ export default function AddTellerModal() {
                         name="birthdate"
                         required
                         type="date"
-                        value={inputs?.birthdate}
+                        value={inputs.birthdate}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -253,11 +272,51 @@ export default function AddTellerModal() {
                   Reset
                 </Button>
               </div>
-              <Button>Create</Button>
+              <SubmitButton />
             </CardFooter>
           </Card>
-        </section>
+        </form>
       )}
     </>
   );
 }
+
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      type="submit"
+      disabled={pending}
+      className="flex items-center gap-2"
+    >
+      {pending ? (
+        <>
+          <svg
+            className="-ml-1 h-5 w-5 animate-spin text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p>Processing...</p>
+        </>
+      ) : (
+        <p>Create</p>
+      )}
+    </Button>
+  );
+};
