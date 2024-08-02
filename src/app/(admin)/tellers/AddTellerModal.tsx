@@ -165,32 +165,6 @@ export default function AddTellerModal() {
                 <div className="w-full mx-5 space-y-2">
                   <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input
-                        id="firstName"
-                        name="firstName"
-                        required
-                        type="text"
-                        placeholder="Enter your name"
-                        value={inputs.firstName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input
-                        id="lastName"
-                        name="lastName"
-                        required
-                        type="text"
-                        placeholder="Enter your last name"
-                        value={inputs.lastName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full flex sm:flex-row flex-col gap-2">
-                    <div className="flex-1">
                       <Label htmlFor="username">Username</Label>
                       <Input
                         id="username"
@@ -211,6 +185,32 @@ export default function AddTellerModal() {
                         type="text"
                         placeholder="Enter your password"
                         value={inputs.password}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex sm:flex-row flex-col gap-2">
+                    <div className="flex-1">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        name="firstName"
+                        required
+                        type="text"
+                        placeholder="Enter your name"
+                        value={inputs.firstName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        name="lastName"
+                        required
+                        type="text"
+                        placeholder="Enter your last name"
+                        value={inputs.lastName}
                         onChange={handleInputChange}
                       />
                     </div>
@@ -258,6 +258,7 @@ export default function AddTellerModal() {
             <CardFooter className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <Button
+                  type="button"
                   variant="outline"
                   className="!text-xs"
                   onClick={handleGeneratePassword}
@@ -265,6 +266,7 @@ export default function AddTellerModal() {
                   Generate Password
                 </Button>
                 <Button
+                  type="button"
                   variant="ghost"
                   className="!text-xs"
                   onClick={handleReset}

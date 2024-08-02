@@ -21,6 +21,7 @@ interface AlertTypes {
   onConfirm?: any;
   onCancel?: any;
   children?: React.ReactNode;
+  primaryClassName?: string;
 }
 
 const Alert = ({
@@ -33,21 +34,24 @@ const Alert = ({
   openChange,
   onConfirm,
   onCancel,
+  primaryClassName,
   ...rest
 }: AlertTypes) => {
   return (
     <AlertDialog open={open} onOpenChange={openChange} {...rest}>
-      <AlertDialogTrigger asChild>
-        {children}
-      </AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>{secondaryBtn || "Cancel"}</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>{primaryBtn || "Continue"}</AlertDialogAction>
+          <AlertDialogCancel onClick={onCancel}>
+            {secondaryBtn || "Cancel"}
+          </AlertDialogCancel>
+          <AlertDialogAction className={primaryClassName} onClick={onConfirm}>
+            {primaryBtn || "Continue"}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

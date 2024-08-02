@@ -22,8 +22,25 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    address: {
+      type: String,
+    },
+    image: {
+      type: String,
+    },
+    contactNumber: {
+      type: String,
+    },
+    birthdate: {
+      type: Date,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 const User = models.users || mongoose.model("users", userSchema);

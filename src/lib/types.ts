@@ -13,3 +13,20 @@ export interface CustomUserData {
   isAdmin: boolean;
   username: string;
 }
+
+export interface UserTypes {
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  username: string;
+  password: string;
+  isAdmin?: boolean;
+  address?: string;
+  image?: string;
+  contact?: string;
+  birthdate?: string;
+  status?: "active" | "inactive";
+  createdAt?: string;
+  updatedAt?: string;
+}
