@@ -14,7 +14,7 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { generateRandomString } from "@/lib/utils";
-import { createTeller } from "@/lib/actions";
+import { editTeller } from "@/lib/actions";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialInputs = {
@@ -27,12 +27,18 @@ const initialInputs = {
   birthdate: "",
 };
 
-export default function EditForm({ accountDetails, setIsOpen }) {
+export default function EditForm({
+  accountDetails,
+  setIsOpen,
+}: {
+  accountDetails: any;
+  setIsOpen: (state: boolean) => null;
+}) {
   const [imagePreview, setImagePreview] = useState(null);
   const [inputs, setInputs] = useState(accountDetails);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
-  const [state, formAction] = useFormState(createTeller, null);
+  const [state, formAction] = useFormState(editTeller, null);
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -66,7 +72,7 @@ export default function EditForm({ accountDetails, setIsOpen }) {
 
   const handleGeneratePassword = () => {
     const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5); // Generate a password between 5 and 10 characters
-    setInputs((prevInputs) => ({
+    setInputs((prevInputs: any) => ({
       ...prevInputs,
       password: newPassword,
     }));
@@ -74,7 +80,7 @@ export default function EditForm({ accountDetails, setIsOpen }) {
 
   const handleInputChange = useCallback((e: any) => {
     const { name, value } = e.target;
-    setInputs((prevInputs) => ({
+    setInputs((prevInputs: any) => ({
       ...prevInputs,
       [name]: value,
     }));
@@ -300,7 +306,7 @@ const SubmitButton = () => {
           <p>Processing...</p>
         </>
       ) : (
-        <p>Create</p>
+        <p>Save</p>
       )}
     </Button>
   );
