@@ -1,11 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
   flexRender,
@@ -35,193 +31,242 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
+import AddBoatModal from "./AddBoatModal";
+import { Delete, Edit, Edit2Icon, Trash, User2Icon } from "lucide-react";
+import { UserTypes } from "@/lib/types";
+import Alert from "@/components/utils/Alert";
+import BoatEditForm from "./BoatEditForm";
 
-export type Queue = {
-  id: string;
-  boatImage: string;
-  registrationStatus: "pending" | "completed";
-  name: string;
-  queueStatus: "waiting" | "queued" | "sailing";
-};
-
-const data: Queue[] = [
+const data: UserTypes[] = [
   {
-    id: "m5gr84i9",
-    boatImage:
-      "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-    registrationStatus: "completed",
-    name: "ken99@yahoo.com",
-    queueStatus: "waiting",
+    id: "32165465465",
+    firstName: "John",
+    lastName: "Doe",
+    fullName: "John Doe",
+    username: "johndoe123",
+    password: "password123",
+    isAdmin: false,
+    address: "123 Main St, Anytown, USA",
+    contact: "+1234567890",
+    birthdate: "1990-01-01", // Updated format
+    status: "active",
+    createdAt: "2024-08-01T12:34:56Z",
+    updatedAt: "2024-08-01T12:34:56Z",
   },
   {
-    id: "m5gr84i9",
-    boatImage: "",
-    registrationStatus: "pending",
-    name: "ken99@yahoo.com",
-    queueStatus: "sailing",
+    id: "65432132123",
+    firstName: "Jane",
+    lastName: "Smith",
+    fullName: "Jane Smith",
+    username: "janesmith245",
+    password: "securepass456",
+    isAdmin: true,
+    address: "456 Elm St, Othertown, USA",
+    contact: "+1987654321",
+    birthdate: "1985-05-15", // Updated format
+    status: "inactive",
+    createdAt: "2024-08-02T10:20:30Z",
+    updatedAt: "2024-08-02T10:20:30Z",
   },
   {
-    id: "m5gr84i9",
-    boatImage: "",
-    registrationStatus: "completed",
-    name: "ken99@yahoo.com",
-    queueStatus: "queued",
+    id: "98765498765",
+    firstName: "Alice",
+    lastName: "Johnson",
+    fullName: "Alice Johnson",
+    username: "alicejohnson678",
+    password: "mypassword789",
+    isAdmin: false,
+    address: "789 Oak St, Newcity, USA",
+    contact: "+1122334455",
+    birthdate: "1992-09-09", // Updated format
+    status: "active",
+    createdAt: "2024-08-03T14:45:12Z",
+    updatedAt: "2024-08-03T14:45:12Z",
   },
 ];
-
-export const columns: ColumnDef<Queue>[] = [
-  {
-    id: "image",
-    accessorKey: "boatImage",
-    header: "Boat Image",
-    cell: ({ row }) => {
-      return (
-        <div className="size-12">
-          <Link
-            href={`${row.getValue("image") || "/images/default-image.jpg"}`}
-            className="size-12"
-            target="_blank"
-          >
-            <img
-              width={40}
-              height={40}
-              alt="boat-image"
-              className="aspect-square w-max object-cover transition"
-              src={row.getValue("image") || "/images/default-image.jpg"}
-            />
-          </Link>
-        </div>
-      );
-    },
-  },
-  {
-    id: "name",
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-max"
-        >
-          Name
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="text-left lowercase">{row.getValue("name")}</div>
-    ),
-  },
-  {
-    id: "Registration Status",
-    accessorKey: "registrationStatus",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-full p-0 text-center hover:bg-transparent"
-        >
-          Registration Status
-          <CaretSortIcon className="ml-1 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div
-        className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${
-          row?.getValue("Registration Status")?.toLowerCase() === "completed"
-            ? "bg-green-500"
-            : "bg-orange-400"
-        }`}
-      >
-        {row.getValue("Registration Status")}
-      </div>
-    ),
-  },
-  {
-    id: "Queue Status",
-    accessorKey: "queueStatus",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="w-full p-0 text-center hover:bg-transparent"
-        >
-          Queue Status
-          <CaretSortIcon className="ml-1 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const statusBgs = {
-        queueing: "bg-green-700",
-        sailing: "bg-blue-500",
-        waiting: "bg-gray-500",
-      };
-      return (
-        <div
-          className={`mx-auto w-max rounded px-2 py-1 text-left text-xs capitalize text-white ${
-            statusBgs[row?.getValue("Queue Status")?.toLowerCase()]
-          }`}
-        >
-          {row.getValue("Queue Status")}
-        </div>
-      );
-    },
-  },
-  {
-    id: "actions",
-    header: () => <div className="w-full text-center">Actions</div>,
-    enableHiding: false,
-    cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link
-              href={`/boats/${row?.original?.name}`}
-              className="text-black/80 group-hover:text-black"
-            >
-              <DropdownMenuItem className="cursor-pointer">
-                Boat Profile
-              </DropdownMenuItem>
-            </Link>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer text-red-500 hover:!text-red-500">
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
-
 export default function BoatTable() {
   let maxPerPage = 10;
   const [sorting, setSorting] = React.useState([]);
+  const [editMode, setEditMode] = React.useState(false);
+  const [editDetails, setEditDetails] = React.useState({});
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = React.useState(false);
+  const [deleteUser, setDeleteUser] = React.useState("");
+  const [pendingModalClose, setPendingModalClose] = React.useState(false);
   const [pages, setPages] = React.useState(
     Math.ceil(data?.length / maxPerPage)
   );
   const [page, setPage] = React.useState(1);
 
+  const columns: ColumnDef<UserTypes>[] = [
+    {
+      id: "image",
+      accessorKey: "image",
+      header: "Image",
+      cell: ({ row }) => {
+        return (
+          <div className="size-12">
+            <Link
+              href={`${row.getValue("image") || "/images/default-image.jpg"}`}
+              className="size-12"
+              target="_blank"
+            >
+              <img
+                width={40}
+                height={40}
+                alt="user-image"
+                className="aspect-square w-max object-cover transition"
+                src={row.getValue("image") || "/images/default-image.jpg"}
+              />
+            </Link>
+          </div>
+        );
+      },
+    },
+    {
+      id: "name",
+      accessorKey: "fullName",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="w-max"
+          >
+            Name
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div className="text-left lowercase">{row.getValue("name")}</div>
+      ),
+    },
+    {
+      id: "username",
+      accessorKey: "username",
+      header: ({ column }) => {
+        return <p>Username</p>;
+      },
+      cell: ({ row }) => (
+        <div className="text-left lowercase">{row.getValue("username")}</div>
+      ),
+    },
+    {
+      id: "password",
+      accessorKey: "password",
+      header: ({ column }) => {
+        return <p>Password</p>;
+      },
+      cell: ({ row }) => (
+        <div className="text-left lowercase">{row.getValue("password")}</div>
+      ),
+    },
+    {
+      id: "address",
+      accessorKey: "address",
+      header: ({ column }) => {
+        return <p>Address</p>;
+      },
+      cell: ({ row }) => (
+        <div className="text-left lowercase">{row.getValue("address")}</div>
+      ),
+    },
+    {
+      id: "contact",
+      accessorKey: "contact",
+      header: ({ column }) => {
+        return <p>Contact Number</p>;
+      },
+      cell: ({ row }) => (
+        <div className="text-left lowercase">{row.getValue("contact")}</div>
+      ),
+    },
+    {
+      id: "status",
+      accessorKey: "status",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="w-full p-0 text-center hover:bg-transparent"
+          >
+            Status
+            <CaretSortIcon className="ml-1 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div
+          className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${
+            row?.getValue("status") === "active"
+              ? "bg-green-500"
+              : "bg-slate-400"
+          }`}
+        >
+          {row.getValue("status")}
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: () => <div className="w-full text-center">Actions</div>,
+      enableHiding: false,
+      cell: ({ row }) => {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <Link
+                href={`/boats/${row?.original?.username}`}
+                className="text-black/80 group-hover:text-black"
+              >
+                <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
+                  <User2Icon size={18} />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => {
+                  setEditMode(true);
+                  setEditDetails(row.original);
+                }}
+                className="cursor-pointer gap-1.5"
+              >
+                <Edit size={18} />
+                <span>Edit</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  setIsDeleteAlertOpen(true);
+                  setDeleteUser(row.getValue("id"));
+                }}
+                className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
+              >
+                <Trash size={18} />
+                <span>Delete</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   const table = useReactTable({
     data,
     columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onSortingChange: setSorting as any,
+    onColumnFiltersChange: setColumnFilters as any,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -234,110 +279,142 @@ export default function BoatTable() {
     },
   });
 
+  const handleAlertConfirm = () => {
+    // TODO: Server side action for deleting user account
+    setIsDeleteAlertOpen(false);
+    if (pendingModalClose) {
+      setPendingModalClose(false);
+    }
+  };
+
+  const handleAlertCancel = () => {
+    setDeleteUser("");
+    setIsDeleteAlertOpen(false);
+    setPendingModalClose(false);
+  };
+
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Search a boat..."
-          value={table.getColumn("name")?.getFilterValue() ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="w-[200px] max-w-sm md:w-full"
+    <>
+      {isDeleteAlertOpen && (
+        <Alert
+          title="Are you sure you want to delete this account?"
+          description="Everything in this account will be deleted and items, references, and data related to this account will be removed."
+          open={isDeleteAlertOpen}
+          openChange={setIsDeleteAlertOpen}
+          onConfirm={handleAlertConfirm}
+          onCancel={handleAlertCancel}
+          primaryBtn="Delete"
+          primaryClassName="bg-red-500 hover:bg-red-600"
         />
-        <div className="flex items-center gap-2">
-          <Link href="/boats/add">
-            <Button>Add Boat</Button>
-          </Link>
+      )}
+      {editMode && (
+        <BoatEditForm accountDetails={editDetails} setIsOpen={setEditMode} />
+      )}
+      {/* Table */}
+      <div className="w-full">
+        <div className="flex items-center justify-between py-4">
+          <Input
+            placeholder="Search a boat..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="w-[200px] max-w-sm md:w-full"
+          />
+          <div className="flex items-center gap-2">
+            <AddBoatModal />
+          </div>
         </div>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="text-center"
-                >
-                  {row.getVisibleCells().map((cell) => {
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
                     return (
-                      <TableCell
-                        key={cell.id}
-                        className={`${
-                          cell?.column?.id === "actions" && "w-24"
-                        }`}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
                     );
                   })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className={`h-24 text-center`}
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="text-xs">
-          Page {page} out of {pages} page/s.
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => {
+                  return (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className="text-center"
+                    >
+                      {row.getVisibleCells().map((cell) => {
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            className={`${
+                              cell?.column?.id === "actions" && "w-24"
+                            }`}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className={`h-24 text-center`}
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              table.previousPage();
-              setPage(page - 1);
-            }}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              table.nextPage();
-              setPage(page + 1);
-            }}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+        <div className="flex items-center justify-between space-x-2 py-4">
+          <div className="text-xs">
+            Page {page} out of {pages} page/s.
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                table.previousPage();
+                setPage(page - 1);
+              }}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                table.nextPage();
+                setPage(page + 1);
+              }}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
