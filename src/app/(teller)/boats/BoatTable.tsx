@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import AddBoatModal from "./AddBoatModal";
-import { Delete, Edit, Edit2Icon, Trash, User2Icon } from "lucide-react";
+import { Edit, Trash, User2Icon } from "lucide-react";
 import { UserTypes } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import BoatEditForm from "./BoatEditForm";

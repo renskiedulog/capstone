@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 const error = () => {
   const session = useSession();
   const isAuthenticated = session?.status === "authenticated";
+
   return (
     <div
       className={`flex flex-col items-center justify-center ${

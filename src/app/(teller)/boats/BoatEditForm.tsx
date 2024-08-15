@@ -98,8 +98,6 @@ export default function BoatEditForm({
     }
   }, [state?.success]);
 
-  console.log(accountDetails);
-
   return (
     <>
       <Alert
@@ -124,9 +122,9 @@ export default function BoatEditForm({
             onClick={handleModalClose}
           />
           <CardHeader>
-            <CardTitle>Add Teller Account</CardTitle>
+            <CardTitle>Add A Boat</CardTitle>
             <CardDescription>
-              Provide the necessary details for the account.
+              Provide the necessary details for the boat.
             </CardDescription>
           </CardHeader>
           <CardContent className="mx-auto">

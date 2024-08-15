@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
   flexRender,
@@ -13,14 +12,6 @@ import {
 } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -194,7 +185,7 @@ export const columns: ColumnDef<Queue>[] = [
     },
     cell: ({ row }) => {
       const statusBgs = {
-        queueing: "bg-green-700",
+        queued: "bg-green-700",
         sailing: "bg-blue-500",
         waiting: "bg-gray-500",
       };

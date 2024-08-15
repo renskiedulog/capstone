@@ -124,9 +124,9 @@ export default function EditForm({
             onClick={handleModalClose}
           />
           <CardHeader>
-            <CardTitle>Add Teller Account</CardTitle>
+            <CardTitle>Edit Teller Account</CardTitle>
             <CardDescription>
-              Provide the necessary details for the account.
+              Edit the necessary details for the account.
             </CardDescription>
           </CardHeader>
           <CardContent className="mx-auto">
