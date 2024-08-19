@@ -25,10 +25,11 @@ const initialInputs = {
   address: "",
   contact: "",
   birthdate: "",
+  email: "",
 };
 
 export default function AddTellerModal() {
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputs, setInputs] = useState(initialInputs);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -61,16 +62,25 @@ export default function AddTellerModal() {
     setPendingModalClose(false);
   };
 
-  const handleImageUpload = (event: any) => {
-    const file = event.target.files[0];
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
-      const reader: any = new FileReader();
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
+
+  function clearFileInput(fileInputId: string) {
+    const fileInput = document.getElementById(
+      fileInputId
+    ) as HTMLInputElement | null;
+    if (fileInput) {
+      fileInput.value = "";
+    }
+  }
 
   const handleGeneratePassword = () => {
     const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5); // Generate a password between 5 and 10 characters
@@ -89,8 +99,9 @@ export default function AddTellerModal() {
   }, []);
 
   const handleReset = () => {
-    setImagePreview(null);
+    setImagePreview("");
     setInputs(initialInputs);
+    clearFileInput("uploadImage");
   };
 
   useEffect(() => {
@@ -118,7 +129,7 @@ export default function AddTellerModal() {
           onClick={handleModal}
         >
           <Card
-            className="border-none w-full max-w-3xl mx-5 relative"
+            className="border-none w-full max-w-3xl mx-5 relative max-h-[700px] overflow-y-auto scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             <XIcon
@@ -133,10 +144,10 @@ export default function AddTellerModal() {
             </CardHeader>
             <CardContent className="mx-auto">
               <div className="flex w-full flex-col sm:flex-row items-center gap-2">
-                <div className="relative w-full max-w-[150px] sm:max-w-[200px] max-h-[150px] sm:max-h-[200px] h-[100vh] overflow-hidden">
+                <div className="relative w-full max-w-[200px] h-full">
                   <Label
                     htmlFor="uploadImage"
-                    className={`absolute bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
+                    className={`bg-white z-10 space-y-1 group w-full h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
                   >
                     {imagePreview ? (
                       <img
@@ -153,6 +164,7 @@ export default function AddTellerModal() {
                       </>
                     )}
                   </Label>
+
                   <Input
                     type="file"
                     id="uploadImage"
@@ -161,6 +173,28 @@ export default function AddTellerModal() {
                     className="hidden"
                     onChange={handleImageUpload}
                   />
+                  {imagePreview && (
+                    <>
+                      <Button
+                        type="button"
+                        className="w-full mt-1 hover:bg-primary/80 hover:text-white"
+                        variant="outline"
+                        onClick={() => {
+                          setImagePreview("");
+                          clearFileInput("uploadImage");
+                        }}
+                      >
+                        Remove
+                      </Button>
+                      <Input
+                        type="string"
+                        id="imageBase64"
+                        name="imageBase64"
+                        className="hidden"
+                        value={imagePreview}
+                      />
+                    </>
+                  )}
                 </div>
                 <div className="w-full mx-5 space-y-2">
                   <div className="w-full flex sm:flex-row flex-col gap-2">
@@ -214,6 +248,18 @@ export default function AddTellerModal() {
                         onChange={handleInputChange}
                       />
                     </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      required
+                      type="text"
+                      placeholder="Enter permanent email"
+                      value={inputs.email}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div>
                     <Label htmlFor="address">Address</Label>

@@ -52,6 +52,8 @@ const data: UserTypes[] = [
     status: "active",
     createdAt: "2024-08-01T12:34:56Z",
     updatedAt: "2024-08-01T12:34:56Z",
+    image:
+      "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp",
   },
   {
     id: "65432132123",
@@ -67,6 +69,8 @@ const data: UserTypes[] = [
     status: "inactive",
     createdAt: "2024-08-02T10:20:30Z",
     updatedAt: "2024-08-02T10:20:30Z",
+    image:
+      "https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg",
   },
   {
     id: "98765498765",
@@ -82,6 +86,8 @@ const data: UserTypes[] = [
     status: "active",
     createdAt: "2024-08-03T14:45:12Z",
     updatedAt: "2024-08-03T14:45:12Z",
+    image:
+      "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp",
   },
 ];
 export default function TellerTable() {
@@ -226,7 +232,7 @@ export default function TellerTable() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <Link
-                href={`/boats/${row?.original?.username}`}
+                href={`/profile/${row?.original?.username}`}
                 className="text-black/80 group-hover:text-black"
               >
                 <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
@@ -314,7 +320,7 @@ export default function TellerTable() {
       <div className="w-full">
         <div className="flex items-center justify-between py-4">
           <Input
-            placeholder="Search a boat..."
+            placeholder="Search a teller..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)

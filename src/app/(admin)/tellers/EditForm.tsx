@@ -32,7 +32,7 @@ export default function EditForm({
   setIsOpen,
 }: {
   accountDetails: any;
-  setIsOpen: (state: boolean) => null;
+  setIsOpen: (state: boolean) => void;
 }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [inputs, setInputs] = useState(accountDetails);
@@ -98,7 +98,9 @@ export default function EditForm({
     }
   }, [state?.success]);
 
-  console.log(accountDetails);
+  useEffect(() => {
+    setImagePreview(accountDetails.image);
+  }, [accountDetails]);
 
   return (
     <>
@@ -137,11 +139,20 @@ export default function EditForm({
                   className={`absolute bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
                 >
                   {imagePreview ? (
-                    <img
-                      src={imagePreview}
-                      alt="Uploaded"
-                      className="w-full h-full object-cover"
-                    />
+                    <>
+                      <img
+                        src={imagePreview}
+                        alt="Uploaded"
+                        className="w-full h-full object-cover"
+                      />
+                      <Input
+                        type="string"
+                        id="imageBase64"
+                        name="imageBase64"
+                        className="hidden"
+                        value={imagePreview}
+                      />
+                    </>
                   ) : (
                     <>
                       <ImageIcon className="group-hover:opacity-70 opacity-50" />
