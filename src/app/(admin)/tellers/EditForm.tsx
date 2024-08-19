@@ -14,7 +14,7 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { generateRandomString } from "@/lib/utils";
-import { editTeller } from "@/lib/actions";
+import { editTeller } from "@/lib/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialInputs = {

@@ -10,9 +10,13 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    fullName: {
+      type: String,
+    },
     username: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -22,18 +26,10 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    address: {
-      type: String,
-    },
-    image: {
-      type: String,
-    },
-    contactNumber: {
-      type: String,
-    },
-    birthdate: {
-      type: Date,
-    },
+    address: String,
+    image: String,
+    contact: String,
+    birthdate: Date,
     status: {
       type: String,
       enum: ["active", "inactive"],
@@ -43,6 +39,6 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 
-const User = models.users || mongoose.model("users", userSchema);
+const User = models.User || mongoose.model("User", userSchema);
 
 export default User;

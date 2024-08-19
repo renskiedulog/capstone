@@ -7,6 +7,7 @@ import TopNav from "@/components/utils/TopNav";
 import SessionProvider from "@/components/utils/SessionProvider";
 import { options } from "./(NextAuth)/api/auth/[...nextauth]/options";
 import { redirect } from "next/navigation";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,6 +43,7 @@ export default async function RootLayout({
             <div className="px-2 sm:px-8 sm:pl-20 sm:pt-0 pt-16">
               <TopNav />
               {children}
+              <Toaster />
             </div>
           </TooltipProvider>
         </SessionProvider>

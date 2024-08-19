@@ -15,7 +15,7 @@ export interface CustomUserData {
 }
 
 export interface UserTypes {
-  id: string;
+  _id: string;
   firstName: string;
   lastName: string;
   fullName: string;

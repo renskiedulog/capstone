@@ -7,23 +7,3 @@ export const connectMongoDB = async () => {
     console.error("Error connecting to MongoDB:", error);
   }
 };
-
-const fetchData = async (collectionName: string, query: any) => {
-  try {
-    const Model = mongoose.model(collectionName);
-    const result = await Model.find(query);
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};
-
-const updateData = async (collectionName: string, id: string, update: any) => {
-  try {
-    const Model = mongoose.model(collectionName);
-    const result = await Model.findByIdAndUpdate(id, update, { new: true });
-    return result;
-  } catch (error) {
-    throw error;
-  }
-};

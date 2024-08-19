@@ -14,8 +14,10 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { generateRandomString } from "@/lib/utils";
-import { createTeller } from "@/lib/actions";
+import { createTeller } from "@/lib/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
+import { useToast } from "@/components/ui/use-toast";
+import { revalidatePath } from "next/cache";
 
 const initialInputs = {
   firstName: "",
@@ -29,6 +31,7 @@ const initialInputs = {
 };
 
 export default function AddTellerModal() {
+  const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputs, setInputs] = useState(initialInputs);
@@ -108,6 +111,11 @@ export default function AddTellerModal() {
     if (state?.success) {
       handleReset();
       setIsModalOpen(false);
+      toast({
+        title: "Teller Sucessfully Created.",
+        description:
+          "You can edit, delete and view this account by clicking the actions tab.",
+      });
     }
   }, [state?.success]);
 

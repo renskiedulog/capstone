@@ -32,65 +32,13 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import AddTellerModal from "./AddTellerModal";
-import { Delete, Edit, Edit2Icon, Trash, User2Icon } from "lucide-react";
+import { Edit, Trash, User2Icon } from "lucide-react";
 import { UserTypes } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import EditForm from "./EditForm";
+import { deleteTellerAccount } from "@/lib/tellerActions";
 
-const data: UserTypes[] = [
-  {
-    id: "32165465465",
-    firstName: "John",
-    lastName: "Doe",
-    fullName: "John Doe",
-    username: "johndoe123",
-    password: "password123",
-    isAdmin: false,
-    address: "123 Main St, Anytown, USA",
-    contact: "+1234567890",
-    birthdate: "1990-01-01", // Updated format
-    status: "active",
-    createdAt: "2024-08-01T12:34:56Z",
-    updatedAt: "2024-08-01T12:34:56Z",
-    image:
-      "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp",
-  },
-  {
-    id: "65432132123",
-    firstName: "Jane",
-    lastName: "Smith",
-    fullName: "Jane Smith",
-    username: "janesmith245",
-    password: "securepass456",
-    isAdmin: true,
-    address: "456 Elm St, Othertown, USA",
-    contact: "+1987654321",
-    birthdate: "1985-05-15", // Updated format
-    status: "inactive",
-    createdAt: "2024-08-02T10:20:30Z",
-    updatedAt: "2024-08-02T10:20:30Z",
-    image:
-      "https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg",
-  },
-  {
-    id: "98765498765",
-    firstName: "Alice",
-    lastName: "Johnson",
-    fullName: "Alice Johnson",
-    username: "alicejohnson678",
-    password: "mypassword789",
-    isAdmin: false,
-    address: "789 Oak St, Newcity, USA",
-    contact: "+1122334455",
-    birthdate: "1992-09-09", // Updated format
-    status: "active",
-    createdAt: "2024-08-03T14:45:12Z",
-    updatedAt: "2024-08-03T14:45:12Z",
-    image:
-      "https://img-cdn.pixlr.com/image-generator/history/65bb506dcb310754719cf81f/ede935de-1138-4f66-8ed7-44bd16efc709/medium.webp",
-  },
-];
-export default function TellerTable() {
+export default function TellerTable({ data }: { data: UserTypes[] }) {
   let maxPerPage = 10;
   const [sorting, setSorting] = React.useState([]);
   const [editMode, setEditMode] = React.useState(false);
@@ -117,6 +65,8 @@ export default function TellerTable() {
               href={`${row.getValue("image") || "/images/default-image.jpg"}`}
               className="size-12"
               target="_blank"
+              rel="noopener noreferrer"
+              prefetch={false}
             >
               <img
                 width={40}
@@ -146,7 +96,7 @@ export default function TellerTable() {
         );
       },
       cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("name")}</div>
+        <div className="text-left">{row.getValue("name")}</div>
       ),
     },
     {
@@ -166,7 +116,9 @@ export default function TellerTable() {
         return <p>Password</p>;
       },
       cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("password")}</div>
+        <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
+          {row.getValue("password")}
+        </div>
       ),
     },
     {
@@ -176,7 +128,7 @@ export default function TellerTable() {
         return <p>Address</p>;
       },
       cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("address")}</div>
+        <div className="text-left">{row.getValue("address")}</div>
       ),
     },
     {
@@ -254,7 +206,7 @@ export default function TellerTable() {
               <DropdownMenuItem
                 onClick={() => {
                   setIsDeleteAlertOpen(true);
-                  setDeleteUser(row.getValue("id"));
+                  setDeleteUser(row.original._id);
                 }}
                 className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
               >
@@ -285,8 +237,9 @@ export default function TellerTable() {
     },
   });
 
-  const handleAlertConfirm = () => {
+  const handleAlertConfirm = async () => {
     // TODO: Server side action for deleting user account
+    await deleteTellerAccount(deleteUser);
     setIsDeleteAlertOpen(false);
     if (pendingModalClose) {
       setPendingModalClose(false);
