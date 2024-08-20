@@ -263,7 +263,7 @@ export default function AddTellerModal() {
                       id="email"
                       name="email"
                       required
-                      type="text"
+                      type="email"
                       placeholder="Enter permanent email"
                       value={inputs.email}
                       onChange={handleInputChange}

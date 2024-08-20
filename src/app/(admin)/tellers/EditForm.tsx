@@ -14,7 +14,6 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { generateRandomString } from "@/lib/utils";
-import { editTeller } from "@/lib/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 
 const initialInputs = {
@@ -38,7 +37,7 @@ export default function EditForm({
   const [inputs, setInputs] = useState(accountDetails);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
-  const [state, formAction] = useFormState(editTeller, null);
+  const [state, formAction] = useFormState(setInputs, null);
 
   const handleModalClose = () => {
     setIsAlertOpen(true);

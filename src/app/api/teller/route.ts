@@ -1,3 +1,4 @@
+import DELETE from "./delete";
 import GET from "./get";
 
-export { GET };
+export { GET, DELETE };

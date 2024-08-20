@@ -36,9 +36,11 @@ import { Edit, Trash, User2Icon } from "lucide-react";
 import { UserTypes } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import EditForm from "./EditForm";
-import { deleteTellerAccount } from "@/lib/tellerActions";
+import { useToast } from "@/components/ui/use-toast";
+import { revalidateTag } from "next/cache";
 
 export default function TellerTable({ data }: { data: UserTypes[] }) {
+  const { toast } = useToast();
   let maxPerPage = 10;
   const [sorting, setSorting] = React.useState([]);
   const [editMode, setEditMode] = React.useState(false);
@@ -238,8 +240,16 @@ export default function TellerTable({ data }: { data: UserTypes[] }) {
   });
 
   const handleAlertConfirm = async () => {
-    // TODO: Server side action for deleting user account
-    await deleteTellerAccount(deleteUser);
+    const deleteRequest = await fetch(`/api/teller?id=${deleteUser}`, {
+      method: "DELETE",
+    });
+    const res = await deleteRequest.json();
+
+    if (res.success) {
+      toast({
+        title: "Teller Deleted Sucessfully.",
+      });
+    }
     setIsDeleteAlertOpen(false);
     if (pendingModalClose) {
       setPendingModalClose(false);

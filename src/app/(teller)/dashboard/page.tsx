@@ -13,7 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DashboardPieChart } from "./DashboardPieChart";
-import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Dashboard",

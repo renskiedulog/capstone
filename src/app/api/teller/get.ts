@@ -1,18 +1,11 @@
-import { options } from "@/app/(NextAuth)/api/auth/[...nextauth]/options";
 import { connectMongoDB, disconnectDB } from "@/lib/db";
 import User from "@/models/User";
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 const GET = async () => {
-  const session = await getServerSession(options);
-  if (!session?.user || !session?.user?.isAdmin)
-    return NextResponse.json({
-      message: "Invalid credentials. Unable to access protected route.",
-    });
   try {
     await connectMongoDB();
-    const req = await User.find({ isAdmin: false }).select("-password");
+    const req = await User.find({ isAdmin: false });
     const tellers = req.map((teller) => ({
       _id: teller._id.toString(),
       firstName: teller.firstName,
@@ -20,6 +13,7 @@ const GET = async () => {
       lastName: teller.lastName,
       fullName: teller.fullName,
       username: teller.username,
+      password: teller.password,
       email: teller.email,
       address: teller.address,
       contact: teller.contact,
