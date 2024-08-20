@@ -7,3 +7,11 @@ export const connectMongoDB = async () => {
     console.error("Error connecting to MongoDB:", error);
   }
 };
+
+export const disconnectDB = async () => {
+  try {
+    await mongoose.disconnect();
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
+  }
+};

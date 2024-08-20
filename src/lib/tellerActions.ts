@@ -20,14 +20,13 @@ export const createTeller = async (prevState: any, formData: FormData) => {
       password: hashedPassword,
       fullName: `${values.firstName} ${values.lastName}`,
       firstName: values.firstName,
+      email: values.email,
       lastName: values.lastName,
       address: values.address,
       contact: values.contact as string,
       birthdate: new Date(values.birthdate),
       image: values.imageBase64,
     });
-
-    revalidatePath("tellers");
 
     return {
       success: true,
@@ -61,6 +60,7 @@ export const fetchTellers = async () => {
   const req = await User.find({ isAdmin: false });
   const tellers = req.map((teller) => ({
     _id: teller._id.toString(),
+    image: teller.image,
     firstName: teller.firstName,
     lastName: teller.lastName,
     fullName: teller.fullName,
@@ -74,7 +74,6 @@ export const fetchTellers = async () => {
     createdAt: teller.createdAt.toISOString(),
     updatedAt: teller.updatedAt.toISOString(),
   }));
-  console.log(tellers);
 
   return tellers;
 };

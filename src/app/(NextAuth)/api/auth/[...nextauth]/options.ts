@@ -75,7 +75,7 @@ export const options: any = {
         // session.user = userDocument?.toObject();
         session.user = {
           ...session.user,
-          isAdmin: true,
+          isAdmin: false,
         };
         return session;
       } else return session;
