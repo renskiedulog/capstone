@@ -14,10 +14,11 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { generateRandomString } from "@/lib/utils";
-import { createTeller } from "@/lib/tellerActions";
+import { createTeller } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { revalidatePath } from "next/cache";
+import { refreshPage } from "@/lib/requests";
 
 const initialInputs = {
   firstName: "",

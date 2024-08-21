@@ -38,6 +38,7 @@ import Alert from "@/components/utils/Alert";
 import EditForm from "./EditForm";
 import { useToast } from "@/components/ui/use-toast";
 import { revalidateTag } from "next/cache";
+import { deleteTellerAccount } from "@/lib/api/tellerActions";
 
 export default function TellerTable({ data }: { data: UserTypes[] }) {
   const { toast } = useToast();
@@ -240,14 +241,15 @@ export default function TellerTable({ data }: { data: UserTypes[] }) {
   });
 
   const handleAlertConfirm = async () => {
-    const deleteRequest = await fetch(`/api/teller?id=${deleteUser}`, {
-      method: "DELETE",
-    });
-    const res = await deleteRequest.json();
-
-    if (res.success) {
+    const reqDelete = await deleteTellerAccount(deleteUser);
+    if (reqDelete) {
       toast({
         title: "Teller Deleted Sucessfully.",
+      });
+    } else {
+      toast({
+        title: "Something went wrong.",
+        description: "Please refresh the page and try again."
       });
     }
     setIsDeleteAlertOpen(false);

@@ -2,6 +2,7 @@ import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import React from "react";
 import TellerTable from "./TellerTable";
+import { fetchTellers } from "@/lib/api/tellerActions";
 
 export const metadata = {
   title: "Tellers",
@@ -12,13 +13,9 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
 
-  const req = await fetch(`${process.env.NEXTAUTH_URL}/api/teller`, {
-    method: "GET",
-    next: { tags: ["tellers"] },
-  });
-  const res = await req?.json() ?? [];
+  const tellers = await fetchTellers();
 
-  return <TellerTable data={res.data} />;
+  return <TellerTable data={tellers} />;
 };
 
 export default page;

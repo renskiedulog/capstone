@@ -1,5 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
-import { connectMongoDB } from "@/lib/db";
+import { connectMongoDB } from "@/lib/api/db";
 import User from "@/models/User";
 import { RequestInternal, User as UserTypes } from "next-auth";
 import { JWT } from "next-auth/jwt";
