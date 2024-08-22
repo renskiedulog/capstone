@@ -37,10 +37,10 @@ import { UserTypes } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import EditForm from "./EditForm";
 import { useToast } from "@/components/ui/use-toast";
-import { revalidateTag } from "next/cache";
-import { deleteTellerAccount } from "@/lib/api/tellerActions";
+import { deleteTellerAccount, fetchTellers } from "@/lib/api/tellerActions";
 
-export default function TellerTable({ data }: { data: UserTypes[] }) {
+export default function TellerTable({ initData }: { initData: UserTypes[] }) {
+  const [data, setData] = React.useState<UserTypes[]>(initData);
   const { toast } = useToast();
   let maxPerPage = 10;
   const [sorting, setSorting] = React.useState([]);
@@ -55,6 +55,15 @@ export default function TellerTable({ data }: { data: UserTypes[] }) {
     Math.ceil(data?.length / maxPerPage)
   );
   const [page, setPage] = React.useState(1);
+
+  const fetchData = async () => {
+    const req = await fetchTellers();
+    setData(req);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
   const columns: ColumnDef<UserTypes>[] = [
     {
@@ -249,13 +258,14 @@ export default function TellerTable({ data }: { data: UserTypes[] }) {
     } else {
       toast({
         title: "Something went wrong.",
-        description: "Please refresh the page and try again."
+        description: "Please refresh the page and try again.",
       });
     }
     setIsDeleteAlertOpen(false);
     if (pendingModalClose) {
       setPendingModalClose(false);
     }
+    fetchData();
   };
 
   const handleAlertCancel = () => {

@@ -15,7 +15,7 @@ const page = async () => {
 
   const tellers = await fetchTellers();
 
-  return <TellerTable data={tellers} />;
+  return <TellerTable initData={tellers} />;
 };
 
 export default page;

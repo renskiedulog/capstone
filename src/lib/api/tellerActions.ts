@@ -15,7 +15,7 @@ export const createTeller = async (prevState: any, formData: FormData) => {
 
     const hashedPassword = await bcrypt.hash(values.password, 10);
 
-    await User.create({
+    const req = await User.create({
       username: values.username,
       password: hashedPassword,
       fullName: `${values.firstName} ${values.lastName}`,
@@ -31,6 +31,7 @@ export const createTeller = async (prevState: any, formData: FormData) => {
     return {
       success: true,
       message: "Teller created successfully",
+      data: req,
     };
   } catch (error: any) {
     return {
@@ -72,11 +73,22 @@ export const fetchTellers = async () => {
 };
 
 export const deleteTellerAccount = async (id: string) => {
-  // await connectMongoDB();
-  // const req = await User.deleteOne({ _id: id });
+  await connectMongoDB();
+  const req = await User.deleteOne({ _id: id });
 
-  // if (req.acknowledged !== true) {
+  if (req.acknowledged !== true) {
     return false;
-  // }
-  // return true;
+  }
+  return true;
+};
+
+export const isUsernameTaken = async (username: string) => {
+  try {
+    await connectMongoDB();
+    const existingUser = await User.findOne({ username });
+
+    return existingUser ? true : false;
+  } catch (error: any) {
+    throw new Error("Error checking username availability");
+  }
 };

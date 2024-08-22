@@ -14,11 +14,9 @@ import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { generateRandomString } from "@/lib/utils";
-import { createTeller } from "@/lib/api/tellerActions";
+import { createTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { revalidatePath } from "next/cache";
-import { refreshPage } from "@/lib/requests";
 
 const initialInputs = {
   firstName: "",
@@ -39,6 +37,7 @@ export default function AddTellerModal() {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(createTeller, null);
+  const [error, setError] = useState("");
 
   const handleModal = () => {
     const hasValues = Object.values(inputs).some(
@@ -108,6 +107,15 @@ export default function AddTellerModal() {
     clearFileInput("uploadImage");
   };
 
+  const handleCheckUsername = async (inputUsername: string) => {
+    const res = await isUsernameTaken(inputUsername);
+    if (res) {
+      setError("Username already taken.");
+    } else {
+      setError("");
+    }
+  };
+
   useEffect(() => {
     if (state?.success) {
       handleReset();
@@ -117,6 +125,8 @@ export default function AddTellerModal() {
         description:
           "You can edit, delete and view this account by clicking the actions tab.",
       });
+    } else if (!state?.success && state?.message) {
+      setError("Something went wrong, please enter valid inputs.");
     }
   }, [state?.success]);
 
@@ -150,6 +160,11 @@ export default function AddTellerModal() {
               <CardDescription>
                 Provide the necessary details for the account.
               </CardDescription>
+              {error !== "" && (
+                <CardDescription className="text-red-500">
+                  {error}
+                </CardDescription>
+              )}
             </CardHeader>
             <CardContent className="mx-auto">
               <div className="flex w-full flex-col sm:flex-row items-center gap-2">
@@ -217,6 +232,7 @@ export default function AddTellerModal() {
                         placeholder="Enter your username"
                         value={inputs.username}
                         onChange={handleInputChange}
+                        onBlur={(e) => handleCheckUsername(e.target.value)}
                       />
                     </div>
                     <div className="flex-1">
@@ -289,7 +305,7 @@ export default function AddTellerModal() {
                         id="contact"
                         name="contact"
                         required
-                        type="text"
+                        type="tel"
                         placeholder="Enter contact number"
                         value={inputs.contact}
                         onChange={handleInputChange}
