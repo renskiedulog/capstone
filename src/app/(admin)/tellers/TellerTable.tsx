@@ -61,10 +61,6 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     setData(req);
   };
 
-  React.useEffect(() => {
-    fetchData();
-  }, []);
-
   const columns: ColumnDef<UserTypes>[] = [
     {
       id: "image",
@@ -303,7 +299,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
             className="w-[200px] max-w-sm md:w-full"
           />
           <div className="flex items-center gap-2">
-            <AddTellerModal />
+            <AddTellerModal refetchData={fetchData} />
           </div>
         </div>
         <div className="rounded-md border">

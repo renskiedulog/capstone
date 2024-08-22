@@ -29,7 +29,11 @@ const initialInputs = {
   email: "",
 };
 
-export default function AddTellerModal() {
+export default function AddTellerModal({
+  refetchData,
+}: {
+  refetchData: () => void;
+}) {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -118,6 +122,7 @@ export default function AddTellerModal() {
 
   useEffect(() => {
     if (state?.success) {
+      refetchData();
       handleReset();
       setIsModalOpen(false);
       toast({
