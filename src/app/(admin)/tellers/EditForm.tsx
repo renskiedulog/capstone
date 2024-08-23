@@ -13,35 +13,25 @@ import { useCallback, useEffect, useState } from "react";
 import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { formatInputDate, generateRandomString } from "@/lib/utils";
+import { formatInputDate, generateRandomString, isEqual } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
 import { editTeller } from "@/lib/api/tellerActions";
 import { AccountDetailsTypes } from "@/lib/types";
 
-const initialInputs = {
-  firstName: "",
-  lastName: "",
-  username: "",
-  password: "",
-  address: "",
-  contact: "",
-  birthdate: "",
-};
-
 export default function EditForm({
   accountDetails,
   setIsOpen,
+  refetchData,
 }: {
   accountDetails: AccountDetailsTypes;
   setIsOpen: (state: boolean) => void;
+  refetchData: () => void;
 }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [inputs, setInputs] = useState(accountDetails);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(editTeller, null);
-
-  console.log(state)
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -68,6 +58,10 @@ export default function EditForm({
       reader.onloadend = () => {
         setImagePreview(reader.result);
       };
+      setInputs((prev: AccountDetailsTypes) => ({
+        ...prev,
+        image: reader.result,
+      }));
       reader.readAsDataURL(file);
     }
   };
@@ -88,14 +82,25 @@ export default function EditForm({
     }));
   }, []);
 
+  function clearFileInput(fileInputId: string) {
+    const fileInput = document.getElementById(
+      fileInputId
+    ) as HTMLInputElement | null;
+    if (fileInput) {
+      fileInput.value = "";
+      setInputs((prev) => ({ ...prev, image: "" }));
+    }
+  }
+
   useEffect(() => {
     if (state?.success) {
       setIsOpen(false);
+      refetchData();
     }
   }, [state?.success]);
 
   useEffect(() => {
-    setImagePreview(accountDetails.image);
+    setImagePreview(accountDetails?.image);
   }, [accountDetails]);
 
   return (
@@ -138,10 +143,10 @@ export default function EditForm({
                 name="id"
                 id="id"
               />
-              <div className="relative w-full max-w-[150px] sm:max-w-[200px] max-h-[150px] sm:max-h-[200px] h-[100vh] overflow-hidden">
+              <div className="relative w-full max-w-[150px] sm:max-w-[200px] max-h-[150px] sm:max-h-[200px] h-[100vh]">
                 <Label
                   htmlFor="uploadImage"
-                  className={`absolute bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
+                  className={`bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
                 >
                   {imagePreview ? (
                     <>
@@ -152,8 +157,8 @@ export default function EditForm({
                       />
                       <Input
                         type="string"
-                        id="imageBase64"
-                        name="imageBase64"
+                        id="image"
+                        name="image"
                         className="hidden"
                         value={imagePreview}
                       />
@@ -175,6 +180,28 @@ export default function EditForm({
                   className="hidden"
                   onChange={handleImageUpload}
                 />
+                {imagePreview && (
+                  <>
+                    <Button
+                      type="button"
+                      className="w-full mt-1 hover:bg-primary/80 hover:text-white"
+                      variant="outline"
+                      onClick={() => {
+                        setImagePreview(null);
+                        clearFileInput("image");
+                      }}
+                    >
+                      Remove
+                    </Button>
+                    <Input
+                      type="string"
+                      id="imageBase64"
+                      name="imageBase64"
+                      className="hidden"
+                      value={imagePreview}
+                    />
+                  </>
+                )}
               </div>
               <div className="w-full mx-5 space-y-2">
                 <div className="w-full flex sm:flex-row flex-col gap-2">
@@ -243,7 +270,7 @@ export default function EditForm({
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <div className="w-full flex-1">
-                    <Label htmlFor="address">Contact Number</Label>
+                    <Label htmlFor="contact">Contact Number</Label>
                     <Input
                       id="contact"
                       name="contact"
@@ -255,7 +282,7 @@ export default function EditForm({
                     />
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="address">Birth Date</Label>
+                    <Label htmlFor="birthdate">Birth Date</Label>
                     <Input
                       id="birthdate"
                       name="birthdate"
@@ -281,7 +308,7 @@ export default function EditForm({
                 Generate Password
               </Button>
             </div>
-            <SubmitButton />
+            <SubmitButton disabled={isEqual(inputs, accountDetails)} />
           </CardFooter>
         </Card>
       </form>
@@ -289,13 +316,13 @@ export default function EditForm({
   );
 }
 
-const SubmitButton = () => {
+const SubmitButton = ({ disabled }: { disabled?: boolean }) => {
   const { pending } = useFormStatus();
 
   return (
     <Button
       type="submit"
-      disabled={pending}
+      disabled={pending || disabled}
       className="flex items-center gap-2"
     >
       {pending ? (

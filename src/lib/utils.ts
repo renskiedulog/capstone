@@ -37,3 +37,15 @@ export function formatInputDate(dateString: string) {
 
   return `${year}-${month}-${day}`;
 }
+
+export function isEqual(a: any, b: any) {
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
+
+  for (const key of keys) {
+    if (a[key] !== b[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}

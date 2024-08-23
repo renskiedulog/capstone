@@ -100,6 +100,10 @@ export const editTeller = async (prevState: any, formData: FormData) => {
       newValues[key] = value;
     }
 
+    if (newValues.image === undefined) {
+      newValues.image = '';
+    }
+
     const userId = newValues.id;
     if (!userId) {
       return {
@@ -146,12 +150,17 @@ export const editTeller = async (prevState: any, formData: FormData) => {
       }
     }
 
+    if (newValues.image !== existingUserObject.image) {
+      updatedFields.image = newValues.image;
+    }
+
     for (const key in newValues) {
       if (
         newValues[key] !== existingUserObject[key] &&
         key !== "password" &&
         key !== "firstName" &&
-        key !== "lastName"
+        key !== "lastName" &&
+        key !== "image"
       ) {
         updatedFields[key] = newValues[key];
       }
