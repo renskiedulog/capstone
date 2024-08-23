@@ -325,6 +325,7 @@ export default function AddTellerModal({
                         type="date"
                         value={inputs.birthdate}
                         onChange={handleInputChange}
+                        className="!block"
                       />
                     </div>
                   </div>

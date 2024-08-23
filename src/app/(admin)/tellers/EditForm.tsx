@@ -13,8 +13,10 @@ import { useCallback, useEffect, useState } from "react";
 import { ImageIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { generateRandomString } from "@/lib/utils";
+import { formatInputDate, generateRandomString } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
+import { editTeller } from "@/lib/api/tellerActions";
+import { AccountDetailsTypes } from "@/lib/types";
 
 const initialInputs = {
   firstName: "",
@@ -30,14 +32,16 @@ export default function EditForm({
   accountDetails,
   setIsOpen,
 }: {
-  accountDetails: any;
+  accountDetails: AccountDetailsTypes;
   setIsOpen: (state: boolean) => void;
 }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [inputs, setInputs] = useState(accountDetails);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
-  const [state, formAction] = useFormState(setInputs, null);
+  const [state, formAction] = useFormState(editTeller, null);
+
+  console.log(state)
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -45,7 +49,6 @@ export default function EditForm({
   };
 
   const handleAlertConfirm = () => {
-    handleReset();
     setIsAlertOpen(false);
     if (pendingModalClose) {
       setIsOpen(false);
@@ -70,7 +73,7 @@ export default function EditForm({
   };
 
   const handleGeneratePassword = () => {
-    const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5); // Generate a password between 5 and 10 characters
+    const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5);
     setInputs((prevInputs: any) => ({
       ...prevInputs,
       password: newPassword,
@@ -85,14 +88,8 @@ export default function EditForm({
     }));
   }, []);
 
-  const handleReset = () => {
-    setImagePreview(null);
-    setInputs(initialInputs);
-  };
-
   useEffect(() => {
     if (state?.success) {
-      handleReset();
       setIsOpen(false);
     }
   }, [state?.success]);
@@ -127,11 +124,20 @@ export default function EditForm({
           <CardHeader>
             <CardTitle>Edit Teller Account</CardTitle>
             <CardDescription>
-              Edit the necessary details for the account.
+              Edit the necessary details for the account. You can leave the
+              inputs unchanged.
             </CardDescription>
           </CardHeader>
           <CardContent className="mx-auto">
             <div className="flex w-full flex-col sm:flex-row items-center gap-2">
+              {/* ID */}
+              <Input
+                type="text"
+                className="hidden"
+                value={accountDetails._id}
+                name="id"
+                id="id"
+              />
               <div className="relative w-full max-w-[150px] sm:max-w-[200px] max-h-[150px] sm:max-h-[200px] h-[100vh] overflow-hidden">
                 <Label
                   htmlFor="uploadImage"
@@ -255,8 +261,9 @@ export default function EditForm({
                       name="birthdate"
                       required
                       type="date"
-                      value={inputs.birthdate}
+                      value={formatInputDate(inputs.birthdate)}
                       onChange={handleInputChange}
+                      className="!block"
                     />
                   </div>
                 </div>

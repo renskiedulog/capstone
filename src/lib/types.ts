@@ -1,5 +1,3 @@
-import { Session } from "next-auth";
-
 export type NavLinkProps = {
   link: string;
   icon: React.ReactNode;
@@ -29,4 +27,15 @@ export interface UserTypes {
   status?: "active" | "inactive";
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface AccountDetailsTypes extends UserTypes{
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+  address: string;
+  contact: string;
+  birthdate: string;
+  image: any;
 }

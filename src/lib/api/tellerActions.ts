@@ -7,7 +7,7 @@ import { checkSession } from "./requests";
 export const createTeller = async (prevState: any, formData: FormData) => {
   try {
     const values: any = {};
-    for (const [key, value] of formData.entries()) {
+    for (const [key, value] of formData.entries() as any) {
       values[key] = value;
     }
 
@@ -31,7 +31,6 @@ export const createTeller = async (prevState: any, formData: FormData) => {
     return {
       success: true,
       message: "Teller created successfully",
-      data: req,
     };
   } catch (error: any) {
     return {
@@ -59,6 +58,7 @@ export const fetchTellers = async () => {
       password: teller.password,
       isAdmin: teller.isAdmin,
       address: teller.address,
+      image: teller.image,
       contact: teller.contact,
       birthdate: teller.birthdate,
       status: teller.status,
@@ -90,5 +90,95 @@ export const isUsernameTaken = async (username: string) => {
     return existingUser ? true : false;
   } catch (error: any) {
     throw new Error("Error checking username availability");
+  }
+};
+
+export const editTeller = async (prevState: any, formData: FormData) => {
+  try {
+    const newValues: { [key: string]: any } = {};
+    for (const [key, value] of formData.entries() as any) {
+      newValues[key] = value;
+    }
+
+    const userId = newValues.id;
+    if (!userId) {
+      return {
+        success: false,
+        message: "User ID is required.",
+      };
+    }
+
+    const existingUser: Document | null = await User.findById(userId).exec();
+    if (!existingUser) {
+      return {
+        success: false,
+        message: "Teller account not found. Please try again.",
+      };
+    }
+
+    const existingUserObject = existingUser?.toObject();
+    const updatedFields: { [key: string]: any } = {};
+
+    if (
+      newValues.password &&
+      newValues.password !== existingUserObject.password
+    ) {
+      const hashedPassword = await bcrypt.hash(newValues.password, 10);
+      updatedFields.password = hashedPassword;
+    }
+
+    let fullNameUpdated = false;
+    if (newValues.firstName || newValues.lastName) {
+      const newFirstName = newValues.firstName || existingUserObject.firstName;
+      const newLastName = newValues.lastName || existingUserObject.lastName;
+
+      if (newValues.firstName !== existingUserObject.firstName) {
+        updatedFields.firstName = newFirstName;
+      }
+
+      if (newValues.lastName !== existingUserObject.lastName) {
+        updatedFields.lastName = newLastName;
+      }
+
+      if (newValues.firstName || newValues.lastName) {
+        updatedFields.fullName = `${newFirstName} ${newLastName}`;
+        fullNameUpdated = true;
+      }
+    }
+
+    for (const key in newValues) {
+      if (
+        newValues[key] !== existingUserObject[key] &&
+        key !== "password" &&
+        key !== "firstName" &&
+        key !== "lastName"
+      ) {
+        updatedFields[key] = newValues[key];
+      }
+    }
+
+    if (Object.keys(updatedFields).length === 0 && !fullNameUpdated) {
+      return {
+        success: false,
+        message: "No changes applied.",
+      };
+    }
+
+    await User.findByIdAndUpdate(
+      userId,
+      { $set: updatedFields },
+      { new: true }
+    ).exec();
+
+    return {
+      success: true,
+      message: "Teller edited successfully",
+    };
+  } catch (error) {
+    console.error("Error updating teller:", error);
+    return {
+      success: false,
+      message: "Something went wrong.",
+    };
   }
 };
