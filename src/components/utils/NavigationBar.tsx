@@ -33,7 +33,11 @@ const NavigationBar = () => {
               href={`/profile/${username}`}
               className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground hover:scale-105 md:h-10 md:w-10 md:text-base"
             >
-              <Avatar name={username as string} className="text-primary" />
+              <Avatar
+                name={username as string}
+                image={session?.data?.user?.image}
+                className="text-primary"
+              />
             </Link>
             <div className="flex flex-row sm:flex-col gap-3 items-center w-full">
               {links?.map((link, idx) => (

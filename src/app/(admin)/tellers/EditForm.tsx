@@ -17,6 +17,7 @@ import { formatInputDate, generateRandomString, isEqual } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
 import { editTeller } from "@/lib/api/tellerActions";
 import { AccountDetailsTypes } from "@/lib/types";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function EditForm({
   accountDetails,
@@ -32,6 +33,7 @@ export default function EditForm({
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(editTeller, null);
+  const { toast } = useToast();
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -96,6 +98,11 @@ export default function EditForm({
     if (state?.success) {
       setIsOpen(false);
       refetchData();
+      toast({
+        title: "Teller Edited Sucessfully.",
+        description:
+          "Please wait for a few seconds for changes to be saved.",
+      });
     }
   }, [state?.success]);
 

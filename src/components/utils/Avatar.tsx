@@ -1,10 +1,11 @@
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type AvatarProps = {
   name: string;
   className?: string;
+  image?: string;
 };
-export default function AvatarHolder({ name, className }: AvatarProps) {
+export default function AvatarHolder({ name, className, image }: AvatarProps) {
   const initials = name
     ?.split(" ")
     .map((word) => word[0].toUpperCase())
@@ -12,6 +13,7 @@ export default function AvatarHolder({ name, className }: AvatarProps) {
 
   return (
     <Avatar>
+      <AvatarImage src={image} alt={name} />
       <AvatarFallback className={className}>{initials}</AvatarFallback>
     </Avatar>
   );
