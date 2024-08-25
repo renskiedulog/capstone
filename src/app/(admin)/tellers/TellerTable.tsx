@@ -38,6 +38,8 @@ import Alert from "@/components/utils/Alert";
 import EditForm from "./EditForm";
 import { useToast } from "@/components/ui/use-toast";
 import { deleteTellerAccount, fetchTellers } from "@/lib/api/tellerActions";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import Image from "next/image";
 
 export default function TellerTable({ initData }: { initData: UserTypes[] }) {
   const [data, setData] = React.useState<UserTypes[]>(initData);
@@ -55,6 +57,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     Math.ceil(data?.length / maxPerPage)
   );
   const [page, setPage] = React.useState(1);
+  const [viewImage, setViewImage] = React.useState("");
 
   const fetchData = async () => {
     const req = await fetchTellers();
@@ -68,13 +71,13 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
       header: "Image",
       cell: ({ row }) => {
         return (
-          <div className="size-12">
-            <Link
-              href={`${row.getValue("image") || "/images/default-image.jpg"}`}
-              className="size-12"
-              target="_blank"
-              rel="noopener noreferrer"
-              prefetch={false}
+          <div className="size-12 cursor-pointer">
+            <div
+              onClick={() =>
+                setViewImage(
+                  row.getValue("image") || "/images/default-image.jpg"
+                )
+              }
             >
               <img
                 width={40}
@@ -83,7 +86,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
                 className="aspect-square w-max object-cover transition"
                 src={row.getValue("image") || "/images/default-image.jpg"}
               />
-            </Link>
+            </div>
           </div>
         );
       },
@@ -272,6 +275,13 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
 
   return (
     <>
+      {viewImage !== "" && (
+        <Dialog open={viewImage !== ""} onOpenChange={() => setViewImage("")}>
+          <DialogContent>
+            <Image src={viewImage} width={500} height={500} alt="image-dialog" className="aspect-square object-cover mt-5" />
+          </DialogContent>
+        </Dialog>
+      )}
       {isDeleteAlertOpen && (
         <Alert
           title="Are you sure you want to delete this account?"
@@ -285,7 +295,11 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
         />
       )}
       {editMode && (
-        <EditForm accountDetails={editDetails} setIsOpen={setEditMode} refetchData={fetchData} />
+        <EditForm
+          accountDetails={editDetails}
+          setIsOpen={setEditMode}
+          refetchData={fetchData}
+        />
       )}
       {/* Table */}
       <div className="w-full">
