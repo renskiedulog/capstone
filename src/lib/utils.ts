@@ -49,3 +49,31 @@ export function isEqual(a: any, b: any) {
 
   return true;
 }
+
+/**
+ * Converts an ISO 8601 timestamp to a human-readable date format.
+ * 
+ * The output format is "HH:MM AM/PM - Month Day, Year", e.g., "10:46 PM - August 8, 2024".
+ * 
+ * @param timestamp - An ISO 8601 formatted date string (e.g., "2024-08-21T00:57:13.497+00:00").
+ * @returns A formatted date string in the form of "HH:MM AM/PM - Month Day, Year".
+ * 
+ * Example usage:
+ * ```
+ * const formattedDate = formatDateToReadable("2024-08-21T00:57:13.497+00:00");
+ * console.log(formattedDate); // Outputs: "12:57 AM - August 21, 2024"
+ * ```
+ */
+export function formatDateToReadable(timestamp: string): string {
+  const date = new Date(timestamp);
+
+  const hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const hour12 = hours % 12 || 12;
+  const month = date.toLocaleString('default', { month: 'long' });
+  const day = date.getDate();
+  const year = date.getFullYear();
+
+  return `${hour12}:${minutes} ${ampm} - ${month} ${day}, ${year}`;
+}

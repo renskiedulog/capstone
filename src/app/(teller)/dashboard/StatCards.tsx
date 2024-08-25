@@ -1,8 +1,7 @@
 "use client";
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface DashboardCardTypes {
   cardTitle: string;
@@ -20,7 +19,7 @@ const DashboardCard = ({
   return (
     <Card className="flex-1 min-w-max md:min-w-max">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="md:text-sm font-medium">{cardTitle}</CardTitle>
+        <CardTitle className="text-sm md:text-base font-semibold">{cardTitle}</CardTitle>
         {icon}
       </CardHeader>
       <CardContent className="pb-4 md:pb-6">

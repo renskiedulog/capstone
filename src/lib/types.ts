@@ -20,16 +20,17 @@ export interface UserTypes {
   username: string;
   password: string;
   isAdmin?: boolean;
+  email: string;
   address?: string;
   image?: string;
-  contact?: string;
-  birthdate?: string;
-  status?: "active" | "inactive";
-  createdAt?: string;
-  updatedAt?: string;
+  contact: string;
+  birthdate: string;
+  status: "active" | "inactive";
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface AccountDetailsTypes extends UserTypes{
+export interface AccountDetailsTypes extends UserTypes {
   firstName: string;
   lastName: string;
   username: string;

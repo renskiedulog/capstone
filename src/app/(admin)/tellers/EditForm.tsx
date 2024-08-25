@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { formatInputDate, generateRandomString, isEqual } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
-import { editTeller } from "@/lib/api/tellerActions";
+import { editTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { AccountDetailsTypes } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -33,6 +33,7 @@ export default function EditForm({
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(editTeller, null);
+  const [error, setError] = useState("");
   const { toast } = useToast();
 
   const handleModalClose = () => {
@@ -94,14 +95,22 @@ export default function EditForm({
     }
   }
 
+  const handleCheckUsername = async (inputUsername: string) => {
+    const res = await isUsernameTaken(inputUsername);
+    if (res) {
+      setError("Username already taken.");
+    } else {
+      setError("");
+    }
+  };
+
   useEffect(() => {
     if (state?.success) {
       setIsOpen(false);
       refetchData();
       toast({
         title: "Teller Edited Sucessfully.",
-        description:
-          "Please wait for a few seconds for changes to be saved.",
+        description: "Please wait for a few seconds for changes to be saved.",
       });
     }
   }, [state?.success]);
@@ -139,6 +148,11 @@ export default function EditForm({
               Edit the necessary details for the account. You can leave the
               inputs unchanged.
             </CardDescription>
+            {error !== "" && (
+              <CardDescription className="text-red-500">
+                {error}
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent className="mx-auto">
             <div className="flex w-full flex-col sm:flex-row items-center gap-2">
@@ -222,6 +236,7 @@ export default function EditForm({
                       placeholder="Enter your username"
                       value={inputs.username}
                       onChange={handleInputChange}
+                      onBlur={(e) => handleCheckUsername(e.target.value)}
                     />
                   </div>
                   <div className="flex-1">
