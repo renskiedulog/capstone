@@ -5,35 +5,9 @@ import CircularChartCard from "./CircularChartCard";
 import WaveChartCard from "./WaveChartCard";
 import LineChartCard from "./LineChartCard";
 import StatCards from "@/app/(teller)/dashboard/StatCards";
-import { DollarSign } from "lucide-react";
+import { DollarSign, UserIcon } from "lucide-react";
 import RecentTellers from "./RecentTellers";
-
-const cards = [
-  {
-    cardTitle: "Total",
-    icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-    stats: "123,123,123.12",
-    info: "+40% since last month.",
-  },
-  {
-    cardTitle: "Total",
-    icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-    stats: "123,123,123.12",
-    info: "+40% since last month.",
-  },
-  {
-    cardTitle: "Total",
-    icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-    stats: "123,123,123.12",
-    info: "+40% since last month.",
-  },
-  {
-    cardTitle: "Total",
-    icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-    stats: "123,123,123.12",
-    info: "+40% since last month.",
-  },
-];
+import { getTellerCount } from "@/lib/api/common";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -43,6 +17,20 @@ const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
+
+  const tellerCount = await getTellerCount();
+
+  const cards = [
+    {
+      cardTitle: "Total Teller Accounts",
+      icon: <UserIcon className="h-4 w-4 text-muted-foreground" />,
+      stats: tellerCount?.totalTellersCount,
+      info:
+        tellerCount?.currentMonthTellersCount > 0
+          ? `There are ${tellerCount?.currentMonthTellersCount} new tellers this month.`
+          : "No new tellers this month.",
+    },
+  ];
 
   return (
     <div>

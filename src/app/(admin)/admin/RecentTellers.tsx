@@ -3,6 +3,7 @@ import { getRecentTellers } from "@/lib/api/common";
 import Avatar from "@/components/utils/Avatar";
 import { UserTypes } from "@/lib/types";
 import { formatDateToReadable } from "@/lib/utils";
+import Link from "next/link";
 
 export default async function RecentTellers() {
   const recentTellers: UserTypes[] = await getRecentTellers();
@@ -10,20 +11,26 @@ export default async function RecentTellers() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Sales</CardTitle>
+        <CardTitle>Recent Tellers</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-8">
         {recentTellers?.map((teller, idx) => (
           <div key={idx} className="flex items-center gap-4">
-            <Avatar name={teller?.fullName} image={teller?.image} />
+            {teller?.username && (
+              <Link href={`/profile/${teller.username}`}>
+                <Avatar name={teller?.fullName} image={teller?.image} />
+              </Link>
+            )}
             <div className="grid gap-1">
               {teller?.fullName && (
-                <p className="text-sm font-medium leading-none">
-                  {teller?.fullName}
-                </p>
+                <Link href={`/profile/${teller.username}`}>
+                  <p className="text-sm font-semibold leading-none">
+                    {teller?.fullName}
+                  </p>
+                </Link>
               )}
               {teller?.email && (
-                <p className="text-sm text-muted-foreground">{teller?.email}</p>
+                <p className="text-xs text-muted-foreground">{teller?.email}</p>
               )}
             </div>
             {teller?.createdAt && (
