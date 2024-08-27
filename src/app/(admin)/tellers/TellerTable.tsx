@@ -59,6 +59,16 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
   const [page, setPage] = React.useState(1);
   const [viewImage, setViewImage] = React.useState("");
 
+  React.useEffect(() => {
+    fetchData();
+
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const fetchData = async () => {
     const req = await fetchTellers();
     setData(req);
@@ -278,7 +288,13 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
       {viewImage !== "" && (
         <Dialog open={viewImage !== ""} onOpenChange={() => setViewImage("")}>
           <DialogContent>
-            <Image src={viewImage} width={500} height={500} alt="image-dialog" className="aspect-square object-cover mt-5" />
+            <Image
+              src={viewImage}
+              width={500}
+              height={500}
+              alt="image-dialog"
+              className="aspect-square object-cover mt-5"
+            />
           </DialogContent>
         </Dialog>
       )}

@@ -3,6 +3,7 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
+import { revalidateTag } from "next/cache";
 
 export const createTeller = async (prevState: any, formData: FormData) => {
   try {
@@ -101,7 +102,7 @@ export const editTeller = async (prevState: any, formData: FormData) => {
     }
 
     if (newValues.image === undefined) {
-      newValues.image = '';
+      newValues.image = "";
     }
 
     const userId = newValues.id;

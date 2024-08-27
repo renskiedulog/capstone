@@ -8,6 +8,8 @@ export const metadata = {
   title: "Tellers",
 };
 
+export const revalidate = 5;
+
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access

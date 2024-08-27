@@ -13,6 +13,7 @@ import { signOut, useSession } from "next-auth/react";
 import Avatar from "./Avatar";
 import { NavLinkProps } from "@/lib/types";
 import Alert from "./Alert";
+import { logOutDB } from "@/lib/api/common";
 
 const NavigationBar = () => {
   const session: any = useSession() || null;
@@ -23,6 +24,11 @@ const NavigationBar = () => {
   }, [session?.data?.user?.isAdmin]);
 
   const pathname = usePathname();
+
+  const handleLogout = async () => {
+    await fetch("/logout");
+    await signOut();
+  };
 
   return React.useMemo(
     () =>
@@ -55,7 +61,7 @@ const NavigationBar = () => {
                 <Alert
                   title="Are you sure you want to logout?"
                   description="Logging out will end your current session and any unsaved changes will be lost. Do you wish to proceed?"
-                  onConfirm={() => signOut()}
+                  onConfirm={handleLogout}
                   primaryBtn="Logout"
                 >
                   <TooltipTrigger asChild>

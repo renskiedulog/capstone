@@ -52,3 +52,18 @@ export const getTellerCount = async () => {
 
   return { totalTellersCount, currentMonthTellersCount };
 };
+
+export const logOutDB = async (username: string) => {
+  try {
+    if (username) {
+      await connectMongoDB();
+      const checkUser = await User.findOne({ username });
+      if (checkUser) {
+        checkUser.status = "inactive";
+        await checkUser.save();
+      }
+    }
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+};

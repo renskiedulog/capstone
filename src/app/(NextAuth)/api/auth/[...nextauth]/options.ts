@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { RequestInternal, User as UserTypes } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { connectMongoDB } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 interface CustomUser extends UserTypes {
   isAdmin?: boolean;
@@ -43,11 +44,14 @@ export const options: any = {
               checkUser.password
             );
 
-            console.log(checkUser.password)
-
             if (!isPasswordMatch) {
               return null; // wrong password
             }
+
+            checkUser.status = "active";
+            await checkUser.save();
+
+            revalidatePath("/tellers", "page");
 
             return {
               name: checkUser.username,
