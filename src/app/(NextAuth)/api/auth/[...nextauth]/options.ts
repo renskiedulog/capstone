@@ -33,7 +33,7 @@ export const options: any = {
           const { username, password } = credentials;
           try {
             await connectMongoDB();
-            const checkUser = await User.findOne({ username });
+            const checkUser = (await User?.findOne({ username })) || null;
 
             if (!checkUser) {
               return null; // No Username Found
