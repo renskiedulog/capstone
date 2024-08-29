@@ -18,15 +18,14 @@ import { useFormState, useFormStatus } from "react-dom";
 import { editTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { AccountDetailsTypes } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
+import socket from "@/socket";
 
 export default function EditForm({
   accountDetails,
   setIsOpen,
-  refetchData,
 }: {
   accountDetails: AccountDetailsTypes;
   setIsOpen: (state: boolean) => void;
-  refetchData: () => void;
 }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [inputs, setInputs] = useState(accountDetails);
@@ -107,9 +106,9 @@ export default function EditForm({
   useEffect(() => {
     if (state?.success) {
       setIsOpen(false);
-      refetchData();
+      socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       toast({
-        title: "Teller Edited Sucessfully.",
+        title: "Teller Edited Successfully.",
         description: "Please wait for a few seconds for changes to be saved.",
       });
     }

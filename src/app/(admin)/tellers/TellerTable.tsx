@@ -262,8 +262,9 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
   const handleAlertConfirm = async () => {
     const reqDelete = await deleteTellerAccount(deleteUser);
     if (reqDelete) {
+      socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       toast({
-        title: "Teller Deleted Sucessfully.",
+        title: "Teller Deleted Successfully.",
       });
     } else {
       toast({
@@ -312,11 +313,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
         />
       )}
       {editMode && (
-        <EditForm
-          accountDetails={editDetails}
-          setIsOpen={setEditMode}
-          refetchData={fetchData}
-        />
+        <EditForm accountDetails={editDetails} setIsOpen={setEditMode} />
       )}
       {/* Table */}
       <div className="w-full">
@@ -330,7 +327,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
             className="w-[200px] max-w-sm md:w-full"
           />
           <div className="flex items-center gap-2">
-            <AddTellerModal refetchData={fetchData} />
+            <AddTellerModal />
           </div>
         </div>
         <div className="rounded-md border">

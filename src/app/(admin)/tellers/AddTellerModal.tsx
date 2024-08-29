@@ -17,6 +17,7 @@ import { generateRandomString } from "@/lib/utils";
 import { createTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
+import socket from "@/socket";
 
 const initialInputs = {
   firstName: "",
@@ -29,11 +30,7 @@ const initialInputs = {
   email: "",
 };
 
-export default function AddTellerModal({
-  refetchData,
-}: {
-  refetchData: () => void;
-}) {
+export default function AddTellerModal({}: {}) {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -122,7 +119,7 @@ export default function AddTellerModal({
 
   useEffect(() => {
     if (state?.success) {
-      refetchData();
+      socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       handleReset();
       setIsModalOpen(false);
       toast({
