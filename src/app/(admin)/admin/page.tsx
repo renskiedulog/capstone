@@ -48,24 +48,11 @@ const page = async () => {
           ? `There are ${tellerCount?.currentMonthTellersCount} new tellers this month.`
           : "No new tellers this month.",
     },
-    {
-      cardTitle: "Total Teller Accounts",
-      icon: <UserIcon className="h-4 w-4 text-muted-foreground" />,
-      stats: tellerCount?.totalTellersCount,
-      info:
-        tellerCount?.currentMonthTellersCount > 0
-          ? `There are ${tellerCount?.currentMonthTellersCount} new tellers this month.`
-          : "No new tellers this month.",
-    },
   ];
 
   return (
-    <div>
+    <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[70%,30%] gap-2">
       <StatCards data={cards} />
-      <HorizontalCardChart />
-      <CircularChartCard />
-      <WaveChartCard />
-      <LineChartCard />
       <RecentTellers />
     </div>
   );
