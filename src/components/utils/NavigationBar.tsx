@@ -13,7 +13,7 @@ import { signOut, useSession } from "next-auth/react";
 import Avatar from "./Avatar";
 import { NavLinkProps } from "@/lib/types";
 import Alert from "./Alert";
-import { logOutDB } from "@/lib/api/common";
+import socket from "@/socket";
 
 const NavigationBar = () => {
   const session: any = useSession() || null;
@@ -26,6 +26,7 @@ const NavigationBar = () => {
   const pathname = usePathname();
 
   const handleLogout = async () => {
+    socket.emit("tellerRefresh", { info: "Refresh Teller Data" });
     await fetch("/logout");
     await signOut();
   };

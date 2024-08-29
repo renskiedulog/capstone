@@ -13,10 +13,19 @@ app.prepare().then(() => {
   const httpServer = createServer(handler);
 
   const io = new Server(httpServer);
+  ``;
+  io.on("connection", (socket) => {
+    console.log("New client connected:", socket.id);
 
-  //   io.on("connection", (socket) => {
-  //     // ...
-  //   });
+    socket.on("tellerRefresh", (data) => {
+      console.log("refresh teller");
+      io.emit("tellerRefresh", data);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Client disconnected:", socket.id);
+    });
+  });
 
   httpServer
     .once("error", (err) => {

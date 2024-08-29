@@ -40,6 +40,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { deleteTellerAccount, fetchTellers } from "@/lib/api/tellerActions";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
+import socket from "@/socket";
 
 export default function TellerTable({ initData }: { initData: UserTypes[] }) {
   const [data, setData] = React.useState<UserTypes[]>(initData);
@@ -60,13 +61,13 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
   const [viewImage, setViewImage] = React.useState("");
 
   React.useEffect(() => {
-    fetchData();
-
-    const intervalId = setInterval(() => {
+    socket.on("tellerRefresh", (data) => {
       fetchData();
-    }, 5000);
+    });
 
-    return () => clearInterval(intervalId);
+    return () => {
+      socket.off("tellerRefresh");
+    };
   }, []);
 
   const fetchData = async () => {

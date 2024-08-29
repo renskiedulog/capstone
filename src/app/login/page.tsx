@@ -13,6 +13,7 @@ import { useState, useCallback } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import socket from "@/socket";
 
 export default function LoginPage() {
   let session;
@@ -63,6 +64,7 @@ export default function LoginPage() {
       });
 
       setLoading(false);
+      socket.emit("tellerRefresh", { info: "Refresh Teller Data" });
 
       if (res?.error) {
         setError("Invalid Username Or Wrong Password.");

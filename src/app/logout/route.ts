@@ -6,7 +6,6 @@ import {
 } from "../(NextAuth)/api/auth/[...nextauth]/options";
 import { connectMongoDB } from "@/lib/db";
 import User from "@/models/User";
-import { revalidatePath } from "next/cache";
 
 export const GET = async (req: NextRequest, res: NextResponse) => {
   const session: CustomSessionType | null = await getServerSession(options);
@@ -31,8 +30,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       { username: username },
       { $set: { status: "inactive" } }
     );
-
-    revalidatePath("/tellers");
 
     return NextResponse.json({ data: username, status: "inactive" });
   } catch (error) {

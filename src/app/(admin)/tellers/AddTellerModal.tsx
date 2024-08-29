@@ -126,7 +126,7 @@ export default function AddTellerModal({
       handleReset();
       setIsModalOpen(false);
       toast({
-        title: "Teller Sucessfully Created.",
+        title: "Teller Successfully Created.",
         description:
           "You can edit, delete and view this account by clicking the actions tab.",
       });
