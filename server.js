@@ -12,24 +12,27 @@ const handler = app.getRequestHandler();
 app.prepare().then(() => {
   const httpServer = createServer(handler);
 
-  const io = new Server(httpServer);
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "*", // Allow all origins
+      methods: ["GET", "POST"],
+    },
+  });
   ``;
   io.on("connection", (socket) => {
     console.log("New client connected:", socket.id);
 
     socket.on("tellerRefresh", (data) => {
-      console.log("refresh teller");
       io.emit("tellerRefresh", data);
     });
 
-    socket.on("disconnect", () => {
-      console.log("Client disconnected:", socket.id);
+    socket.on("message", (data) => {
+      io.emit("message", data);
     });
   });
 
   httpServer
     .once("error", (err) => {
-      console.error(err);
       process.exit(1);
     })
     .listen(port, () => {
