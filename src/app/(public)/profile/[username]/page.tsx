@@ -1,5 +1,7 @@
 import { checkSession } from "@/components/utils/Authenticator";
+import { getTellerInfo } from "@/lib/api/tellerActions";
 import { redirect } from "next/navigation";
+import Profile from "./Profile";
 
 type ProfileParams = {
   params: {
@@ -35,7 +37,14 @@ export async function generateMetadata({ params }: ProfileParams) {
 const page = async ({ params }: ProfileParams) => {
   const session = await checkSession();
   if (!session) return redirect("/login");
-  return <section></section>;
+
+  const accountInfo = await getTellerInfo(params.username);
+
+  return (
+    <section>
+      <Profile data={accountInfo} isAdmin={session?.user?.isAdmin} />
+    </section>
+  );
 };
 
 export default page;

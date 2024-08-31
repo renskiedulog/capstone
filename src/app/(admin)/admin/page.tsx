@@ -7,7 +7,7 @@ import LineChartCard from "./LineChartCard";
 import StatCards from "@/app/(teller)/dashboard/StatCards";
 import { DollarSign, UserIcon } from "lucide-react";
 import RecentTellers from "./RecentTellers";
-import { getTellerCount } from "@/lib/api/common";
+import { getRecentTellers, getTellerCount } from "@/lib/api/common";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -19,6 +19,7 @@ const page = async () => {
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
 
   const tellerCount = await getTellerCount();
+  const recentTellers = await getRecentTellers();
 
   const cards = [
     {
@@ -52,8 +53,12 @@ const page = async () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[70%,30%] gap-2">
+      {/* <HorizontalCardChart />
+      <LineChartCard />
+      <WaveChartCard />
+      <CircularChartCard /> */}
       <StatCards data={cards} />
-      <RecentTellers />
+      <RecentTellers data={recentTellers} />
     </div>
   );
 };

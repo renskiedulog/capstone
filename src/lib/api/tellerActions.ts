@@ -192,3 +192,13 @@ export const editTeller = async (prevState: any, formData: FormData) => {
     };
   }
 };
+
+export const getTellerInfo = async (username: string) => {
+  try {
+    await connectMongoDB();
+
+    const info = await User.findOne({ username: username });
+
+    return info.toObject();
+  } catch (error) {}
+};

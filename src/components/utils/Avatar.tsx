@@ -1,20 +1,27 @@
+import { HTMLAttributes } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-type AvatarProps = {
+interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   name: string;
   className?: string;
   image?: string;
-};
-export default function AvatarHolder({ name, className, image }: AvatarProps) {
+}
+
+export default function AvatarHolder({
+  name,
+  className,
+  image,
+  ...rest
+}: AvatarProps) {
   const initials = name
     ?.split(" ")
     .map((word) => word[0].toUpperCase())
     .join("");
 
   return (
-    <Avatar>
-      <AvatarImage src={image} alt={name} />
-      <AvatarFallback className={className}>{initials}</AvatarFallback>
+    <Avatar className={className} {...rest}>
+      <AvatarImage src={image} alt={name} className="object-cover" />
+      <AvatarFallback>{initials}</AvatarFallback>
     </Avatar>
   );
 }

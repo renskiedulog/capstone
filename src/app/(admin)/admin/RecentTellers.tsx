@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -11,9 +12,26 @@ import { UserTypes } from "@/lib/types";
 import { formatDateToReadable } from "@/lib/utils";
 import Link from "next/link";
 import { UserIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import socket from "@/socket";
 
-export default async function RecentTellers() {
-  const recentTellers: UserTypes[] = await getRecentTellers();
+function RecentTellers({ data }: { data: UserTypes[] }) {
+  const [recentTellers, setUserTellers] = useState(data);
+
+  useEffect(() => {
+    socket.on("tellerRefresh", (data) => {
+      fetchRecentTellers();
+    });
+
+    return () => {
+      socket.off("tellerRefresh");
+    };
+  }, []);
+  
+  const fetchRecentTellers = async () => {
+    const req = await getRecentTellers();
+    setUserTellers(req);
+  };
 
   return (
     <Card>
@@ -67,3 +85,5 @@ export default async function RecentTellers() {
     </Card>
   );
 }
+
+export default RecentTellers;
