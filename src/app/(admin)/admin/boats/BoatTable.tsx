@@ -319,7 +319,7 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
       <div className="w-full">
         <div className="flex items-center justify-between py-4">
           <Input
-            placeholder="Search a teller..."
+            placeholder="Search a boat..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
@@ -390,35 +390,37 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-between space-x-2 py-4">
-          <div className="text-xs">
-            Page {page} out of {pages} page/s.
+        {pages > 1 && (
+          <div className="flex items-center justify-between space-x-2 py-4">
+            <div className="text-xs">
+              Page {page} out of {pages} page/s.
+            </div>
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  table.previousPage();
+                  setPage(page - 1);
+                }}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  table.nextPage();
+                  setPage(page + 1);
+                }}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
           </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                table.previousPage();
-                setPage(page - 1);
-              }}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                table.nextPage();
-                setPage(page + 1);
-              }}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
+        )}
       </div>
     </>
   );
