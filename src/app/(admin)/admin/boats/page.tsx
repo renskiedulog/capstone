@@ -11,7 +11,7 @@ const exampleBoats = [
     registrationNumber: "ABC1234",
     ownerName: "John Doe",
     capacity: 50,
-    status: "Loading",
+    status: "Boarding",
     registrationStatus: "Registered",
     boatDetails: "A luxury yacht with all amenities for a comfortable journey.",
     images: [
@@ -58,7 +58,7 @@ const exampleBoats = [
     registrationNumber: "JKL1121",
     ownerName: "Bob Brown",
     capacity: 60,
-    status: "Loading",
+    status: "Boarding",
     registrationStatus: "Registered",
     boatDetails: "A cruise ship with luxury cabins and dining areas.",
     images: [
@@ -118,7 +118,7 @@ const exampleBoats = [
     registrationNumber: "VWX9202",
     ownerName: "Frank Martin",
     capacity: 70,
-    status: "Loading",
+    status: "Boarding",
     registrationStatus: "Registered",
     boatDetails: "A large ferry designed for passenger transport.",
     images: [
@@ -163,7 +163,7 @@ const exampleBoats = [
     registrationNumber: "EFG3456",
     ownerName: "Ivy Adams",
     capacity: 55,
-    status: "Loading",
+    status: "Boarding",
     registrationStatus: "Registered",
     boatDetails: "A comfortable catamaran for leisure sailing.",
     images: [

@@ -46,8 +46,8 @@ export interface Boat {
   mainImage?: string;
   ownerName: string;
   capacity: number;
-  status: "Queueing" | "Loading" | "Standby";
-  registrationStatus: "Registered" | "Pending" | "Unregistered";
+  status: "queueing" | "boarding" | "standby";
+  registrationStatus: "registered" | "pending" | "unregistered";
   boatDetails: string;
   images: String[];
   additionalInfo?: string;

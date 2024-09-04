@@ -145,16 +145,11 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "registrationStatus",
       accessorKey: "registrationStatus",
-      header: ({ column }) => {
+      header: () => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="w-full p-0 text-center hover:bg-transparent"
-          >
+          <div className="w-full p-0 text-center hover:bg-transparent">
             Registration Status
-            <CaretSortIcon className="ml-1 h-4 w-4" />
-          </Button>
+          </div>
         );
       },
       cell: ({ row }: { row: any }) => {
@@ -176,22 +171,17 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "status",
       accessorKey: "status",
-      header: ({ column }) => {
+      header: () => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="w-full p-0 text-center hover:bg-transparent"
-          >
+          <div className="w-full p-0 text-center hover:bg-transparent">
             Queue Status
-            <CaretSortIcon className="ml-1 h-4 w-4" />
-          </Button>
+          </div>
         );
       },
       cell: ({ row }: { row: any }) => {
         const bgColors: any = {
-          queueing: "bg-green-700",
-          loading: "bg-red-700",
+          boarding: "bg-green-700",
+          queueing: "bg-orange-500",
           standby: "bg-slate-400",
         };
 
@@ -334,7 +324,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
         <div className="flex items-center justify-between py-4">
           <Input
             placeholder="Search a boat..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn("boatName")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
