@@ -28,7 +28,7 @@ const page = async () => {
       stats: tellerCount?.totalTellersCount,
       info:
         tellerCount?.currentMonthTellersCount > 0
-          ? `There are ${tellerCount?.currentMonthTellersCount} new tellers this month.`
+          ? `There are ${tellerCount?.currentMonthTellersCount} new teller${tellerCount?.currentMonthTellersCount > 1 ? "s" : ""} this month.`
           : "No new tellers this month.",
     },
     {

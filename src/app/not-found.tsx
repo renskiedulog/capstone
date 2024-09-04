@@ -4,7 +4,7 @@ import Image from "next/image";
 import React from "react";
 import { useSession } from "next-auth/react";
 
-const notFound = () => {
+const NotFound = () => {
   const session = useSession();
   const isAuthenticated = session?.status === "authenticated";
   return (
@@ -34,4 +34,4 @@ const notFound = () => {
   );
 };
 
-export default notFound;
+export default NotFound;

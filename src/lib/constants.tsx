@@ -39,9 +39,14 @@ export const adminLinks = [
     icon: <DashboardIcon />,
   },
   {
-    link: "/tellers",
+    link: "/admin/tellers",
     name: "Tellers",
     icon: <User2Icon />,
+  },
+  {
+    link: "/admin/boats",
+    name: "Boats",
+    icon: <Ship />,
   },
 ];
 

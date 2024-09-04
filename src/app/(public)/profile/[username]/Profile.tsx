@@ -1,5 +1,6 @@
 "use client";
-import EditForm from "@/app/(admin)/tellers/EditForm";
+import EditForm from "@/app/(admin)/admin/tellers/EditForm";
+import NotFound from "@/app/not-found";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import AvatarHolder from "@/components/utils/Avatar";
@@ -41,6 +42,10 @@ const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
     setAccountDetails(req);
   };
 
+  if (!accountDetails) {
+    return <NotFound />;
+  }
+
   return (
     <>
       {data && isAdmin && isEditing && (
@@ -54,7 +59,7 @@ const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
               width={500}
               height={500}
               alt="image-dialog"
-              className="aspect-square object-cover mt-5"
+              className="aspect-square object-contain mt-5"
             />
           </DialogContent>
         </Dialog>
@@ -63,19 +68,19 @@ const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
         <div className="flex justify-between">
           <div className="flex items-center gap-5">
             <AvatarHolder
-              name={accountDetails.fullName}
-              image={accountDetails.image}
-              className={`size-28 ${accountDetails.image && "cursor-pointer"}`}
+              name={accountDetails?.fullName}
+              image={accountDetails?.image}
+              className={`size-28 ${accountDetails?.image && "cursor-pointer"}`}
               onClick={() => {
                 if (accountDetails?.image) {
-                  setViewImage(accountDetails.image as string);
+                  setViewImage(accountDetails?.image as string);
                 }
               }}
             />
             <div>
               {isAdmin && (
                 <h2 className="text-xs opacity-70">
-                  UID: {accountDetails._id}
+                  UID: {accountDetails?._id}
                 </h2>
               )}
               {accountDetails?.fullName && (
@@ -83,8 +88,8 @@ const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
                   {accountDetails.fullName}
                 </h1>
               )}
-              {accountDetails.email && (
-                <h2 className="text-xl opacity-70">{accountDetails.email}</h2>
+              {accountDetails?.email && (
+                <h2 className="text-xl opacity-70">{accountDetails?.email}</h2>
               )}
             </div>
           </div>
@@ -102,32 +107,32 @@ const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
           <InfoItem
             icon={<Mail />}
             label="Email"
-            value={accountDetails.email}
+            value={accountDetails?.email}
           />
           <InfoItem
             icon={<Calendar />}
             label="Birthdate"
-            value={formatDate(accountDetails.birthdate, "MMMM d, yyyy")}
+            value={formatDate(accountDetails?.birthdate, "MMMM d, yyyy")}
           />
           <InfoItem
             icon={<MapPin />}
             label="Address"
-            value={accountDetails.address as string}
+            value={accountDetails?.address as string}
           />
           <InfoItem
             icon={<Phone />}
             label="Contact"
-            value={accountDetails.contact}
+            value={accountDetails?.contact}
           />
           <InfoItem
             icon={<Clock />}
             label="Created"
-            value={formatDate(accountDetails.createdAt, "MMM d, yyyy HH:mm")}
+            value={formatDate(accountDetails?.createdAt, "MMM d, yyyy HH:mm")}
           />
           <InfoItem
             icon={<RefreshCw />}
             label="Updated"
-            value={formatDate(accountDetails.updatedAt, "MMM d, yyyy HH:mm")}
+            value={formatDate(accountDetails?.updatedAt, "MMM d, yyyy HH:mm")}
           />
         </div>
       </section>
