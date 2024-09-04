@@ -16,19 +16,19 @@ import Alert from "@/components/utils/Alert";
 import { formatInputDate, generateRandomString, isEqual } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
 import { editTeller, isUsernameTaken } from "@/lib/api/tellerActions";
-import { AccountDetailsTypes } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
+import { Boat } from "@/lib/types";
 
 export default function EditForm({
-  accountDetails,
+  boatDetails,
   setIsOpen,
 }: {
-  accountDetails: AccountDetailsTypes;
+  boatDetails: Boat;
   setIsOpen: (state: boolean) => void;
 }) {
   const [imagePreview, setImagePreview] = useState(null);
-  const [inputs, setInputs] = useState(accountDetails);
+  const [inputs, setInputs] = useState(boatDetails);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(editTeller, null);
@@ -60,7 +60,7 @@ export default function EditForm({
       reader.onloadend = () => {
         setImagePreview(reader.result);
       };
-      setInputs((prev: AccountDetailsTypes) => ({
+      setInputs((prev: Boat) => ({
         ...prev,
         image: reader.result,
       }));
@@ -115,8 +115,8 @@ export default function EditForm({
   }, [state?.success]);
 
   useEffect(() => {
-    setImagePreview(accountDetails?.image);
-  }, [accountDetails]);
+    setImagePreview(boatDetails?.images[0]);
+  }, [boatDetails]);
 
   return (
     <>
@@ -159,7 +159,7 @@ export default function EditForm({
               <Input
                 type="text"
                 className="hidden"
-                value={accountDetails._id}
+                value={boatDetails._id}
                 name="id"
                 id="id"
               />
@@ -329,7 +329,7 @@ export default function EditForm({
                 Generate Password
               </Button>
             </div>
-            <SubmitButton disabled={isEqual(inputs, accountDetails)} />
+            <SubmitButton disabled={isEqual(inputs, boatDetails)} />
           </CardFooter>
         </Card>
       </form>

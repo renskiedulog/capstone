@@ -37,6 +37,22 @@ export interface AccountDetailsTypes extends UserTypes {
   password: string;
   address: string;
   contact: string;
-  birthdate: string;
   image: any;
+}
+
+export interface Boat {
+  _id: string;
+  registrationNumber: string;
+  mainImage?: string;
+  ownerName: string;
+  capacity: number;
+  status: "Queueing" | "Loading" | "Standby";
+  registrationStatus: "Registered" | "Pending" | "Unregistered";
+  boatDetails: string;
+  images: String[];
+  additionalInfo?: string;
+  boatCode?: string;
+  contactNumber: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

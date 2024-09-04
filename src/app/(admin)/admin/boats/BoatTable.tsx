@@ -33,7 +33,7 @@ import {
 import Link from "next/link";
 import AddTellerModal from "./AddBoatModal";
 import { Edit, Trash, User2Icon } from "lucide-react";
-import { AccountDetailsTypes, UserTypes } from "@/lib/types";
+import { Boat } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import EditForm from "./BoatEditForm";
 import { useToast } from "@/components/ui/use-toast";
@@ -42,8 +42,8 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
 import socket from "@/socket";
 
-export default function BoatTable({ initData }: { initData: UserTypes[] }) {
-  const [data, setData] = React.useState<UserTypes[]>(initData);
+export default function BoatTable({ initData }: { initData: Boat[] }) {
+  const [data, setData] = React.useState<Boat[]>(initData);
   const { toast } = useToast();
   let maxPerPage = 10;
   const [sorting, setSorting] = React.useState([]);
@@ -70,15 +70,15 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
   //   };
   // }, []);
 
-  const fetchData = async () => {
-    const req = await fetchTellers();
-    setData(req);
-  };
+  // const fetchData = async () => {
+  //   const req = await fetchTellers();
+  //   setData(req);
+  // };
 
-  const columns: ColumnDef<UserTypes>[] = [
+  const columns: ColumnDef<Boat>[] = [
     {
-      id: "image",
-      accessorKey: "image",
+      id: "mainImage",
+      accessorKey: "mainImage",
       header: "Image",
       cell: ({ row }) => {
         return (
@@ -86,7 +86,7 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
             <div
               onClick={() =>
                 setViewImage(
-                  row.getValue("image") || "/images/default-image.jpg"
+                  row.getValue("mainImage") || "/images/default-image.jpg"
                 )
               }
             >
@@ -95,7 +95,7 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
                 height={40}
                 alt="user-image"
                 className="aspect-square w-max object-cover transition"
-                src={row.getValue("image") || "/images/default-image.jpg"}
+                src={row.getValue("mainImage") || "/images/default-image.jpg"}
               />
             </div>
           </div>
@@ -103,65 +103,75 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
       },
     },
     {
-      id: "name",
-      accessorKey: "fullName",
+      id: "registrationNumber",
+      accessorKey: "registrationNumber",
+      header: () => {
+        return <div className="text-center">Registration Number</div>;
+      },
+      cell: ({ row }) => (
+        <div className="text-center">{row.getValue("registrationNumber")}</div>
+      ),
+    },
+    {
+      id: "ownerName",
+      accessorKey: "ownerName",
+      header: "Owner",
+      cell: ({ row }) => (
+        <div className="text-left">{row.getValue("ownerName")}</div>
+      ),
+    },
+    {
+      id: "boatName",
+      accessorKey: "boatName",
+      header: () => {
+        return <p>Boat Name</p>;
+      },
+      cell: ({ row }) => (
+        <div className="text-left lowercase">{row.getValue("boatName")}</div>
+      ),
+    },
+    {
+      id: "boatCode",
+      accessorKey: "boatCode",
+      header: () => {
+        return <p>Boat Code</p>;
+      },
+      cell: ({ row }) => (
+        <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
+          {row.getValue("boatCode")}
+        </div>
+      ),
+    },
+    {
+      id: "registrationStatus",
+      accessorKey: "registrationStatus",
       header: ({ column }) => {
         return (
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="w-max"
+            className="w-full p-0 text-center hover:bg-transparent"
           >
-            Name
-            <CaretSortIcon className="ml-2 h-4 w-4" />
+            Registration Status
+            <CaretSortIcon className="ml-1 h-4 w-4" />
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div className="text-left">{row.getValue("name")}</div>
-      ),
-    },
-    {
-      id: "username",
-      accessorKey: "username",
-      header: ({ column }) => {
-        return <p>Username</p>;
+      cell: ({ row }: { row: any }) => {
+        const bgColors: any = {
+          registered: "bg-green-700",
+          unregistered: "bg-slate-400",
+          pending: "bg-orange-500",
+        };
+
+        return (
+          <div
+            className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${bgColors[row?.getValue("registrationStatus").toLowerCase()]}`}
+          >
+            {row.getValue("registrationStatus")}
+          </div>
+        );
       },
-      cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("username")}</div>
-      ),
-    },
-    {
-      id: "password",
-      accessorKey: "password",
-      header: ({ column }) => {
-        return <p>Password</p>;
-      },
-      cell: ({ row }) => (
-        <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
-          {row.getValue("password")}
-        </div>
-      ),
-    },
-    {
-      id: "address",
-      accessorKey: "address",
-      header: ({ column }) => {
-        return <p>Address</p>;
-      },
-      cell: ({ row }) => (
-        <div className="text-left">{row.getValue("address")}</div>
-      ),
-    },
-    {
-      id: "contact",
-      accessorKey: "contact",
-      header: ({ column }) => {
-        return <p>Contact Number</p>;
-      },
-      cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("contact")}</div>
-      ),
     },
     {
       id: "status",
@@ -173,22 +183,26 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="w-full p-0 text-center hover:bg-transparent"
           >
-            Status
+            Queue Status
             <CaretSortIcon className="ml-1 h-4 w-4" />
           </Button>
         );
       },
-      cell: ({ row }) => (
-        <div
-          className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${
-            row?.getValue("status") === "active"
-              ? "bg-green-500"
-              : "bg-slate-400"
-          }`}
-        >
-          {row.getValue("status")}
-        </div>
-      ),
+      cell: ({ row }: { row: any }) => {
+        const bgColors: any = {
+          queueing: "bg-green-700",
+          loading: "bg-red-700",
+          standby: "bg-slate-400",
+        };
+
+        return (
+          <div
+            className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${bgColors[row?.getValue("status").toLowerCase()]}`}
+          >
+            {row.getValue("status")}
+          </div>
+        );
+      },
     },
     {
       id: "actions",
@@ -206,7 +220,7 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <Link
-                href={`/profile/${row?.original?.username}`}
+                href={`/profile/`}
                 className="text-black/80 group-hover:text-black"
               >
                 <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
@@ -276,7 +290,7 @@ export default function BoatTable({ initData }: { initData: UserTypes[] }) {
     if (pendingModalClose) {
       setPendingModalClose(false);
     }
-    fetchData();
+    // fetchData();
   };
 
   const handleAlertCancel = () => {
