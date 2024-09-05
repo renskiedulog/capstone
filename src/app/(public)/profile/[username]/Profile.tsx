@@ -20,12 +20,18 @@ import {
 import Image from "next/image";
 import React, { useState } from "react";
 
-const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
+const Profile = ({
+  data,
+  isAdmin,
+  user,
+}: {
+  data: UserTypes;
+  isAdmin: boolean;
+  user: string;
+}) => {
   const [accountDetails, setAccountDetails] = useState(data);
   const [viewImage, setViewImage] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-
-  console.log(isAdmin);
 
   React.useEffect(() => {
     socket.on("tellerRefresh", (data) => {
@@ -48,7 +54,7 @@ const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
 
   return (
     <>
-      {data && isAdmin && isEditing && (
+      {data && (isAdmin || user === accountDetails?.username) && isEditing && (
         <EditForm accountDetails={accountDetails} setIsOpen={setIsEditing} />
       )}
       {viewImage !== "" && (
@@ -93,7 +99,7 @@ const Profile = ({ data, isAdmin }: { data: UserTypes; isAdmin: boolean }) => {
               )}
             </div>
           </div>
-          {isAdmin && (
+          {(isAdmin || user === accountDetails?.username) && (
             <Button
               className="flex gap-1 min-w-32"
               onClick={() => setIsEditing(true)}

@@ -39,29 +39,31 @@ export default function Command() {
           <span className="text-xs">ctrl +</span>J
         </kbd>
       </p>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          {commandLinks?.map((command, idx) => (
-            <CommandGroup heading={command?.heading} key={idx}>
-              {command?.links?.map((link, idx) => (
-                <Link
-                  href={link?.link}
-                  key={idx}
-                  onClick={() => setOpen(false)}
-                  className="group hover:text-black"
-                >
-                  <CommandItem className="!bg-transparent !opacity-60 group-hover:!bg-accent group-hover:!opacity-80">
-                    {link?.icon}
-                    <span>{link?.title}</span>
-                  </CommandItem>
-                </Link>
-              ))}
-            </CommandGroup>
-          ))}
-        </CommandList>
-      </CommandDialog>
+      {commandLinks && (
+        <CommandDialog open={open} onOpenChange={setOpen}>
+          <CommandInput placeholder="Type a command or search..." />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            {commandLinks?.map((command, idx) => (
+              <CommandGroup heading={command?.heading} key={idx}>
+                {command?.links?.map((link, idx) => (
+                  <Link
+                    href={link?.link}
+                    key={idx}
+                    onClick={() => setOpen(false)}
+                    className="group hover:text-black"
+                  >
+                    <CommandItem className="!bg-transparent !opacity-60 group-hover:!bg-accent group-hover:!opacity-80">
+                      {link?.icon}
+                      <span>{link?.title}</span>
+                    </CommandItem>
+                  </Link>
+                ))}
+              </CommandGroup>
+            ))}
+          </CommandList>
+        </CommandDialog>
+      )}
     </>
   );
 }

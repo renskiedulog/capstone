@@ -41,7 +41,11 @@ const page = async ({ params }: ProfileParams) => {
   const accountInfo = await getTellerInfo(params.username);
 
   return (
-    <Profile data={accountInfo} isAdmin={session?.user?.isAdmin as boolean} />
+    <Profile
+      data={accountInfo}
+      isAdmin={session?.user?.isAdmin as boolean}
+      user={session.user?.username}
+    />
   );
 };
 

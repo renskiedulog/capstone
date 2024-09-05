@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/table";
 import Link from "next/link";
 import AddTellerModal from "./AddBoatModal";
-import { Edit, Trash, User2Icon } from "lucide-react";
+import { Edit, Ship, Trash, User2Icon } from "lucide-react";
 import { Boat } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import EditForm from "./BoatEditForm";
@@ -105,11 +105,9 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "registrationNumber",
       accessorKey: "registrationNumber",
-      header: () => {
-        return <div className="text-center">Registration Number</div>;
-      },
+      header: "Registration Number",
       cell: ({ row }) => (
-        <div className="text-center">{row.getValue("registrationNumber")}</div>
+        <div className="text-left">{row.getValue("registrationNumber")}</div>
       ),
     },
     {
@@ -210,12 +208,12 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <Link
-                href={`/profile/`}
+                href={`/boat/${row.original.boatCode}`}
                 className="text-black/80 group-hover:text-black"
               >
                 <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
-                  <User2Icon size={18} />
-                  <span>Profile</span>
+                  <Ship size={18} />
+                  <span>Details</span>
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
@@ -324,7 +322,9 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
         <div className="flex items-center justify-between py-4">
           <Input
             placeholder="Search a boat..."
-            value={(table.getColumn("boatName")?.getFilterValue() as string) ?? ""}
+            value={
+              (table.getColumn("boatName")?.getFilterValue() as string) ?? ""
+            }
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }

@@ -21,6 +21,8 @@ const page = async () => {
   const tellerCount = await getTellerCount();
   const recentTellers = await getRecentTellers();
 
+  console.log(session.user);
+
   const cards = [
     {
       cardTitle: "Total Teller Accounts",
