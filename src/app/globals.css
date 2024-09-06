@@ -68,6 +68,10 @@
   }
 }
 
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
 .scrollbar::-webkit-scrollbar {
   width: 5px;
 }

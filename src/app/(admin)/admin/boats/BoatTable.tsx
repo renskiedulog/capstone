@@ -35,7 +35,7 @@ import AddTellerModal from "./AddBoatModal";
 import { Edit, Ship, Trash, User2Icon } from "lucide-react";
 import { Boat } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
-import EditForm from "./BoatEditForm";
+import BoatEditForm from "./BoatEditForm";
 import { useToast } from "@/components/ui/use-toast";
 import { deleteTellerAccount, fetchTellers } from "@/lib/api/tellerActions";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -314,9 +314,13 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
           primaryClassName="bg-red-500 hover:bg-red-600"
         />
       )}
-      {/* {editMode && (
-        <EditForm accountDetails={editDetails} setIsOpen={setEditMode} />
-      )} */}
+      {editMode && (
+        <BoatEditForm
+          boatDetails={editDetails as Boat}
+          setIsOpen={setEditMode}
+          setViewImage={setViewImage}
+        />
+      )}
       {/* Table */}
       <div className="w-full">
         <div className="flex items-center justify-between py-4">

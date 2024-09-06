@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCallback, useEffect, useState } from "react";
-import { ImageIcon, XIcon } from "lucide-react";
+import { ImageIcon, PlusCircleIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { formatInputDate, generateRandomString, isEqual } from "@/lib/utils";
@@ -19,15 +19,18 @@ import { editTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { Boat } from "@/lib/types";
+import Image from "next/image";
 
-export default function EditForm({
+export default function BoatEditForm({
   boatDetails,
   setIsOpen,
+  setViewImage,
 }: {
   boatDetails: Boat;
   setIsOpen: (state: boolean) => void;
+  setViewImage: (url: string) => void;
 }) {
-  const [imagePreview, setImagePreview] = useState(null);
+  const [mainImagePreview, setMainImagePreview] = useState("");
   const [inputs, setInputs] = useState(boatDetails);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
@@ -53,27 +56,44 @@ export default function EditForm({
     setPendingModalClose(false);
   };
 
-  const handleImageUpload = (event: any) => {
+  const handleMainImageUpload = (event: any) => {
     const file = event.target.files[0];
     if (file) {
       const reader: any = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        setMainImagePreview(reader.result);
       };
       setInputs((prev: Boat) => ({
         ...prev,
-        image: reader.result,
+        mainImage: reader.result,
       }));
       reader.readAsDataURL(file);
     }
   };
 
-  const handleGeneratePassword = () => {
-    const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5);
-    setInputs((prevInputs: any) => ({
-      ...prevInputs,
-      password: newPassword,
-    }));
+  const handleImageUpload = (event: any) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      const newImages: string[] = [];
+
+      Array.from(files).forEach((file: any) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result;
+          if (typeof result === "string") {
+            newImages.push(result);
+          }
+
+          if (newImages.length === files.length) {
+            setInputs((prev: Boat) => ({
+              ...prev,
+              images: [...(prev.images || []), ...newImages],
+            }));
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+    }
   };
 
   const handleInputChange = useCallback((e: any) => {
@@ -94,28 +114,26 @@ export default function EditForm({
     }
   }
 
-  const handleCheckUsername = async (inputUsername: string) => {
-    const res = await isUsernameTaken(inputUsername);
-    if (res) {
-      setError("Username already taken.");
-    } else {
-      setError("");
-    }
+  const handleRemoveImage = (indexToRemove: number) => {
+    setInputs((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, index) => index !== indexToRemove),
+    }));
   };
 
-  useEffect(() => {
-    if (state?.success) {
-      setIsOpen(false);
-      socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
-      toast({
-        title: "Teller Edited Successfully.",
-        description: "Please wait for a few seconds for changes to be saved.",
-      });
-    }
-  }, [state?.success]);
+  // useEffect(() => {
+  //   if (state?.success) {
+  //     setIsOpen(false);
+  //     socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
+  //     toast({
+  //       title: "Teller Edited Successfully.",
+  //       description: "Please wait for a few seconds for changes to be saved.",
+  //     });
+  //   }
+  // }, [state?.success]);
 
   useEffect(() => {
-    setImagePreview(boatDetails?.images[0]);
+    setMainImagePreview(boatDetails?.mainImage as string);
   }, [boatDetails]);
 
   return (
@@ -134,7 +152,7 @@ export default function EditForm({
         onClick={handleModalClose}
       >
         <Card
-          className="border-none w-full max-w-3xl mx-5 relative"
+          className="border-none w-full max-w-4xl mx-5 relative"
           onClick={(e) => e.stopPropagation()}
         >
           <XIcon
@@ -142,10 +160,10 @@ export default function EditForm({
             onClick={handleModalClose}
           />
           <CardHeader>
-            <CardTitle>Edit Teller Account</CardTitle>
+            <CardTitle>Edit Boat Details</CardTitle>
             <CardDescription>
-              Edit the necessary details for the account. You can leave the
-              inputs unchanged.
+              Edit the necessary details for the boat. You can leave the inputs
+              unchanged.
             </CardDescription>
             {error !== "" && (
               <CardDescription className="text-red-500">
@@ -155,23 +173,17 @@ export default function EditForm({
           </CardHeader>
           <CardContent className="mx-auto">
             <div className="flex w-full flex-col sm:flex-row items-center gap-2">
-              {/* ID */}
-              <Input
-                type="text"
-                className="hidden"
-                value={boatDetails._id}
-                name="id"
-                id="id"
-              />
-              <div className="relative w-full max-w-[150px] sm:max-w-[200px] max-h-[150px] sm:max-h-[200px] h-[100vh]">
+              {/* Images */}
+              <div className="space-y-2 w-2/6 max-h-[500px] overflow-scroll scrollbar px-2">
+                {/* Main Image */}
                 <Label
-                  htmlFor="uploadImage"
-                  className={`bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
+                  htmlFor="mainImage"
+                  className={`bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[250px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
                 >
-                  {imagePreview ? (
+                  {mainImagePreview ? (
                     <>
                       <img
-                        src={imagePreview}
+                        src={mainImagePreview}
                         alt="Uploaded"
                         className="w-full h-full object-cover"
                       />
@@ -180,7 +192,7 @@ export default function EditForm({
                         id="image"
                         name="image"
                         className="hidden"
-                        value={imagePreview}
+                        value={mainImagePreview}
                       />
                     </>
                   ) : (
@@ -191,144 +203,57 @@ export default function EditForm({
                       </p>
                     </>
                   )}
-                </Label>
-                <Input
-                  type="file"
-                  id="uploadImage"
-                  name="uploadImage"
-                  accept=".png,.jpg,.jpeg"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-                {imagePreview && (
-                  <>
-                    <Button
-                      type="button"
-                      className="w-full mt-1 hover:bg-primary/80 hover:text-white"
-                      variant="outline"
-                      onClick={() => {
-                        setImagePreview(null);
-                        clearFileInput("image");
-                      }}
-                    >
-                      Remove
-                    </Button>
-                    <Input
-                      type="string"
-                      id="imageBase64"
-                      name="imageBase64"
-                      className="hidden"
-                      value={imagePreview}
-                    />
-                  </>
-                )}
-              </div>
-              <div className="w-full mx-5 space-y-2">
-                <div className="w-full flex sm:flex-row flex-col gap-2">
-                  <div className="flex-1">
-                    <Label htmlFor="username">Username</Label>
-                    <Input
-                      id="username"
-                      name="username"
-                      required
-                      type="text"
-                      placeholder="Enter your username"
-                      value={inputs.username}
-                      onChange={handleInputChange}
-                      onBlur={(e) => handleCheckUsername(e.target.value)}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      required
-                      type="text"
-                      placeholder="Enter your password"
-                      value={inputs.password}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div>
-                <div className="w-full flex sm:flex-row flex-col gap-2">
-                  <div className="flex-1">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      name="firstName"
-                      required
-                      type="text"
-                      placeholder="Enter your name"
-                      value={inputs.firstName}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      name="lastName"
-                      required
-                      type="text"
-                      placeholder="Enter your last name"
-                      value={inputs.lastName}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="address">Address</Label>
                   <Input
-                    id="address"
-                    name="address"
-                    required
-                    type="text"
-                    placeholder="Enter permanent address"
-                    value={inputs.address}
-                    onChange={handleInputChange}
+                    type="file"
+                    id="mainImage"
+                    name="mainImage"
+                    accept=".png,.jpg,.jpeg"
+                    className="hidden"
+                    onChange={handleMainImageUpload}
                   />
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <div className="w-full flex-1">
-                    <Label htmlFor="contact">Contact Number</Label>
+                </Label>
+                {/* Images */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {inputs?.images?.map((img, idx) => (
+                    <div className="relative">
+                      <Image
+                        width={150}
+                        height={150}
+                        src={img as string}
+                        alt="sad"
+                        className="w-full aspect-square object-cover rounded cursor-pointer hover:brightness-100 brightness-[0.8]"
+                        onClick={() => setViewImage(img as string)}
+                      />
+                      <XIcon
+                        className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
+                        size={20}
+                        onClick={() => handleRemoveImage(idx)}
+                      />
+                    </div>
+                  ))}
+                  <Label
+                    htmlFor="uploadDocs"
+                    className={`bg-white z-10 space-y-1 group w-full aspect-square flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded border-dashed`}
+                  >
+                    <PlusCircleIcon className="group-hover:opacity-70 opacity-50" />
+                    <p className="group-hover:opacity-70 opacity-50 text-center text-xs">
+                      Upload An Image or Document
+                    </p>
                     <Input
-                      id="contact"
-                      name="contact"
-                      required
-                      type="text"
-                      placeholder="Enter contact number"
-                      value={inputs.contact}
-                      onChange={handleInputChange}
+                      type="file"
+                      id="uploadDocs"
+                      name="uploadDocs"
+                      accept=".png,.jpg,.jpeg"
+                      className="hidden"
+                      multiple
+                      onChange={handleImageUpload}
                     />
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor="birthdate">Birth Date</Label>
-                    <Input
-                      id="birthdate"
-                      name="birthdate"
-                      required
-                      type="date"
-                      value={formatInputDate(inputs.birthdate)}
-                      onChange={handleInputChange}
-                      className="!block"
-                    />
-                  </div>
+                  </Label>
                 </div>
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                className="!text-xs"
-                onClick={handleGeneratePassword}
-              >
-                Generate Password
-              </Button>
-            </div>
+          <CardFooter className="flex justify-end items-center">
             <SubmitButton disabled={isEqual(inputs, boatDetails)} />
           </CardFooter>
         </Card>
