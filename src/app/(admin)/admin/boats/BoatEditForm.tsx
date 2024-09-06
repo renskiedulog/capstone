@@ -104,13 +104,14 @@ export default function BoatEditForm({
     }));
   }, []);
 
-  function clearFileInput(fileInputId: string) {
+  function clearMainImageInput() {
     const fileInput = document.getElementById(
-      fileInputId
+      "mainImage"
     ) as HTMLInputElement | null;
     if (fileInput) {
       fileInput.value = "";
-      setInputs((prev) => ({ ...prev, image: "" }));
+      setMainImagePreview("");
+      setInputs((prev) => ({ ...prev, mainImage: "" }));
     }
   }
 
@@ -174,11 +175,11 @@ export default function BoatEditForm({
           <CardContent className="mx-auto">
             <div className="flex w-full flex-col sm:flex-row items-center gap-2">
               {/* Images */}
-              <div className="space-y-2 w-2/6 max-h-[500px] overflow-scroll scrollbar px-2">
+              <div className="space-y-2 w-2/6 max-h-[500px] overflow-scroll scrollbar p-2">
                 {/* Main Image */}
                 <Label
                   htmlFor="mainImage"
-                  className={`bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[250px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
+                  className={`bg-white relative z-10 space-y-1 group w-full h-[150px] sm:h-[250px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
                 >
                   {mainImagePreview ? (
                     <>
@@ -193,6 +194,15 @@ export default function BoatEditForm({
                         name="image"
                         className="hidden"
                         value={mainImagePreview}
+                      />
+                      <XIcon
+                        className="absolute z-20 -top-3 -right-2 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
+                        size={20}
+                        onClick={(e) => {
+                          e.preventDefault(); // Prevent default action if necessary
+                          e.stopPropagation(); // Prevent the event from reaching the parent
+                          clearMainImageInput();
+                        }}
                       />
                     </>
                   ) : (
