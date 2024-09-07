@@ -108,8 +108,8 @@ export default function EditForm({
       setIsOpen(false);
       socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       toast({
-        title: "Teller Edited Successfully.",
-        description: "Please wait for a few seconds for changes to be saved.",
+        title: "Edited Successfully.",
+        description: "If changes do not occur, refreshing the page might help.",
       });
     }
   }, [state?.success]);

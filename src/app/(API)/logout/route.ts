@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   CustomSessionType,
   options,
-} from "../(NextAuth)/api/auth/[...nextauth]/options";
+} from "../../(NextAuth)/api/auth/[...nextauth]/options";
 import { connectMongoDB } from "@/lib/db";
 import User from "@/models/User";
 

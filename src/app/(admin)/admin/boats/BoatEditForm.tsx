@@ -175,7 +175,7 @@ export default function BoatEditForm({
           <CardContent className="mx-auto">
             <div className="flex w-full flex-col sm:flex-row items-center gap-2">
               {/* Images */}
-              <div className="space-y-2 w-2/6 max-h-[500px] overflow-scroll scrollbar p-2">
+              <div className="flex flex-col gap-2 w-1/2 sm:w-2/6 aspect-square` max-h-[400px] sm:overflow-scroll scrollbar p-2">
                 {/* Main Image */}
                 <Label
                   htmlFor="mainImage"

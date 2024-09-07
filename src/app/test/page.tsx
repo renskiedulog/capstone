@@ -29,19 +29,43 @@ export default function Home() {
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
+    socket.on("newActivity", () => {
+      console.log("new activity found");
+    });
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off("newActivity");
     };
   }, []);
 
+  const handleSendMessage = async () => {
+    try {
+      const response = await fetch("/activity", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          activityType: "test",
+          message: "test",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Fetch failed with status: ${response.status}`);
+      }
+
+      socket.emit("newActivity");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
   return (
     <div>
-      <p>Status: {isConnected ? "connected" : "disconnected"}</p>
-      <p>Transport: {transport}</p>
-      <Button onClick={() => socket.disconnect()}>disconnect</Button>
-      <Button onClick={() => socket.connect()}>connect</Button>
+      <Button onClick={handleSendMessage}>Message</Button>
     </div>
   );
 }

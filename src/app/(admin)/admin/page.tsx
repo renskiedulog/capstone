@@ -8,6 +8,7 @@ import StatCards from "@/app/(teller)/dashboard/StatCards";
 import { DollarSign, UserIcon } from "lucide-react";
 import RecentTellers from "./RecentTellers";
 import { getRecentTellers, getTellerCount } from "@/lib/api/common";
+import Activity from "./Activity";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -60,7 +61,10 @@ const page = async () => {
       <WaveChartCard />
       <CircularChartCard /> */}
       <StatCards data={cards} />
-      <RecentTellers data={recentTellers} />
+      <div>
+        <RecentTellers data={recentTellers} />
+        <Activity />
+      </div>
     </div>
   );
 };
