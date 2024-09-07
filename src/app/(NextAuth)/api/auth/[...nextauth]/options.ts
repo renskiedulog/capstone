@@ -50,6 +50,10 @@ export const options: any = {
               return null; // No Username Found
             }
 
+            if (checkUser.isDeleted) {
+              return null; // If user is deleted
+            }
+
             const isPasswordMatch = await bcrypt.compare(
               password,
               checkUser.password

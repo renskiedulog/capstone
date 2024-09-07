@@ -5,7 +5,9 @@ import { connectMongoDB } from "../db";
 export const getRecentTellers = async () => {
   try {
     await connectMongoDB();
-    const tellers = await User?.find()?.sort({ createdAt: -1 })?.limit(5);
+    const tellers = await User?.find({ isDeleted: false })
+      ?.sort({ createdAt: -1 })
+      ?.limit(5);
 
     return tellers;
   } catch (error) {
@@ -27,7 +29,7 @@ export const getTellerCount = async () => {
 
   const results = await User.aggregate([
     {
-      $match: { isAdmin: false },
+      $match: { isAdmin: false, isDeleted: false },
     },
     {
       $facet: {

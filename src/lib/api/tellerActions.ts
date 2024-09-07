@@ -16,7 +16,7 @@ export const createTeller = async (prevState: any, formData: FormData) => {
 
     const hashedPassword = await bcrypt.hash(values.password, 10);
 
-    const req = await User.create({
+    await User.create({
       username: values.username,
       password: hashedPassword,
       fullName: `${values.firstName} ${values.lastName}`,
@@ -41,14 +41,16 @@ export const createTeller = async (prevState: any, formData: FormData) => {
   }
 };
 
-export const fetchTellers = async () => {
+export const fetchTellers = async (isDeleted: boolean = false) => { // accesses deleted teller accounts if true
   const checkAuth = await checkSession();
   if (!checkAuth) {
     return [];
   }
   try {
     await connectMongoDB();
-    const req = await User.find({ isAdmin: false }).sort({ createdAt: -1 });
+    const req = await User.find({ isAdmin: false, isDeleted: isDeleted }).sort({
+      createdAt: -1,
+    });
     const tellers = req.map((teller) => ({
       _id: teller._id.toString(),
       firstName: teller.firstName,
@@ -63,6 +65,7 @@ export const fetchTellers = async () => {
       contact: teller.contact,
       birthdate: teller.birthdate,
       status: teller.status,
+      isDeleted: teller.isDeleted,
       createdAt: teller.createdAt.toISOString(),
       updatedAt: teller.updatedAt.toISOString(),
     }));
@@ -75,9 +78,9 @@ export const fetchTellers = async () => {
 
 export const deleteTellerAccount = async (id: string) => {
   await connectMongoDB();
-  const req = await User.deleteOne({ _id: id });
+  const req = await User.updateOne({ _id: id }, { $set: { isDeleted: true } });
 
-  if (req.acknowledged !== true) {
+  if (req.modifiedCount === 0) {
     return false;
   }
   return true;

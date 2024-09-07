@@ -27,7 +27,7 @@ function RecentTellers({ data }: { data: UserTypes[] }) {
       socket.off("tellerRefresh");
     };
   }, []);
-  
+
   const fetchRecentTellers = async () => {
     const req = await getRecentTellers();
     setUserTellers(req);
@@ -43,44 +43,52 @@ function RecentTellers({ data }: { data: UserTypes[] }) {
         <UserIcon size={30} />
       </CardHeader>
       <CardContent className="grid gap-8">
-        {recentTellers?.map((teller, idx) => (
-          <div key={idx} className="flex items-center gap-4">
-            {teller?.username && (
-              <Link href={`/profile/${teller.username}`}>
-                <Avatar name={teller?.fullName} image={teller?.image} />
-              </Link>
-            )}
-            <div className="grid gap-1">
-              {teller?.fullName && (
+        {recentTellers?.length > 0 ? (
+          recentTellers?.map((teller, idx) => (
+            <div key={idx} className="flex items-center gap-4">
+              {teller?.username && (
                 <Link href={`/profile/${teller.username}`}>
-                  <p className="text-sm font-semibold leading-none">
-                    {teller?.fullName}
-                  </p>
+                  <Avatar name={teller?.fullName} image={teller?.image} />
                 </Link>
               )}
-              {teller?.email && (
-                <p className="text-xs text-muted-foreground">{teller?.email}</p>
+              <div className="grid gap-1">
+                {teller?.fullName && (
+                  <Link href={`/profile/${teller.username}`}>
+                    <p className="text-sm font-semibold leading-none">
+                      {teller?.fullName}
+                    </p>
+                  </Link>
+                )}
+                {teller?.email && (
+                  <p className="text-xs text-muted-foreground">
+                    {teller?.email}
+                  </p>
+                )}
+              </div>
+              {teller?.createdAt && (
+                <div className="ml-auto font-semibold text-[10px] text-right opacity-70">
+                  {formatDateToReadable(teller?.createdAt)
+                    .split("-")
+                    ?.map((word, idx) => {
+                      if (idx === 0) {
+                        return word;
+                      } else {
+                        return (
+                          <>
+                            <br /> {word}
+                          </>
+                        );
+                      }
+                    })}
+                </div>
               )}
             </div>
-            {teller?.createdAt && (
-              <div className="ml-auto font-semibold text-[10px] text-right opacity-70">
-                {formatDateToReadable(teller?.createdAt)
-                  .split("-")
-                  ?.map((word, idx) => {
-                    if (idx === 0) {
-                      return word;
-                    } else {
-                      return (
-                        <>
-                          <br /> {word}
-                        </>
-                      );
-                    }
-                  })}
-              </div>
-            )}
-          </div>
-        ))}
+          ))
+        ) : (
+          <h1 className="text-center">
+            There are currently no recent tellers.
+          </h1>
+        )}
       </CardContent>
     </Card>
   );
