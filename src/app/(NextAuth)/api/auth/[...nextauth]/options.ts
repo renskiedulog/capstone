@@ -32,17 +32,6 @@ export const options: any = {
         if (credentials) {
           const { username, password } = credentials;
           try {
-            if (
-              username === process.env.ADMIN_ACC?.split(":")[0] &&
-              password === process.env.ADMIN_ACC?.split(":")[1]
-            ) {
-              return {
-                name: "admin",
-                isAdmin: true,
-                id: "admin",
-              };
-            }
-
             await connectMongoDB();
             const checkUser = (await User?.findOne({ username })) || null;
 
@@ -96,10 +85,6 @@ export const options: any = {
       token: JWT;
     }) {
       if (session) {
-        if (session?.user?.name === "admin") {
-          session.user.isAdmin = true;
-          return session;
-        }
         const userDocument: any = await User.findOne({
           username: token?.name,
         }).select("-password -_id");
