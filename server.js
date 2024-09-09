@@ -33,7 +33,7 @@ app.prepare().then(() => {
     .once("error", (err) => {
       process.exit(1);
     })
-    .listen(port, () => {
+    .listen(port, async () => {
       console.log(`> Ready on http://${hostname}:${port}`);
     });
 });
