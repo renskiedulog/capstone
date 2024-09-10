@@ -175,11 +175,11 @@ export default function BoatEditForm({
           <CardContent className="mx-auto">
             <div className="flex w-full flex-col sm:flex-row items-center gap-2">
               {/* Images */}
-              <div className="flex flex-col gap-2 w-1/2 sm:w-2/6 aspect-square` max-h-[400px] sm:overflow-scroll scrollbar p-2">
+              <div className="flex flex-col gap-2 w-5/6 sm:w-2/6 aspect-square min-h-[400px] max-h-[400px] sm:overflow-scroll scrollbar p-2">
                 {/* Main Image */}
                 <Label
                   htmlFor="mainImage"
-                  className={`bg-white relative z-10 space-y-1 group w-full h-[150px] sm:h-[250px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
+                  className={`bg-white relative z-10 space-y-1 group flex items-center min-h-[180px] justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
                 >
                   {mainImagePreview ? (
                     <>
@@ -209,7 +209,7 @@ export default function BoatEditForm({
                     <>
                       <ImageIcon className="group-hover:opacity-70 opacity-50" />
                       <p className="group-hover:opacity-70 opacity-50">
-                        Upload An Image
+                        Upload A Main Image
                       </p>
                     </>
                   )}
@@ -223,7 +223,7 @@ export default function BoatEditForm({
                   />
                 </Label>
                 {/* Images */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
                   {inputs?.images?.map((img, idx) => (
                     <div className="relative">
                       <Image
@@ -231,7 +231,7 @@ export default function BoatEditForm({
                         height={150}
                         src={img as string}
                         alt="sad"
-                        className="w-full aspect-square object-cover rounded cursor-pointer hover:brightness-100 brightness-[0.8]"
+                        className="w-full aspect-square rounded cursor-pointer hover:brightness-100 brightness-[0.8] object-cover"
                         onClick={() => setViewImage(img as string)}
                       />
                       <XIcon
@@ -246,7 +246,7 @@ export default function BoatEditForm({
                     className={`bg-white z-10 space-y-1 group w-full aspect-square flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded border-dashed`}
                   >
                     <PlusCircleIcon className="group-hover:opacity-70 opacity-50" />
-                    <p className="group-hover:opacity-70 opacity-50 text-center text-xs">
+                    <p className="group-hover:opacity-70 opacity-50 text-center text-[10px] sm:text-xs px-2">
                       Upload An Image or Document
                     </p>
                     <Input

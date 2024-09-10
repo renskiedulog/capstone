@@ -75,7 +75,7 @@ async function seedAdmin() {
     await connectMongoDB();
 
     const adminUsername = "admin";
-    const adminPassword = "admin123";
+    const adminPassword = "admin";
 
     const existingAdmin = await User.findOne({ username: adminUsername });
 
@@ -93,7 +93,7 @@ async function seedAdmin() {
         address: "ADMIN",
         contact: "ADMIN",
         birthdate: new Date("1970-01-01"),
-        image: null,
+        image: "",
         isAdmin: true,
       });
 

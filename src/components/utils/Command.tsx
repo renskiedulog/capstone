@@ -9,6 +9,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from "@/components/ui/command";
 import { commandLinks } from "@/lib/constants";
 import Link from "next/link";
@@ -45,21 +46,26 @@ export default function Command() {
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             {commandLinks?.map((command, idx) => (
-              <CommandGroup heading={command?.heading} key={idx}>
-                {command?.links?.map((link, idx) => (
-                  <Link
-                    href={link?.link}
-                    key={idx}
-                    onClick={() => setOpen(false)}
-                    className="group hover:text-black"
-                  >
-                    <CommandItem className="!bg-transparent !opacity-60 group-hover:!bg-accent group-hover:!opacity-80">
-                      {link?.icon}
-                      <span>{link?.title}</span>
-                    </CommandItem>
-                  </Link>
-                ))}
-              </CommandGroup>
+              <div key={`Command ${idx}`}>
+                <CommandGroup heading={command?.heading} key={idx}>
+                  {command?.links?.map((link, idx) => (
+                    <Link
+                      href={link?.link}
+                      key={idx}
+                      onClick={() => setOpen(false)}
+                      className="group hover:text-black"
+                    >
+                      <CommandItem className="!bg-transparent cursor-pointer !opacity-60 group-hover:!bg-accent group-hover:!opacity-80">
+                        {link?.icon}
+                        <span>{link?.title}</span>
+                      </CommandItem>
+                    </Link>
+                  ))}
+                </CommandGroup>
+                {commandLinks?.length - 1 !== idx && (
+                  <CommandSeparator key={idx} />
+                )}
+              </div>
             ))}
           </CommandList>
         </CommandDialog>

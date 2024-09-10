@@ -5,7 +5,7 @@ import { connectMongoDB } from "../db";
 export const getRecentTellers = async () => {
   try {
     await connectMongoDB();
-    const tellers = await User?.find({ isDeleted: false })
+    const tellers = await User?.find({ isDeleted: false, isAdmin: false })
       ?.sort({ createdAt: -1 })
       ?.limit(5);
 
