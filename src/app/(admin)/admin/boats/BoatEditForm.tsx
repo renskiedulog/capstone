@@ -149,11 +149,11 @@ export default function BoatEditForm({
       />
       <form
         action={formAction}
-        className="bg-black/50 w-full h-screen fixed top-0 left-0 z-50 flex items-center justify-center"
+        className="bg-black/50 w-full h-screen overflow-y-auto fixed top-0 left-0 z-50 flex items-center justify-center"
         onClick={handleModalClose}
       >
         <Card
-          className="border-none w-full max-w-4xl mx-5 relative"
+          className="border-none w-full max-w-4xl mx-5 relative overflow-y-auto scrollbar max-h-[90vh]"
           onClick={(e) => e.stopPropagation()}
         >
           <XIcon
@@ -173,9 +173,9 @@ export default function BoatEditForm({
             )}
           </CardHeader>
           <CardContent className="mx-auto">
-            <div className="flex w-full flex-col sm:flex-row items-center gap-2">
+            <div className="flex w-full flex-col sm:flex-row items-start gap-2">
               {/* Images */}
-              <div className="flex flex-col gap-2 w-5/6 sm:w-2/6 aspect-square min-h-[400px] max-h-[400px] sm:overflow-scroll scrollbar p-2">
+              <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square sm:min-h-[380px] sm:max-h-[400px] sm:overflow-scroll scrollbar p-2">
                 {/* Main Image */}
                 <Label
                   htmlFor="mainImage"
@@ -259,6 +259,100 @@ export default function BoatEditForm({
                       onChange={handleImageUpload}
                     />
                   </Label>
+                </div>
+              </div>
+              {/* Fields */}
+              <div className="w-full mx-5 space-y-2">
+                <div className="w-full flex sm:flex-row flex-col gap-2">
+                  <div className="flex-1">
+                    <Label htmlFor="username">Username</Label>
+                    <Input
+                      id="username"
+                      name="username"
+                      required
+                      type="text"
+                      placeholder="Enter your username"
+                      value={inputs.username}
+                      onChange={handleInputChange}
+                      onBlur={(e) => handleCheckUsername(e.target.value)}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      name="password"
+                      required
+                      type="text"
+                      placeholder="Enter your password"
+                      value={inputs.password}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <div className="w-full flex sm:flex-row flex-col gap-2">
+                  <div className="flex-1">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      name="firstName"
+                      required
+                      type="text"
+                      placeholder="Enter your name"
+                      value={inputs.firstName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      name="lastName"
+                      required
+                      type="text"
+                      placeholder="Enter your last name"
+                      value={inputs.lastName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="address">Address</Label>
+                  <Input
+                    id="address"
+                    name="address"
+                    required
+                    type="text"
+                    placeholder="Enter permanent address"
+                    value={inputs.address}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div className="w-full flex-1">
+                    <Label htmlFor="contact">Contact Number</Label>
+                    <Input
+                      id="contact"
+                      name="contact"
+                      required
+                      type="text"
+                      placeholder="Enter contact number"
+                      value={inputs.contact}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="birthdate">Birth Date</Label>
+                    <Input
+                      id="birthdate"
+                      name="birthdate"
+                      required
+                      type="date"
+                      value={formatInputDate(inputs.birthdate)}
+                      onChange={handleInputChange}
+                      className="!block"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
