@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCallback, useEffect, useState } from "react";
-import { ImageIcon, XIcon } from "lucide-react";
+import { ImageIcon, PlusCircleIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
 import { generateRandomString } from "@/lib/utils";
@@ -18,21 +18,33 @@ import { createTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
+import { Boat } from "@/lib/types";
+import Image from "next/image";
 
-const initialInputs = {
-  firstName: "",
-  lastName: "",
-  username: "",
-  password: "",
-  address: "",
-  contact: "",
-  birthdate: "",
-  email: "",
+const initialInputs: Boat = {
+  _id: "",
+  registrationNumber: "",
+  ownerName: "",
+  driverName: "",
+  boatName: "",
+  mainImage: "",
+  capacity: 0,
+  boatDetails: "",
+  images: [],
+  additionalInfo: "",
+  boatCode: "",
+  contactNumber: "",
+  lastCheck: "",
+  checkingDetails: "",
 };
 
-export default function AddTellerModal({}: {}) {
+export default function AddBoatModal({
+  setViewImage,
+}: {
+  setViewImage: (url: string) => void;
+}) {
   const { toast } = useToast();
-  const [imagePreview, setImagePreview] = useState("");
+  const [mainImagePreview, setMainImagePreview] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputs, setInputs] = useState(initialInputs);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -41,10 +53,20 @@ export default function AddTellerModal({}: {}) {
   const [error, setError] = useState("");
 
   const handleModal = () => {
-    const hasValues = Object.values(inputs).some(
-      (value) => value.trim() !== ""
-    );
-    if (isModalOpen && (hasValues || imagePreview)) {
+    const hasValues = Object.values(inputs).some((value) => {
+      if (typeof value === "string") {
+        return value.trim() !== "";
+      }
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      if (typeof value === "number") {
+        return value !== 0;
+      }
+      return value !== "";
+    });
+
+    if (isModalOpen && (hasValues || mainImagePreview)) {
       setIsAlertOpen(true);
       setPendingModalClose(true);
     } else {
@@ -66,25 +88,45 @@ export default function AddTellerModal({}: {}) {
     setPendingModalClose(false);
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleMainImageUpload = (event: any) => {
+    const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
+      const reader: any = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setMainImagePreview(reader.result);
       };
+      setInputs((prev: Boat) => ({
+        ...prev,
+        mainImage: reader.result,
+      }));
       reader.readAsDataURL(file);
     }
   };
 
-  function clearFileInput(fileInputId: string) {
-    const fileInput = document.getElementById(
-      fileInputId
-    ) as HTMLInputElement | null;
-    if (fileInput) {
-      fileInput.value = "";
+  const handleImageUpload = (event: any) => {
+    const files = event.target.files;
+    if (files.length > 0) {
+      const newImages: string[] = [];
+
+      Array.from(files).forEach((file: any) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = reader.result;
+          if (typeof result === "string") {
+            newImages.push(result);
+          }
+
+          if (newImages.length === files.length) {
+            setInputs((prev: Boat) => ({
+              ...prev,
+              images: [...(prev.images || []), ...newImages],
+            }));
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     }
-  }
+  };
 
   const handleGeneratePassword = () => {
     const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5); // Generate a password between 5 and 10 characters
@@ -103,34 +145,43 @@ export default function AddTellerModal({}: {}) {
   }, []);
 
   const handleReset = () => {
-    setImagePreview("");
+    setMainImagePreview("");
     setInputs(initialInputs);
-    clearFileInput("uploadImage");
+    clearMainImageInput();
   };
 
-  const handleCheckUsername = async (inputUsername: string) => {
-    const res = await isUsernameTaken(inputUsername);
-    if (res) {
-      setError("Username already taken.");
-    } else {
-      setError("");
+  function clearMainImageInput() {
+    const fileInput = document.getElementById(
+      "mainImage"
+    ) as HTMLInputElement | null;
+    if (fileInput) {
+      fileInput.value = "";
+      setMainImagePreview("");
+      setInputs((prev) => ({ ...prev, mainImage: "" }));
     }
+  }
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setInputs((prev) => ({
+      ...prev,
+      images: prev?.images?.filter((_, index) => index !== indexToRemove),
+    }));
   };
 
-  useEffect(() => {
-    if (state?.success) {
-      socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
-      handleReset();
-      setIsModalOpen(false);
-      toast({
-        title: "Teller Successfully Created.",
-        description:
-          "You can edit, delete and view this account by clicking the actions tab.",
-      });
-    } else if (!state?.success && state?.message) {
-      setError("Something went wrong, please enter valid inputs.");
-    }
-  }, [state?.success]);
+  // useEffect(() => {
+  //   if (state?.success) {
+  //     socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
+  //     handleReset();
+  //     setIsModalOpen(false);
+  //     toast({
+  //       title: "Teller Successfully Created.",
+  //       description:
+  //         "You can edit, delete and view this account by clicking the actions tab.",
+  //     });
+  //   } else if (!state?.success && state?.message) {
+  //     setError("Something went wrong, please enter valid inputs.");
+  //   }
+  // }, [state?.success]);
 
   return (
     <>
@@ -142,7 +193,7 @@ export default function AddTellerModal({}: {}) {
         onConfirm={handleAlertConfirm}
         onCancel={handleAlertCancel}
       />
-      <Button onClick={handleModal}>Add Teller</Button>
+      <Button onClick={handleModal}>Add Boat</Button>
       {isModalOpen && (
         <form
           action={formAction}
@@ -158,9 +209,9 @@ export default function AddTellerModal({}: {}) {
               onClick={handleModal}
             />
             <CardHeader>
-              <CardTitle>Add Teller Account</CardTitle>
+              <CardTitle>Add A Boat</CardTitle>
               <CardDescription>
-                Provide the necessary details for the account.
+                Provide the necessary details for the boat.
               </CardDescription>
               {error !== "" && (
                 <CardDescription className="text-red-500">
@@ -170,60 +221,95 @@ export default function AddTellerModal({}: {}) {
             </CardHeader>
             <CardContent className="mx-auto">
               <div className="flex w-full flex-col sm:flex-row items-center gap-2">
-                <div className="relative w-full max-w-[200px] h-full">
+                {/* Images */}
+                <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square sm:min-h-[550px] sm:max-h-[400px] sm:overflow-y-auto scrollbar p-2">
+                  {/* Main Image */}
                   <Label
-                    htmlFor="uploadImage"
-                    className={`bg-white z-10 space-y-1 group w-full h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
+                    htmlFor="mainImage"
+                    className={`bg-white relative z-10 space-y-1 group flex items-center min-h-[200px] justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
                   >
-                    {imagePreview ? (
-                      <img
-                        src={imagePreview}
-                        alt="Uploaded"
-                        className="w-full h-full object-cover"
-                      />
+                    {mainImagePreview ? (
+                      <>
+                        <img
+                          src={mainImagePreview}
+                          alt="Uploaded"
+                          className="w-full h-full object-cover"
+                        />
+                        <Input
+                          type="string"
+                          id="image"
+                          name="image"
+                          className="hidden"
+                          value={mainImagePreview}
+                        />
+                        <XIcon
+                          className="absolute z-20 -top-3 -right-2 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
+                          size={20}
+                          onClick={(e) => {
+                            e.preventDefault(); // Prevent default action if necessary
+                            e.stopPropagation(); // Prevent the event from reaching the parent
+                            clearMainImageInput();
+                          }}
+                        />
+                      </>
                     ) : (
                       <>
                         <ImageIcon className="group-hover:opacity-70 opacity-50" />
                         <p className="group-hover:opacity-70 opacity-50">
-                          Upload An Image
+                          Upload A Main Image
                         </p>
                       </>
                     )}
+                    <Input
+                      type="file"
+                      id="mainImage"
+                      name="mainImage"
+                      accept=".png,.jpg,.jpeg"
+                      className="hidden"
+                      onChange={handleMainImageUpload}
+                    />
                   </Label>
-
-                  <Input
-                    type="file"
-                    id="uploadImage"
-                    name="uploadImage"
-                    accept=".png,.jpg,.jpeg"
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                  {imagePreview && (
-                    <>
-                      <Button
-                        type="button"
-                        className="w-full mt-1 hover:bg-primary/80 hover:text-white"
-                        variant="outline"
-                        onClick={() => {
-                          setImagePreview("");
-                          clearFileInput("uploadImage");
-                        }}
-                      >
-                        Remove
-                      </Button>
+                  {/* Images */}
+                  <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
+                    {inputs?.images?.map((img, idx) => (
+                      <div className="relative">
+                        <Image
+                          width={150}
+                          height={150}
+                          src={img as string}
+                          alt="sad"
+                          className="w-full aspect-square rounded cursor-pointer hover:brightness-100 brightness-[0.8] object-cover"
+                          onClick={() => setViewImage(img as string)}
+                        />
+                        <XIcon
+                          className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
+                          size={20}
+                          onClick={() => handleRemoveImage(idx)}
+                        />
+                      </div>
+                    ))}
+                    <Label
+                      htmlFor="uploadDocs"
+                      className={`bg-white z-10 space-y-1 group w-full aspect-square flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded border-dashed`}
+                    >
+                      <PlusCircleIcon className="group-hover:opacity-70 opacity-50" />
+                      <p className="group-hover:opacity-70 opacity-50 text-center text-[10px] sm:text-xs px-2">
+                        Upload An Image or Document
+                      </p>
                       <Input
-                        type="string"
-                        id="imageBase64"
-                        name="imageBase64"
+                        type="file"
+                        id="uploadDocs"
+                        name="uploadDocs"
+                        accept=".png,.jpg,.jpeg"
                         className="hidden"
-                        value={imagePreview}
+                        multiple
+                        onChange={handleImageUpload}
                       />
-                    </>
-                  )}
+                    </Label>
+                  </div>
                 </div>
                 <div className="w-full mx-5 space-y-2">
-                  <div className="w-full flex sm:flex-row flex-col gap-2">
+                  {/* <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
                       <Label htmlFor="username">Username</Label>
                       <Input
@@ -325,7 +411,7 @@ export default function AddTellerModal({}: {}) {
                         className="!block"
                       />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </CardContent>

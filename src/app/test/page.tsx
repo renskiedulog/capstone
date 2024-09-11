@@ -29,9 +29,7 @@ export default function Home() {
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("newActivity", () => {
-      console.log("new activity found");
-    });
+    socket.on("newActivity");
 
     return () => {
       socket.off("connect", onConnect);

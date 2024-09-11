@@ -44,12 +44,12 @@ export interface Boat {
   _id: string;
   registrationNumber: string;
   mainImage?: string;
-  ownerName: string;
+  ownerName?: string;
   capacity: number;
-  status: "queueing" | "boarding" | "standby";
-  registrationStatus: "registered" | "pending" | "unregistered";
-  boatDetails: string;
-  images: String[];
+  status?: "queueing" | "boarding" | "standby";
+  registrationStatus?: "registered" | "pending" | "unregistered";
+  boatDetails?: string;
+  images?: String[];
   additionalInfo?: string;
   boatCode?: string;
   contactNumber: string;
@@ -58,4 +58,5 @@ export interface Boat {
   driverName?: string;
   boatName?: string;
   lastCheck?: Date | string;
+  checkingDetails?: string;
 }

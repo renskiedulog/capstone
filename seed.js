@@ -55,7 +55,6 @@ const User = models.User || mongoose.model("User", userSchema);
 async function connectMongoDB() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
-    console.log("Connected to MongoDB");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   }
@@ -64,7 +63,6 @@ async function connectMongoDB() {
 async function disconnectDB() {
   try {
     await mongoose.connection.close();
-    console.log("Disconnected from MongoDB");
   } catch (error) {
     console.error("Error disconnecting from MongoDB:", error);
   }

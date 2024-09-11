@@ -13,9 +13,9 @@ import { useCallback, useEffect, useState } from "react";
 import { ImageIcon, PlusCircleIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { formatInputDate, generateRandomString, isEqual } from "@/lib/utils";
+import { formatInputDate, isEqual } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
-import { editTeller, isUsernameTaken } from "@/lib/api/tellerActions";
+import { editTeller } from "@/lib/api/tellerActions";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { Boat } from "@/lib/types";
@@ -119,7 +119,7 @@ export default function BoatEditForm({
   const handleRemoveImage = (indexToRemove: number) => {
     setInputs((prev) => ({
       ...prev,
-      images: prev.images.filter((_, index) => index !== indexToRemove),
+      images: prev?.images?.filter((_, index) => index !== indexToRemove),
     }));
   };
 

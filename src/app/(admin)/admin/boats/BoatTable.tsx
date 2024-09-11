@@ -41,6 +41,7 @@ import { deleteTellerAccount, fetchTellers } from "@/lib/api/tellerActions";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
 import socket from "@/socket";
+import AddBoatModal from "./AddBoatModal";
 
 export default function BoatTable({ initData }: { initData: Boat[] }) {
   const [data, setData] = React.useState<Boat[]>(initData);
@@ -330,12 +331,12 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
               (table.getColumn("boatName")?.getFilterValue() as string) ?? ""
             }
             onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
+              table.getColumn("boatName")?.setFilterValue(event.target.value)
             }
             className="w-[200px] max-w-sm md:w-full"
           />
           <div className="flex items-center gap-2">
-            {/* <AddTellerModal /> */}
+            <AddBoatModal setViewImage={setViewImage} />
           </div>
         </div>
         <div className="rounded-md border">

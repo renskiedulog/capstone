@@ -30,7 +30,7 @@ const initialInputs = {
   email: "",
 };
 
-export default function AddTellerModal({}: {}) {
+export default function AddTellerModal() {
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
