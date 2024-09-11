@@ -13,13 +13,22 @@ import { useCallback, useEffect, useState } from "react";
 import { ImageIcon, PlusCircleIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { generateRandomString } from "@/lib/utils";
+import { formatInputDate, generateRandomString } from "@/lib/utils";
 import { createTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { Boat } from "@/lib/types";
 import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const initialInputs: Boat = {
   _id: "",
@@ -33,9 +42,13 @@ const initialInputs: Boat = {
   images: [],
   additionalInfo: "",
   boatCode: "",
-  contactNumber: "",
   lastCheck: "",
   checkingDetails: "",
+  ownerContactNumber: "",
+  driverContactNumber: "",
+  status: "standby",
+  registrationStatus: "registered",
+  checkingStatus: "not-checked",
 };
 
 export default function AddBoatModal({
@@ -73,6 +86,8 @@ export default function AddBoatModal({
       setIsModalOpen((prev) => !prev);
     }
   };
+
+  console.log(inputs);
 
   const handleAlertConfirm = () => {
     handleReset();
@@ -220,7 +235,7 @@ export default function AddBoatModal({
               )}
             </CardHeader>
             <CardContent className="mx-auto ">
-              <div className="flex w-full flex-col sm:flex-row items-center gap-2">
+              <div className="flex w-full flex-col sm:flex-row items-center sm:items-start gap-2">
                 {/* Images */}
                 <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square sm:min-h-[500px] sm:max-h-[400px] sm:overflow-y-auto scrollbar p-2">
                   {/* Main Image */}
@@ -241,6 +256,7 @@ export default function AddBoatModal({
                           name="image"
                           className="hidden"
                           value={mainImagePreview}
+                          readOnly
                         />
                         <XIcon
                           className="absolute z-20 -top-3 -right-2 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
@@ -272,7 +288,7 @@ export default function AddBoatModal({
                   {/* Images */}
                   <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
                     {inputs?.images?.map((img, idx) => (
-                      <div className="relative">
+                      <div className="relative" key={idx}>
                         <Image
                           width={150}
                           height={150}
@@ -309,109 +325,186 @@ export default function AddBoatModal({
                   </div>
                 </div>
                 <div className="w-full mx-5 space-y-2">
-                  {/* <div className="w-full flex sm:flex-row flex-col gap-2">
+                  <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
-                      <Label htmlFor="username">Username</Label>
+                      <Label htmlFor="registrationNumber">
+                        Registration Number
+                      </Label>
                       <Input
-                        id="username"
-                        name="username"
+                        id="registrationNumber"
+                        name="registrationNumber"
                         required
                         type="text"
-                        placeholder="Enter your username"
-                        value={inputs.username}
+                        placeholder="Enter registration number"
+                        value={inputs.registrationNumber}
                         onChange={handleInputChange}
-                        onBlur={(e) => handleCheckUsername(e.target.value)}
                       />
                     </div>
                     <div className="flex-1">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="boatCode">Boat Code</Label>
                       <Input
-                        id="password"
-                        name="password"
+                        id="boatCode"
+                        name="boatCode"
                         required
                         type="text"
-                        placeholder="Enter your password"
-                        value={inputs.password}
+                        placeholder="Enter boat code"
+                        value={inputs.boatCode}
                         onChange={handleInputChange}
                       />
                     </div>
                   </div>
                   <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
-                      <Label htmlFor="firstName">First Name</Label>
+                      <Label htmlFor="ownerName">Owner Name</Label>
                       <Input
-                        id="firstName"
-                        name="firstName"
+                        id="ownerName"
+                        name="ownerName"
                         required
                         type="text"
-                        placeholder="Enter your name"
-                        value={inputs.firstName}
+                        placeholder="Enter owner name"
+                        value={inputs.ownerName}
                         onChange={handleInputChange}
                       />
                     </div>
                     <div className="flex-1">
-                      <Label htmlFor="lastName">Last Name</Label>
+                      <Label htmlFor="ownerContactNumber">
+                        Owner Contact Number
+                      </Label>
                       <Input
-                        id="lastName"
-                        name="lastName"
+                        id="ownerContactNumber"
+                        name="ownerContactNumber"
                         required
                         type="text"
-                        placeholder="Enter your last name"
-                        value={inputs.lastName}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      required
-                      type="email"
-                      placeholder="Enter permanent email"
-                      value={inputs.email}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="address">Address</Label>
-                    <Input
-                      id="address"
-                      name="address"
-                      required
-                      type="text"
-                      placeholder="Enter permanent address"
-                      value={inputs.address}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-2">
-                    <div className="w-full flex-1">
-                      <Label htmlFor="address">Contact Number</Label>
-                      <Input
-                        id="contact"
-                        name="contact"
-                        required
-                        type="tel"
                         placeholder="Enter contact number"
-                        value={inputs.contact}
+                        value={inputs.ownerContactNumber}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex sm:flex-row flex-col gap-2">
+                    <div className="flex-1">
+                      <Label htmlFor="driverName">Driver Name</Label>
+                      <Input
+                        id="driverName"
+                        name="driverName"
+                        required
+                        type="text"
+                        placeholder="Enter driver name"
+                        value={inputs.driverName}
                         onChange={handleInputChange}
                       />
                     </div>
                     <div className="flex-1">
-                      <Label htmlFor="address">Birth Date</Label>
+                      <Label htmlFor="driverContactNumber">
+                        Driver Contact Number
+                      </Label>
                       <Input
-                        id="birthdate"
-                        name="birthdate"
+                        id="driverContactNumber"
+                        name="driverContactNumber"
+                        required
+                        type="text"
+                        placeholder="Enter contact number"
+                        value={inputs.driverContactNumber}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex sm:flex-row flex-col gap-2">
+                    <div className="flex-1">
+                      <Label htmlFor="boatName">Boat Name</Label>
+                      <Input
+                        id="boatName"
+                        name="boatName"
+                        required
+                        type="text"
+                        placeholder="Enter boat name"
+                        value={inputs.boatName}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="capacity">Capacity</Label>
+                      <Input
+                        id="capacity"
+                        name="capacity"
+                        required
+                        type="number"
+                        placeholder="Enter boat capacity"
+                        value={inputs.capacity}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full flex sm:flex-row flex-col gap-2">
+                    <div className="flex-1">
+                      <Label htmlFor="lastCheck">Last Check Date</Label>
+                      <Input
+                        id="lastCheck"
+                        name="lastCheck"
                         required
                         type="date"
-                        value={inputs.birthdate}
                         onChange={handleInputChange}
-                        className="!block"
                       />
                     </div>
-                  </div> */}
+                    <div className="flex-1">
+                      <Label htmlFor="lastCheck">Checking Status</Label>
+                      <Select
+                        defaultValue="not-checked"
+                        name="checkingStatus"
+                        onValueChange={(val) =>
+                          setInputs((prev) => ({
+                            ...prev,
+                            checkingStatus: val,
+                          }))
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="not-checked">
+                              Not Checked
+                            </SelectItem>
+                            <SelectItem value="checked">Checked</SelectItem>
+                            <SelectItem value="under-inspection">
+                              Under Inspection
+                            </SelectItem>
+                            <SelectItem value="requires-repair">
+                              Requires Repair
+                            </SelectItem>
+                            <SelectItem value="not-sailable">
+                              Not Sailable
+                            </SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="boatDetails">Boat Details</Label>
+                    <Input
+                      id="boatDetails"
+                      name="boatDetails"
+                      required
+                      type="text"
+                      placeholder="Enter boat details"
+                      value={inputs.boatDetails}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="additionalInfo">Additional Info</Label>
+                    <Textarea
+                      id="additionalInfo"
+                      name="additionalInfo"
+                      required
+                      placeholder="Enter additional info"
+                      value={inputs.additionalInfo}
+                      onChange={handleInputChange}
+                      className="resize-none min-h-40"
+                    />
+                  </div>
                 </div>
               </div>
             </CardContent>

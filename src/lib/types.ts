@@ -53,7 +53,8 @@ export interface Boat {
     | "checked"
     | "under-inspection"
     | "requires-repair"
-    | "not-sailable";
+    | "not-sailable"
+    | string;
   boatDetails?: string;
   images?: String[];
   additionalInfo?: string;
@@ -65,6 +66,5 @@ export interface Boat {
   driverName?: string;
   boatName?: string;
   lastCheck?: Date | string;
-  nextCheckDate?: Date | string;
   checkingDetails?: string;
 }

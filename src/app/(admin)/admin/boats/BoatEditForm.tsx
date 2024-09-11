@@ -417,26 +417,12 @@ export default function BoatEditForm({
                           <SelectItem value="requires-repair">
                             Requires Repair
                           </SelectItem>
-                          <SelectItem value="cleared-for-sailing">
-                            Cleared for Sailing
-                          </SelectItem>
                           <SelectItem value="not-sailable">
                             Not Sailable
                           </SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="flex-1">
-                    <Label htmlFor="nextCheckDate">Next Checking Date</Label>
-                    <Input
-                      id="nextCheckDate"
-                      name="nextCheckDate"
-                      required
-                      type="date"
-                      value={formatInputDate(inputs.nextCheckDate as string)}
-                      onChange={handleInputChange}
-                    />
                   </div>
                 </div>
                 <div className="flex-1">
