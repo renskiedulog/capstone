@@ -11,6 +11,7 @@ const boatSchema = new Schema(
       type: String,
       required: true,
     },
+    driverName: String,
     boatName: {
       type: String,
       required: true,
@@ -46,6 +47,12 @@ const boatSchema = new Schema(
     contactNumber: {
       type: String,
       required: true,
+    },
+    lastCheck: {
+      type: Date,
+    },
+    checkingDetails: {
+      type: String,
     },
   },
   { timestamps: true }

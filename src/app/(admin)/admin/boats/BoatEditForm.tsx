@@ -20,6 +20,7 @@ import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { Boat } from "@/lib/types";
 import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function BoatEditForm({
   boatDetails,
@@ -173,13 +174,13 @@ export default function BoatEditForm({
             )}
           </CardHeader>
           <CardContent className="mx-auto">
-            <div className="flex w-full flex-col sm:flex-row items-start gap-2">
+            <div className="flex w-full flex-col sm:flex-row items-center sm:items-start gap-2">
               {/* Images */}
-              <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square sm:min-h-[380px] sm:max-h-[400px] sm:overflow-scroll scrollbar p-2">
+              <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square sm:min-h-[550px] sm:max-h-[400px] sm:overflow-y-auto scrollbar p-2">
                 {/* Main Image */}
                 <Label
                   htmlFor="mainImage"
-                  className={`bg-white relative z-10 space-y-1 group flex items-center min-h-[180px] justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
+                  className={`bg-white relative z-10 space-y-1 group flex items-center min-h-[200px] justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
                 >
                   {mainImagePreview ? (
                     <>
@@ -265,94 +266,132 @@ export default function BoatEditForm({
               <div className="w-full mx-5 space-y-2">
                 <div className="w-full flex sm:flex-row flex-col gap-2">
                   <div className="flex-1">
-                    <Label htmlFor="username">Username</Label>
+                    <Label htmlFor="registrationNumber">
+                      Registration Number
+                    </Label>
                     <Input
-                      id="username"
-                      name="username"
+                      id="registrationNumber"
+                      name="registrationNumber"
                       required
                       type="text"
-                      placeholder="Enter your username"
-                      value={inputs.username}
+                      placeholder="Enter registration number"
+                      value={inputs.registrationNumber}
                       onChange={handleInputChange}
-                      onBlur={(e) => handleCheckUsername(e.target.value)}
                     />
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="ownerName">Owner Name</Label>
                     <Input
-                      id="password"
-                      name="password"
+                      id="ownerName"
+                      name="ownerName"
                       required
                       type="text"
-                      placeholder="Enter your password"
-                      value={inputs.password}
+                      placeholder="Enter owner name"
+                      value={inputs.ownerName}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
                 <div className="w-full flex sm:flex-row flex-col gap-2">
                   <div className="flex-1">
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="driverName">Driver Name</Label>
                     <Input
-                      id="firstName"
-                      name="firstName"
+                      id="driverName"
+                      name="driverName"
                       required
                       type="text"
-                      placeholder="Enter your name"
-                      value={inputs.firstName}
+                      placeholder="Enter driver name"
+                      value={inputs.driverName}
                       onChange={handleInputChange}
                     />
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="boatName">Boat Name</Label>
                     <Input
-                      id="lastName"
-                      name="lastName"
+                      id="boatName"
+                      name="boatName"
                       required
                       type="text"
-                      placeholder="Enter your last name"
-                      value={inputs.lastName}
+                      placeholder="Enter boat name"
+                      value={inputs.boatName}
                       onChange={handleInputChange}
                     />
                   </div>
                 </div>
-                <div>
-                  <Label htmlFor="address">Address</Label>
-                  <Input
-                    id="address"
-                    name="address"
-                    required
-                    type="text"
-                    placeholder="Enter permanent address"
-                    value={inputs.address}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <div className="w-full flex-1">
-                    <Label htmlFor="contact">Contact Number</Label>
+                <div className="w-full flex sm:flex-row flex-col gap-2">
+                  <div className="flex-1">
+                    <Label htmlFor="capacity">Capacity</Label>
                     <Input
-                      id="contact"
-                      name="contact"
+                      id="capacity"
+                      name="capacity"
+                      required
+                      type="number"
+                      placeholder="Enter boat capacity"
+                      value={inputs.capacity}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="boatCode">Boat Code</Label>
+                    <Input
+                      id="boatCode"
+                      name="boatCode"
+                      required
+                      type="text"
+                      placeholder="Enter boat code"
+                      value={inputs.boatCode}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <div className="w-full flex sm:flex-row flex-col gap-2">
+                  <div className="flex-1">
+                    <Label htmlFor="contactNumber">Contact Number</Label>
+                    <Input
+                      id="contactNumber"
+                      name="contactNumber"
                       required
                       type="text"
                       placeholder="Enter contact number"
-                      value={inputs.contact}
+                      value={inputs.contactNumber}
                       onChange={handleInputChange}
                     />
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="birthdate">Birth Date</Label>
+                    <Label htmlFor="lastCheck">Last Check Date</Label>
                     <Input
-                      id="birthdate"
-                      name="birthdate"
+                      id="lastCheck"
+                      name="lastCheck"
                       required
                       type="date"
-                      value={formatInputDate(inputs.birthdate)}
+                      value={formatInputDate(inputs.lastCheck as string)}
                       onChange={handleInputChange}
-                      className="!block"
                     />
                   </div>
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="boatDetails">Boat Details</Label>
+                  <Input
+                    id="boatDetails"
+                    name="boatDetails"
+                    required
+                    type="text"
+                    placeholder="Enter boat details"
+                    value={inputs.boatDetails}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="flex-1">
+                  <Label htmlFor="additionalInfo">Additional Info</Label>
+                  <Textarea
+                    id="additionalInfo"
+                    name="additionalInfo"
+                    required
+                    placeholder="Enter additional info"
+                    value={inputs.additionalInfo}
+                    onChange={handleInputChange}
+                    className="resize-none min-h-40"
+                  />
                 </div>
               </div>
             </div>

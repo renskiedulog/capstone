@@ -55,4 +55,7 @@ export interface Boat {
   contactNumber: string;
   createdAt?: Date;
   updatedAt?: Date;
+  driverName?: string;
+  boatName?: string;
+  lastCheck?: Date | string;
 }
