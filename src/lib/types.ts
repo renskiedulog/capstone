@@ -48,15 +48,23 @@ export interface Boat {
   capacity: number;
   status?: "queueing" | "boarding" | "standby";
   registrationStatus?: "registered" | "pending" | "unregistered";
+  checkingStatus?:
+    | "not-checked"
+    | "checked"
+    | "under-inspection"
+    | "requires-repair"
+    | "not-sailable";
   boatDetails?: string;
   images?: String[];
   additionalInfo?: string;
   boatCode?: string;
-  contactNumber: string;
+  ownerContactNumber?: string;
+  driverContactNumber?: string;
   createdAt?: Date;
   updatedAt?: Date;
   driverName?: string;
   boatName?: string;
   lastCheck?: Date | string;
+  nextCheckDate?: Date | string;
   checkingDetails?: string;
 }

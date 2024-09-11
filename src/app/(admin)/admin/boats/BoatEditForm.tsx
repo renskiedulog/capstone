@@ -21,6 +21,15 @@ import socket from "@/socket";
 import { Boat } from "@/lib/types";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function BoatEditForm({
   boatDetails,
@@ -63,11 +72,11 @@ export default function BoatEditForm({
       const reader: any = new FileReader();
       reader.onloadend = () => {
         setMainImagePreview(reader.result);
+        setInputs((prev: Boat) => ({
+          ...prev,
+          mainImage: reader.result,
+        }));
       };
-      setInputs((prev: Boat) => ({
-        ...prev,
-        mainImage: reader.result,
-      }));
       reader.readAsDataURL(file);
     }
   };
@@ -280,6 +289,20 @@ export default function BoatEditForm({
                     />
                   </div>
                   <div className="flex-1">
+                    <Label htmlFor="boatCode">Boat Code</Label>
+                    <Input
+                      id="boatCode"
+                      name="boatCode"
+                      required
+                      type="text"
+                      placeholder="Enter boat code"
+                      value={inputs.boatCode}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <div className="w-full flex sm:flex-row flex-col gap-2">
+                  <div className="flex-1">
                     <Label htmlFor="ownerName">Owner Name</Label>
                     <Input
                       id="ownerName"
@@ -288,6 +311,20 @@ export default function BoatEditForm({
                       type="text"
                       placeholder="Enter owner name"
                       value={inputs.ownerName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="ownerContactNumber">
+                      Owner Contact Number
+                    </Label>
+                    <Input
+                      id="ownerContactNumber"
+                      name="ownerContactNumber"
+                      required
+                      type="text"
+                      placeholder="Enter contact number"
+                      value={inputs.ownerContactNumber}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -306,6 +343,22 @@ export default function BoatEditForm({
                     />
                   </div>
                   <div className="flex-1">
+                    <Label htmlFor="driverContactNumber">
+                      Driver Contact Number
+                    </Label>
+                    <Input
+                      id="driverContactNumber"
+                      name="driverContactNumber"
+                      required
+                      type="text"
+                      placeholder="Enter contact number"
+                      value={inputs.driverContactNumber}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+                <div className="w-full flex sm:flex-row flex-col gap-2">
+                  <div className="flex-1">
                     <Label htmlFor="boatName">Boat Name</Label>
                     <Input
                       id="boatName"
@@ -317,8 +370,6 @@ export default function BoatEditForm({
                       onChange={handleInputChange}
                     />
                   </div>
-                </div>
-                <div className="w-full flex sm:flex-row flex-col gap-2">
                   <div className="flex-1">
                     <Label htmlFor="capacity">Capacity</Label>
                     <Input
@@ -331,32 +382,8 @@ export default function BoatEditForm({
                       onChange={handleInputChange}
                     />
                   </div>
-                  <div className="flex-1">
-                    <Label htmlFor="boatCode">Boat Code</Label>
-                    <Input
-                      id="boatCode"
-                      name="boatCode"
-                      required
-                      type="text"
-                      placeholder="Enter boat code"
-                      value={inputs.boatCode}
-                      onChange={handleInputChange}
-                    />
-                  </div>
                 </div>
                 <div className="w-full flex sm:flex-row flex-col gap-2">
-                  <div className="flex-1">
-                    <Label htmlFor="contactNumber">Contact Number</Label>
-                    <Input
-                      id="contactNumber"
-                      name="contactNumber"
-                      required
-                      type="text"
-                      placeholder="Enter contact number"
-                      value={inputs.contactNumber}
-                      onChange={handleInputChange}
-                    />
-                  </div>
                   <div className="flex-1">
                     <Label htmlFor="lastCheck">Last Check Date</Label>
                     <Input
@@ -365,6 +392,49 @@ export default function BoatEditForm({
                       required
                       type="date"
                       value={formatInputDate(inputs.lastCheck as string)}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="lastCheck">Checking Status</Label>
+                    <Select
+                      defaultValue="not-checked"
+                      name="checkingStatus"
+                      onValueChange={handleInputChange}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="not-checked">
+                            Not Checked
+                          </SelectItem>
+                          <SelectItem value="checked">Checked</SelectItem>
+                          <SelectItem value="under-inspection">
+                            Under Inspection
+                          </SelectItem>
+                          <SelectItem value="requires-repair">
+                            Requires Repair
+                          </SelectItem>
+                          <SelectItem value="cleared-for-sailing">
+                            Cleared for Sailing
+                          </SelectItem>
+                          <SelectItem value="not-sailable">
+                            Not Sailable
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="nextCheckDate">Next Checking Date</Label>
+                    <Input
+                      id="nextCheckDate"
+                      name="nextCheckDate"
+                      required
+                      type="date"
+                      value={formatInputDate(inputs.nextCheckDate as string)}
                       onChange={handleInputChange}
                     />
                   </div>

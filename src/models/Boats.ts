@@ -44,7 +44,11 @@ const boatSchema = new Schema(
       type: String,
       unique: true,
     },
-    contactNumber: {
+    ownerContactNumber: {
+      type: String,
+      required: true,
+    },
+    driverContactNumber: {
       type: String,
       required: true,
     },

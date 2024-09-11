@@ -126,7 +126,9 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
         return <p>Boat Name</p>;
       },
       cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("boatName")}</div>
+        <div className="text-left lowercase reverse">
+          {row.getValue("boatName")}
+        </div>
       ),
     },
     {
