@@ -143,14 +143,6 @@ export default function AddBoatModal({
     }
   };
 
-  const handleGeneratePassword = () => {
-    const newPassword = generateRandomString(Math.floor(Math.random() * 6) + 5); // Generate a password between 5 and 10 characters
-    setInputs((prevInputs) => ({
-      ...prevInputs,
-      password: newPassword,
-    }));
-  };
-
   const handleInputChange = useCallback((e: any) => {
     const { name, value } = e.target;
     setInputs((prevInputs) => ({
@@ -510,14 +502,6 @@ export default function AddBoatModal({
             </CardContent>
             <CardFooter className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="!text-xs"
-                  onClick={handleGeneratePassword}
-                >
-                  Generate Password
-                </Button>
                 <Button
                   type="button"
                   variant="ghost"

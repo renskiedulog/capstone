@@ -61,7 +61,7 @@ const page = async () => {
       <StatCards data={cards} />
       <div>
         <RecentTellers data={recentTellers} />
-        <Activity />
+        <Activity  />
       </div>
     </div>
   );
