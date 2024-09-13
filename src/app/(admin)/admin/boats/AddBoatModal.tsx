@@ -216,7 +216,7 @@ export default function AddBoatModal({
           onClick={handleModal}
         >
           <Card
-            className="border-none w-full max-w-3xl mx-5 relative max-h-[700px] overflow-y-auto scrollbar"
+            className="border-none w-full max-w-3xl mx-5 relative max-h-[90vh] overflow-y-auto scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             <XIcon
@@ -237,7 +237,7 @@ export default function AddBoatModal({
             <CardContent className="mx-auto ">
               <div className="flex w-full flex-col sm:flex-row items-center sm:items-start gap-2">
                 {/* Images */}
-                <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square sm:min-h-[500px] sm:max-h-[400px] sm:overflow-y-auto scrollbar p-2">
+                <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square p-2">
                   {/* Main Image */}
                   <Label
                     htmlFor="mainImage"
@@ -324,7 +324,7 @@ export default function AddBoatModal({
                     </Label>
                   </div>
                 </div>
-                <div className="w-full mx-5 space-y-2">
+                <div className="w-full mx-5 space-y-2 sticky">
                   <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
                       <Label htmlFor="registrationNumber">
