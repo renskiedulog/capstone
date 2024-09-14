@@ -42,10 +42,10 @@ function RecentTellers({ data }: { data: UserTypes[] }) {
         </div>
         <UserIcon size={30} />
       </CardHeader>
-      <CardContent className="grid gap-8">
+      <CardContent className="flex flex-col gap-5">
         {recentTellers?.length > 0 ? (
-          recentTellers?.map((teller, idx) => (
-            <div key={idx} className="flex items-center gap-4">
+          recentTellers?.map((teller) => (
+            <div key={teller?.username} className="flex items-center gap-4">
               {teller?.username && (
                 <Link href={`/profile/${teller.username}`}>
                   <Avatar name={teller?.fullName} image={teller?.image} />

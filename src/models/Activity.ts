@@ -4,26 +4,22 @@ const activitySchema = new Schema(
   {
     type: {
       type: String,
-      enum: ['teller', 'boat', 'passenger', 'queue'],
-      required: true
+      enum: ["teller", "boat", "passenger", "queue"],
+      required: true,
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     details: {
       type: String,
-      default: ''
+      default: "",
     },
     date: {
       type: Date,
-      default: Date.now
+      default: Date.now,
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    }
+    link: String,
   },
   { timestamps: true }
 );

@@ -1,16 +1,28 @@
 "use server";
 import User from "@/models/User";
 import { connectMongoDB } from "../db";
+import Activity from "@/models/Activity";
 
 export const getRecentTellers = async () => {
   try {
     await connectMongoDB();
-    const tellers = await User?.find({ isDeleted: false, isAdmin: false })
-      ?.sort({ createdAt: -1 })
-      ?.limit(5);
 
-    return tellers;
+    const tellers = await User.find({ isDeleted: false, isAdmin: false })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .exec();
+
+    const plainTellers = tellers.map((teller) => {
+      const { _id, ...rest } = teller.toObject();
+      return {
+        _id: _id.toString(),
+        ...rest,
+      };
+    });
+
+    return plainTellers;
   } catch (error) {
+    console.error("Error fetching recent tellers:", error);
     return [];
   }
 };
@@ -68,5 +80,22 @@ export const logOutDB = async (username: string) => {
     }
   } catch (error) {
     console.error("Error during logout:", error);
+  }
+};
+
+export const getRecentActivities = async () => {
+  try {
+    const activities = await Activity.find();
+    const plainActivities = activities.map((activity) => {
+      const { _id, ...rest } = activity.toObject();
+      return {
+        _id: _id.toString(),
+        ...rest,
+      };
+    });
+    return plainActivities;
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+    return [];
   }
 };

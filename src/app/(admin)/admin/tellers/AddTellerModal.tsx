@@ -119,9 +119,14 @@ export default function AddTellerModal() {
   };
 
   const addActivity = async () => {
-    await addNewActivity({ type: "teller", title: "Added Teller Account", description: `Account with the username '${inputs.username}' has been added.` });
+    await addNewActivity({
+      type: "teller",
+      title: "Added Teller Account",
+      details: `Account with the username '${inputs.username}' has been added.`,
+      username: `/profile/${inputs?.username}`,
+    });
     socket.emit("newActivity");
-  }
+  };
 
   useEffect(() => {
     if (state?.success) {

@@ -7,8 +7,13 @@ import LineChartCard from "./LineChartCard";
 import StatCards from "@/app/(teller)/dashboard/StatCards";
 import { DollarSign, UserIcon } from "lucide-react";
 import RecentTellers from "./RecentTellers";
-import { getRecentTellers, getTellerCount } from "@/lib/api/common";
+import {
+  getRecentActivities,
+  getRecentTellers,
+  getTellerCount,
+} from "@/lib/api/common";
 import Activity from "./Activity";
+import { ActivityTypes } from "@/lib/types";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -21,6 +26,7 @@ const page = async () => {
 
   const tellerCount = await getTellerCount();
   const recentTellers = await getRecentTellers();
+  const activities = await getRecentActivities();
 
   const cards = [
     {
@@ -58,10 +64,13 @@ const page = async () => {
       <LineChartCard />
       <WaveChartCard />
       <CircularChartCard /> */}
-      <StatCards data={cards} />
       <div className="space-y-2">
+        <StatCards data={cards} />
         <RecentTellers data={recentTellers} />
-        <Activity  />
+      </div>
+
+      <div className="space-y-2">
+        <Activity initData={activities as ActivityTypes[]} />
       </div>
     </div>
   );

@@ -105,9 +105,14 @@ export default function EditForm({
   };
 
   const addActivity = async () => {
-    await addNewActivity({ type: "teller", title: "Updated Teller Account", description: `Account with the username '${inputs.username}' has been updated.` });
+    await addNewActivity({
+      type: "teller",
+      title: "Updated Teller Account",
+      details: `Account with the username '${inputs.username}' has been updated.`,
+      link: `/profile/${inputs?.username}`,
+    });
     socket.emit("newActivity");
-  }
+  };
 
   useEffect(() => {
     if (state?.success) {

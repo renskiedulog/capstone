@@ -68,3 +68,13 @@ export interface Boat {
   lastCheck?: Date | string;
   checkingDetails?: string;
 }
+
+export interface ActivityTypes {
+  id: string;
+  title: string;
+  subtitle: string;
+  details: string;
+  link: string;
+  type: "teller" | "boat" | "passenger" | "queue";
+  createdAt: string;
+}
