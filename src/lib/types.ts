@@ -24,7 +24,7 @@ export interface UserTypes {
   address?: string;
   image?: string;
   contact: string;
-  birthdate: Date;
+  birthdate: Date | string;
   status: "active" | "inactive";
   createdAt: string;
   updatedAt: string;

@@ -18,6 +18,7 @@ import { createTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
+import { addNewActivity } from "@/lib/api/activity";
 
 const initialInputs = {
   firstName: "",
@@ -117,10 +118,16 @@ export default function AddTellerModal() {
     }
   };
 
+  const addActivity = async () => {
+    await addNewActivity({ type: "teller", title: "Added Teller Account", description: `Account with the username '${inputs.username}' has been added.` });
+    socket.emit("newActivity");
+  }
+
   useEffect(() => {
     if (state?.success) {
       socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       handleReset();
+      addActivity();
       setIsModalOpen(false);
       toast({
         title: "Teller Successfully Created.",

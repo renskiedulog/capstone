@@ -28,7 +28,7 @@ export const generateRandomString = (length: any) => {
   return result;
 };
 
-export function formatInputDate(dateString: string) {
+export function formatInputDate(dateString: string | Date) {
   const date = new Date(dateString);
 
   const year = date.getFullYear();

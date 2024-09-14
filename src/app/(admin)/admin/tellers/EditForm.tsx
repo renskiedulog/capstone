@@ -19,6 +19,7 @@ import { editTeller, isUsernameTaken } from "@/lib/api/tellerActions";
 import { AccountDetailsTypes } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
+import { addNewActivity } from "@/lib/api/activity";
 
 export default function EditForm({
   accountDetails,
@@ -103,10 +104,16 @@ export default function EditForm({
     }
   };
 
+  const addActivity = async () => {
+    await addNewActivity({ type: "teller", title: "Updated Teller Account", description: `Account with the username '${inputs.username}' has been updated.` });
+    socket.emit("newActivity");
+  }
+
   useEffect(() => {
     if (state?.success) {
       setIsOpen(false);
       socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
+      addActivity();
       toast({
         title: "Edited Successfully.",
         description: "If changes do not occur, refreshing the page might help.",

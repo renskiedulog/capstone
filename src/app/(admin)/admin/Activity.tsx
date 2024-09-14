@@ -2,7 +2,7 @@
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, CheckCircle2, Calendar, Target, Briefcase, LucideIcon } from "lucide-react"
+import { ArrowRight, CheckCircle2, Calendar, Target, Briefcase, LucideIcon, SquareGanttChart } from "lucide-react"
 
 interface Activity {
   id: string
@@ -57,9 +57,12 @@ const activityIcons: Record<Activity['type'], LucideIcon> = {
 
 export default function ActivityTracker() {
   return (
-    <div className="w-full max-w-md border rounded-lg shadow-sm">
+    <div className="w-full border rounded-lg shadow-sm overflow-hidden">
       <div className="p-4 bg-primary text-primary-foreground">
-        <h2 className="text-xl font-semibold">Activity Tracker</h2>
+        <div className="flex items-center gap-1">
+          <SquareGanttChart />
+          <h2 className="text-xl font-semibold">Activity Tracker</h2>
+        </div>
         <p className="text-sm opacity-90">Keep track of your recent activities</p>
       </div>
       <ScrollArea className="h-[300px] p-4">

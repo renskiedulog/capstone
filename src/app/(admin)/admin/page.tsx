@@ -59,7 +59,7 @@ const page = async () => {
       <WaveChartCard />
       <CircularChartCard /> */}
       <StatCards data={cards} />
-      <div>
+      <div className="space-y-2">
         <RecentTellers data={recentTellers} />
         <Activity  />
       </div>
