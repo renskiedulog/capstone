@@ -105,6 +105,7 @@ export default function EditForm({
   };
 
   const addActivity = async () => {
+    if (accountDetails?.isAdmin) return;
     await addNewActivity({
       type: "teller",
       title: "Updated Teller Account",

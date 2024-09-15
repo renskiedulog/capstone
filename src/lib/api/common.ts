@@ -85,7 +85,7 @@ export const logOutDB = async (username: string) => {
 
 export const getRecentActivities = async () => {
   try {
-    const activities = await Activity.find();
+    const activities = await Activity.find().sort({ createdAt: -1 });
     const plainActivities = activities.map((activity) => {
       const { _id, ...rest } = activity.toObject();
       return {
