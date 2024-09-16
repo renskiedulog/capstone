@@ -8,7 +8,7 @@ import {
   getRecentTellers,
   getTellerCount,
 } from "@/lib/api/common";
-import Activity from "../../../components/utils/Activity";
+import Activity from "../../../components/utils/ActivityTracker";
 import { ActivityTypes } from "@/lib/types";
 
 export const metadata = {

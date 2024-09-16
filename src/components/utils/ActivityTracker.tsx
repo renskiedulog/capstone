@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { ActivityTypes } from "@/lib/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatDateToReadable } from "@/lib/utils";
+import socket from "@/socket";
+import { getRecentActivities } from "@/lib/api/common";
 
 const activityIcons: Record<ActivityTypes["type"], LucideIcon> = {
   teller: User,
@@ -29,6 +31,21 @@ export default function ActivityTracker({
 }) {
   const [activities, setActivities] = useState(initData);
 
+  useEffect(() => {
+    socket.on("newActivity", () => {
+      fetchData();
+    });
+
+    return () => {
+      socket.off("newActivity");
+    };
+  }, []);
+
+  const fetchData = async () => {
+    const req = await getRecentActivities();
+    setActivities(req);
+  };
+
   return (
     <Card className="w-full border rounded-lg shadow-sm overflow-hidden">
       <div className="p-4 bg-primary text-primary-foreground">
@@ -40,7 +57,7 @@ export default function ActivityTracker({
           Keeps track of the recent activities
         </p>
       </div>
-      <ScrollArea className="max-h-[75vh] p-4">
+      <ScrollArea className="max-h-[80vh] p-4">
         {activities.map((activity, index) => {
           const ActivityIcon = activityIcons[activity.type];
           return (
@@ -71,7 +88,7 @@ export default function ActivityTracker({
                       href={activity.link}
                       className="flex items-center text-sm text-primary"
                     >
-                      View Changes
+                      View Change
                     </a>
                   </Button>
                   <Button

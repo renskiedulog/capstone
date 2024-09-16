@@ -1,5 +1,4 @@
 "use server";
-import User from "@/models/User";
 import { connectMongoDB } from "../db";
 import Activity from "@/models/Activity";
 
@@ -17,6 +16,7 @@ export const addNewActivity = async ({
   link,
 }: Activity) => {
   try {
+    await connectMongoDB();
     const newActivity = new Activity({
       type,
       title,

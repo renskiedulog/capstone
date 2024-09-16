@@ -70,7 +70,7 @@ export interface Boat {
 }
 
 export interface ActivityTypes {
-  id: string;
+  _id: string;
   title: string;
   subtitle: string;
   details: string;

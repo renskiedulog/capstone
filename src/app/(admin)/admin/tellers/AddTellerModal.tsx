@@ -123,7 +123,7 @@ export default function AddTellerModal() {
       type: "teller",
       title: "Added Teller Account",
       details: `Account with the username '${inputs.username}' has been added.`,
-      username: `/profile/${inputs?.username}`,
+      link: `/profile/${inputs?.username}`,
     });
     socket.emit("newActivity");
   };

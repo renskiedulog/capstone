@@ -12,6 +12,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DashboardPieChart } from "./DashboardPieChart";
+import ActivityTracker from "@/components/utils/ActivityTracker";
+import { getRecentActivities } from "@/lib/api/common";
+import { ActivityTypes } from "@/lib/types";
 
 export const metadata = {
   title: "Dashboard",
@@ -49,6 +52,8 @@ const page = async () => {
     },
   ];
 
+  const recentActivities = await getRecentActivities();
+
   return (
     session && (
       <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[75%,25%] gap-2">
@@ -68,7 +73,7 @@ const page = async () => {
           <QueuedTable />
         </div>
         <div className="sm:space-y-0 space-y-2 lg:space-y-2 sm:space-x-2 lg:space-x-0 relative sm:flex lg:block items-start">
-          <DashboardPieChart />
+          <ActivityTracker initData={recentActivities as ActivityTypes[]} />
           <Card className="flex-1 w-full lg:sticky lg:top-1 mt-0">
             <CardHeader>
               <CardTitle>Current Queue</CardTitle>
