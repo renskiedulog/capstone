@@ -41,6 +41,8 @@ export default function AddTellerModal() {
   const [state, formAction] = useFormState(createTeller, null);
   const [error, setError] = useState("");
 
+  console.log(inputs)
+
   const handleModal = () => {
     const hasValues = Object.values(inputs).some(
       (value) => value.trim() !== ""

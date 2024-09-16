@@ -40,7 +40,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <TooltipProvider>
             <NavigationBar />
-            <div className="px-2 sm:px-8 sm:pl-20 sm:pt-0 pt-16">
+            <div className="p-2 sm:p-8 sm:pl-20 sm:pt-0 pt-16">
               <TopNav />
               {children}
               <Toaster />

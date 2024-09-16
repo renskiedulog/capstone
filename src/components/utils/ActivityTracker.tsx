@@ -57,7 +57,7 @@ export default function ActivityTracker({
           Keeps track of the recent activities
         </p>
       </div>
-      <ScrollArea className="max-h-[80vh] p-4">
+      <ScrollArea className="p-4">
         {activities.map((activity, index) => {
           const ActivityIcon = activityIcons[activity.type];
           return (
