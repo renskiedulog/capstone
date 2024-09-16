@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CaretSortIcon, DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
   flexRender,
@@ -31,13 +31,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import AddTellerModal from "./AddBoatModal";
-import { Edit, Ship, Trash, User2Icon } from "lucide-react";
+import { Edit, Ship, Trash } from "lucide-react";
 import { Boat } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import BoatEditForm from "./BoatEditForm";
 import { useToast } from "@/components/ui/use-toast";
-import { deleteTellerAccount, fetchTellers } from "@/lib/api/tellerActions";
+import { deleteTellerAccount } from "@/lib/api/tellerActions";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
 import socket from "@/socket";
@@ -126,9 +125,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
         return <p>Boat Name</p>;
       },
       cell: ({ row }) => (
-        <div className="text-left reverse">
-          {row.getValue("boatName")}
-        </div>
+        <div className="text-left reverse">{row.getValue("boatName")}</div>
       ),
     },
     {

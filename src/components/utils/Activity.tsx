@@ -3,7 +3,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowRight,
   LucideIcon,
   SquareGanttChart,
   User,
@@ -14,7 +13,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { ActivityTypes } from "@/lib/types";
 import { useState } from "react";
-import { formatDateTime, formatDateToReadable } from "@/lib/utils";
+import { formatDateToReadable } from "@/lib/utils";
 
 const activityIcons: Record<ActivityTypes["type"], LucideIcon> = {
   teller: User,

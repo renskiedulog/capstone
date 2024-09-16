@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import AvatarHolder from "@/components/utils/Avatar";
 import { getTellerInfo } from "@/lib/api/tellerActions";
-import { UserTypes } from "@/lib/types";
+import { AccountDetailsTypes, UserTypes } from "@/lib/types";
 import socket from "@/socket";
 import { formatDate } from "date-fns";
 import {
@@ -55,7 +55,10 @@ const Profile = ({
   return (
     <>
       {data && (isAdmin || user === accountDetails?.username) && isEditing && (
-        <EditForm accountDetails={accountDetails} setIsOpen={setIsEditing} />
+        <EditForm
+          accountDetails={accountDetails as AccountDetailsTypes}
+          setIsOpen={setIsEditing}
+        />
       )}
       {viewImage !== "" && (
         <Dialog open={viewImage !== ""} onOpenChange={() => setViewImage("")}>

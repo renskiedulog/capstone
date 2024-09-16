@@ -1,18 +1,14 @@
 import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
-import HorizontalCardChart from "./HorizontalCardChart";
-import CircularChartCard from "./CircularChartCard";
-import WaveChartCard from "./WaveChartCard";
-import LineChartCard from "./LineChartCard";
 import StatCards from "@/app/(teller)/dashboard/StatCards";
-import { DollarSign, UserIcon } from "lucide-react";
+import { UserIcon } from "lucide-react";
 import RecentTellers from "./RecentTellers";
 import {
   getRecentActivities,
   getRecentTellers,
   getTellerCount,
 } from "@/lib/api/common";
-import Activity from "./Activity";
+import Activity from "../../../components/utils/Activity";
 import { ActivityTypes } from "@/lib/types";
 
 export const metadata = {

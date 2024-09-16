@@ -33,7 +33,7 @@ import {
 import Link from "next/link";
 import AddTellerModal from "./AddTellerModal";
 import { Edit, Trash, User2Icon } from "lucide-react";
-import { AccountDetailsTypes, UserTypes } from "@/lib/types";
+import { UserTypes } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import EditForm from "./EditForm";
 import { useToast } from "@/components/ui/use-toast";

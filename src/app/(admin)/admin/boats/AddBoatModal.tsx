@@ -9,12 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { ImageIcon, PlusCircleIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { formatInputDate, generateRandomString } from "@/lib/utils";
-import { createTeller, isUsernameTaken } from "@/lib/api/tellerActions";
+import { createTeller } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
