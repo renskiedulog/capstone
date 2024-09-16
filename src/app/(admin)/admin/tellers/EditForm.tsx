@@ -147,7 +147,7 @@ export default function EditForm({
         onClick={handleModalClose}
       >
         <Card
-          className="border-none w-full max-w-3xl mx-5 relative"
+          className="border-none w-full max-w-3xl mx-5 relative overflow-y-auto scrollbar max-h-[90vh]"
           onClick={(e) => e.stopPropagation()}
         >
           <XIcon

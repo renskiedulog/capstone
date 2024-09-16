@@ -16,6 +16,7 @@ import {
   MapPin,
   Phone,
   RefreshCw,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -73,75 +74,90 @@ const Profile = ({
           </DialogContent>
         </Dialog>
       )}
-      <section>
-        <div className="flex justify-between">
-          <div className="flex items-center gap-5">
-            <AvatarHolder
-              name={accountDetails?.fullName}
-              image={accountDetails?.image}
-              className={`size-28 ${accountDetails?.image && "cursor-pointer"}`}
-              onClick={() => {
-                if (accountDetails?.image) {
-                  setViewImage(accountDetails?.image as string);
-                }
-              }}
+      <section className="flex lg:flex-row flex-col py-20 relative">
+        {(isAdmin || user === accountDetails?.username) && (
+          <Button
+            className="flex gap-1 min-w-32 w-max absolute top-3 right-3"
+            onClick={() => setIsEditing(true)}
+          >
+            <Edit size={16} />
+            <span>Edit</span>
+          </Button>
+        )}
+        <div className="flex flex-col gap-5 items-center min-w-fit">
+          <AvatarHolder
+            name={accountDetails?.fullName}
+            image={accountDetails?.image}
+            className={`size-40 ${accountDetails?.image && "cursor-pointer"}`}
+            onClick={() => {
+              if (accountDetails?.image) {
+                setViewImage(accountDetails?.image as string);
+              }
+            }}
+          />
+          <div className="w-full lg:px-0 px-5">
+            {isAdmin && (
+              <h2 className="text-xs opacity-70 text-center">
+                UID: {accountDetails?._id}
+              </h2>
+            )}
+            {accountDetails?.fullName && (
+              <h1 className="text-4xl font-bold text-center">
+                {accountDetails.fullName}
+              </h1>
+            )}
+            <InfoItem
+              icon={<Clock />}
+              label="Created"
+              className="lg:w-full mt-3"
+              value={formatDate(accountDetails?.createdAt, "MMM d, yyyy HH:mm")}
             />
-            <div>
-              {isAdmin && (
-                <h2 className="text-xs opacity-70">
-                  UID: {accountDetails?._id}
-                </h2>
-              )}
-              {accountDetails?.fullName && (
-                <h1 className="text-4xl font-bold">
-                  {accountDetails.fullName}
-                </h1>
-              )}
-              {accountDetails?.email && (
-                <h2 className="text-xl opacity-70">{accountDetails?.email}</h2>
-              )}
-            </div>
+            <InfoItem
+              icon={<RefreshCw />}
+              label="Updated"
+              className="lg:w-full mt-3"
+              value={formatDate(accountDetails?.updatedAt, "MMM d, yyyy HH:mm")}
+            />
           </div>
-          {(isAdmin || user === accountDetails?.username) && (
-            <Button
-              className="flex gap-1 min-w-32"
-              onClick={() => setIsEditing(true)}
-            >
-              <Edit size={16} />
-              <span>Edit</span>
-            </Button>
-          )}
         </div>
-        <div className="flex flex-wrap gap-y-5 mt-5">
+        <div className="flex flex-wrap gap-y-3 lg:gap-y-5 w-full px-5 mt-3 lg:mt-0 lg:px-10 justify-between">
+          <InfoItem
+            icon={<User />}
+            label="Username"
+            value={accountDetails?.username}
+          />
           <InfoItem
             icon={<Mail />}
             label="Email"
             value={accountDetails?.email}
           />
           <InfoItem
-            icon={<Calendar />}
-            label="Birthdate"
-            value={formatDate(accountDetails?.birthdate, "MMMM d, yyyy")}
+            icon={<User />}
+            label="First Name"
+            value={accountDetails?.firstName}
           />
           <InfoItem
-            icon={<MapPin />}
-            label="Address"
-            value={accountDetails?.address as string}
+            icon={<User />}
+            label="Last Name"
+            value={accountDetails?.lastName}
+          />
+          <InfoItem
+            icon={<Calendar />}
+            label="Birthdate"
+            className="lg:w-full"
+            value={formatDate(accountDetails?.birthdate, "MMMM d, yyyy")}
           />
           <InfoItem
             icon={<Phone />}
             label="Contact"
+            className="lg:w-full"
             value={accountDetails?.contact}
           />
           <InfoItem
-            icon={<Clock />}
-            label="Created"
-            value={formatDate(accountDetails?.createdAt, "MMM d, yyyy HH:mm")}
-          />
-          <InfoItem
-            icon={<RefreshCw />}
-            label="Updated"
-            value={formatDate(accountDetails?.updatedAt, "MMM d, yyyy HH:mm")}
+            icon={<MapPin />}
+            label="Address"
+            className="lg:w-full"
+            value={accountDetails?.address as string}
           />
         </div>
       </section>
@@ -153,13 +169,17 @@ function InfoItem({
   icon,
   label,
   value,
+  className,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
+  className?: string;
 }) {
   return (
-    <div className="flex items-center space-x-3 w-full sm:w-1/2">
+    <div
+      className={`flex items-center space-x-3 w-full lg:w-[49%] rounded-md shadow-sm p-2 border ${className}`}
+    >
       <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/90 text-white flex items-center justify-center">
         {icon}
       </div>
