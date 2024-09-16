@@ -32,7 +32,7 @@ const boatSchema = new Schema(
       enum: ["Registered", "Pending", "Unregistered"],
       default: "Unregistered",
     },
-    boatDetails: {
+    boatFeatures: {
       type: String,
       required: true,
     },

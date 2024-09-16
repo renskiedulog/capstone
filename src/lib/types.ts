@@ -55,7 +55,7 @@ export interface Boat {
     | "requires-repair"
     | "not-sailable"
     | string;
-  boatDetails?: string;
+  boatFeatures?: string;
   images?: String[];
   additionalInfo?: string;
   boatCode?: string;

@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { adminLinks, navLinks } from "@/lib/constants";
+import { adminLinks, hideNav, navLinks } from "@/lib/constants";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import Avatar from "./Avatar";
@@ -31,9 +31,12 @@ const NavigationBar = () => {
     await signOut();
   };
 
+  console.log(pathname);
+
   return React.useMemo(
     () =>
-      session?.status === "authenticated" && (
+      session?.status === "authenticated" &&
+      !hideNav?.includes(pathname) && (
         <aside className="fixed inset-y-0 left-0 z-50 flex w-full sm:w-14 flex-col border-r bg-background py-2 sm:py-0 h-max sm:h-full border-b">
           <nav className="flex flex-row sm:flex-col items-center gap-4 px-2 sm:py-4 h-max sm:h-full w-full">
             <Link

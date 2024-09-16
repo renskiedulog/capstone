@@ -50,9 +50,7 @@ export const adminLinks = [
   },
 ];
 
-export const hideTopNav = ["/login", "/"];
-
-export const hideNav = ["/login"];
+export const hideNav = ["/departing", "boat-queue"];
 
 export const commandLinks = [
   {

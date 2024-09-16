@@ -426,14 +426,14 @@ export default function BoatEditForm({
                   </div>
                 </div>
                 <div className="flex-1">
-                  <Label htmlFor="boatDetails">Boat Details</Label>
+                  <Label htmlFor="boatFeatures">Boat Features</Label>
                   <Input
-                    id="boatDetails"
-                    name="boatDetails"
+                    id="boatFeatures"
+                    name="boatFeatures"
                     required
                     type="text"
                     placeholder="Enter boat details"
-                    value={inputs.boatDetails}
+                    value={inputs.boatFeatures}
                     onChange={handleInputChange}
                   />
                 </div>

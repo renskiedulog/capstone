@@ -37,7 +37,7 @@ const initialInputs: Boat = {
   boatName: "",
   mainImage: "",
   capacity: 0,
-  boatDetails: "",
+  boatFeatures: "",
   images: [],
   additionalInfo: "",
   boatCode: "",
@@ -473,14 +473,14 @@ export default function AddBoatModal({
                     </div>
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="boatDetails">Boat Details</Label>
+                    <Label htmlFor="boatFeatures">Boat Features</Label>
                     <Input
-                      id="boatDetails"
-                      name="boatDetails"
+                      id="boatFeatures"
+                      name="boatFeatures"
                       required
                       type="text"
                       placeholder="Enter boat details"
-                      value={inputs.boatDetails}
+                      value={inputs.boatFeatures}
                       onChange={handleInputChange}
                     />
                   </div>

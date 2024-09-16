@@ -18,7 +18,8 @@ const exampleBoats: Boat[] = [
     mainImage:
       "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/10/free-images.jpg",
     registrationStatus: "registered",
-    boatDetails: "A luxury yacht with all amenities for a comfortable journey.",
+    boatFeatures:
+      "A luxury yacht with all amenities for a comfortable journey.",
     images: [
       "https://buffer.com/cdn-cgi/image/w=1000,fit=contain,q=90,f=auto/library/content/images/size/w1200/2023/10/free-images.jpg",
       "https://images.ctfassets.net/hrltx12pl8hq/28ECAQiPJZ78hxatLTa7Ts/2f695d869736ae3b0de3e56ceaca3958/free-nature-images.jpg?fit=fill&w=1200&h=630",
