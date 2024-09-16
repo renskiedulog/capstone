@@ -14,6 +14,8 @@ import Avatar from "./Avatar";
 import { NavLinkProps } from "@/lib/types";
 import Alert from "./Alert";
 import socket from "@/socket";
+import User from "@/models/User";
+import { logOutDB } from "@/lib/api/common";
 
 const NavigationBar = () => {
   const session: any = useSession() || null;
@@ -26,12 +28,10 @@ const NavigationBar = () => {
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    socket.emit("tellerRefresh", { info: "Refresh Teller Data" });
-    await fetch("/logout");
+    await logOutDB(username);
+    socket.emit("tellerRefresh");
     await signOut();
   };
-
-  console.log(pathname);
 
   return React.useMemo(
     () =>

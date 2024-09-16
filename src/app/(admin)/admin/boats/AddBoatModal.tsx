@@ -86,8 +86,6 @@ export default function AddBoatModal({
     }
   };
 
-  console.log(inputs);
-
   const handleAlertConfirm = () => {
     handleReset();
     setIsAlertOpen(false);
