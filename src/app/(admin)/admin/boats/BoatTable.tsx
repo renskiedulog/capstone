@@ -41,6 +41,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
 import socket from "@/socket";
 import AddBoatModal from "./AddBoatModal";
+import { fetchBoats } from "@/lib/api/boatActions";
 
 export default function BoatTable({ initData }: { initData: Boat[] }) {
   const [data, setData] = React.useState<Boat[]>(initData);
@@ -60,20 +61,20 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
   const [page, setPage] = React.useState(1);
   const [viewImage, setViewImage] = React.useState("");
 
-  // React.useEffect(() => {
-  //   socket.on("tellerRefresh", (data) => {
-  //     fetchData();
-  //   });
+  React.useEffect(() => {
+    socket.on("boatRefresh", (data) => {
+      fetchData();
+    });
 
-  //   return () => {
-  //     socket.off("tellerRefresh");
-  //   };
-  // }, []);
+    return () => {
+      socket.off("boatRefresh");
+    };
+  }, []);
 
-  // const fetchData = async () => {
-  //   const req = await fetchTellers();
-  //   setData(req);
-  // };
+  const fetchData = async () => {
+    const req = await fetchBoats();
+    setData(req);
+  };
 
   const columns: ColumnDef<Boat>[] = [
     {

@@ -40,7 +40,8 @@ export const createTeller = async (prevState: any, formData: FormData) => {
   }
 };
 
-export const fetchTellers = async (isDeleted: boolean = false) => { // accesses deleted teller accounts if true
+export const fetchTellers = async (isDeleted: boolean = false) => {
+  // accesses deleted teller accounts if true
   const checkAuth = await checkSession();
   if (!checkAuth) {
     return [];

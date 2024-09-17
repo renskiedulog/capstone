@@ -15,7 +15,6 @@ const boatSchema = new Schema(
     boatName: {
       type: String,
       required: true,
-      unique: true,
     },
     mainImage: String,
     capacity: {
@@ -34,7 +33,6 @@ const boatSchema = new Schema(
     },
     boatFeatures: {
       type: String,
-      required: true,
     },
     images: [String],
     additionalInfo: {
@@ -53,10 +51,14 @@ const boatSchema = new Schema(
       required: true,
     },
     lastCheck: {
-      type: Date,
+      type: [Date, String],
     },
     checkingDetails: {
       type: String,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

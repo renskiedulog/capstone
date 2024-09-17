@@ -9,11 +9,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ImageIcon, PlusCircleIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { createTeller } from "@/lib/api/tellerActions";
 import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
@@ -28,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createBoat } from "@/lib/api/boatActions";
 
 const initialInputs: Boat = {
   _id: "",
@@ -61,7 +61,7 @@ export default function AddBoatModal({
   const [inputs, setInputs] = useState(initialInputs);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
-  const [state, formAction] = useFormState(createTeller, null);
+  const [state, formAction] = useFormState(createBoat, null);
   const [error, setError] = useState("");
 
   const handleModal = () => {
@@ -172,20 +172,20 @@ export default function AddBoatModal({
     }));
   };
 
-  // useEffect(() => {
-  //   if (state?.success) {
-  //     socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
-  //     handleReset();
-  //     setIsModalOpen(false);
-  //     toast({
-  //       title: "Teller Successfully Created.",
-  //       description:
-  //         "You can edit, delete and view this account by clicking the actions tab.",
-  //     });
-  //   } else if (!state?.success && state?.message) {
-  //     setError("Something went wrong, please enter valid inputs.");
-  //   }
-  // }, [state?.success]);
+  useEffect(() => {
+    if (state?.success) {
+      socket.emit("boatRefresh");
+      handleReset();
+      setIsModalOpen(false);
+      toast({
+        title: "Boat Successfully Created.",
+        description:
+          "You can edit, delete and view this boat by clicking the actions tab.",
+      });
+    } else if (!state?.success && state?.message) {
+      setError("Something went wrong, please enter valid inputs.");
+    }
+  }, [state?.success]);
 
   return (
     <>
@@ -241,8 +241,8 @@ export default function AddBoatModal({
                         />
                         <Input
                           type="string"
-                          id="image"
-                          name="image"
+                          id="mainImageUpload"
+                          name="mainImageUpload"
                           className="hidden"
                           value={mainImagePreview}
                           readOnly
@@ -290,6 +290,12 @@ export default function AddBoatModal({
                           className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
                           size={20}
                           onClick={() => handleRemoveImage(idx)}
+                        />
+                        <Input
+                          type="string"
+                          name={`images-${idx}`}
+                          className="hidden"
+                          value={img as string}
                         />
                       </div>
                     ))}
@@ -475,7 +481,6 @@ export default function AddBoatModal({
                     <Input
                       id="boatFeatures"
                       name="boatFeatures"
-                      required
                       type="text"
                       placeholder="Enter boat details"
                       value={inputs.boatFeatures}
@@ -487,7 +492,6 @@ export default function AddBoatModal({
                     <Textarea
                       id="additionalInfo"
                       name="additionalInfo"
-                      required
                       placeholder="Enter additional info"
                       value={inputs.additionalInfo}
                       onChange={handleInputChange}
