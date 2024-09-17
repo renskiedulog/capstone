@@ -57,9 +57,9 @@ export const fetchBoats = async (isDeleted: boolean = false) => {
   }
   try {
     await connectMongoDB();
-    const req = await Boat.find({ isDeleted: isDeleted }).sort({
-      createdAt: -1,
-    });
+    const req = await Boat.find({ isDeleted: isDeleted })
+      .sort({ createdAt: -1 })
+      .select("-images");
 
     const boats = req.map((boat) => {
       const { _id, ...rest } = boat.toObject();
