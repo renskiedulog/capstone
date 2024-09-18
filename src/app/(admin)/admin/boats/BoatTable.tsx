@@ -36,12 +36,11 @@ import { Boat } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import BoatEditForm from "./BoatEditForm";
 import { useToast } from "@/components/ui/use-toast";
-import { deleteTellerAccount } from "@/lib/api/tellerActions";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
 import socket from "@/socket";
 import AddBoatModal from "./AddBoatModal";
-import { fetchBoats } from "@/lib/api/boatActions";
+import { deleteBoatAccount, fetchBoats } from "@/lib/api/boatActions";
 
 export default function BoatTable({ initData }: { initData: Boat[] }) {
   const [data, setData] = React.useState<Boat[]>(initData);
@@ -53,7 +52,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
   const [columnFilters, setColumnFilters] = React.useState([]);
   const [columnVisibility, setColumnVisibility] = React.useState({});
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = React.useState(false);
-  const [deleteUser, setDeleteUser] = React.useState("");
+  const [deleteBoat, setDeleteBoat] = React.useState("");
   const [pendingModalClose, setPendingModalClose] = React.useState(false);
   const [pages, setPages] = React.useState(
     Math.ceil(data?.length / maxPerPage)
@@ -231,7 +230,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
               <DropdownMenuItem
                 onClick={() => {
                   setIsDeleteAlertOpen(true);
-                  setDeleteUser(row.original._id);
+                  setDeleteBoat(row.original._id);
                 }}
                 className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
               >
@@ -263,7 +262,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
   });
 
   const handleAlertConfirm = async () => {
-    const reqDelete = await deleteTellerAccount(deleteUser);
+    const reqDelete = await deleteBoatAccount(deleteBoat);
     if (reqDelete) {
       socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       toast({
@@ -283,7 +282,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
   };
 
   const handleAlertCancel = () => {
-    setDeleteUser("");
+    setDeleteBoat("");
     setIsDeleteAlertOpen(false);
     setPendingModalClose(false);
   };

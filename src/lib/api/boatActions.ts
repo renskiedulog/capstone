@@ -74,3 +74,13 @@ export const fetchBoats = async (isDeleted: boolean = false) => {
     return [];
   }
 };
+
+export const deleteBoatAccount = async (id: string) => {
+  await connectMongoDB();
+  const req = await Boat.updateOne({ _id: id }, { $set: { isDeleted: true } });
+
+  if (req.modifiedCount === 0) {
+    return false;
+  }
+  return true;
+};
