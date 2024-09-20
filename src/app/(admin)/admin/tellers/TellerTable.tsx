@@ -90,9 +90,9 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
                 )
               }
             >
-              <img
-                width={40}
-                height={40}
+              <Image
+                width={500}
+                height={500}
                 alt="user-image"
                 className="aspect-square w-max object-cover transition"
                 src={row.getValue("image") || "/images/default-image.jpg"}
@@ -292,8 +292,8 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
           <DialogContent>
             <Image
               src={viewImage}
-              width={500}
-              height={500}
+              width={1000}
+              height={1000}
               alt="image-dialog"
               className="aspect-square object-cover mt-5"
             />

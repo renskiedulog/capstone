@@ -229,7 +229,8 @@ export default function AddTellerModal() {
                         id="imageBase64"
                         name="imageBase64"
                         className="hidden"
-                        value={imagePreview}
+                        value={imagePreview as string}
+                        readOnly
                       />
                     </>
                   )}
