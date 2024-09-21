@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { fetchBoatImages } from "@/lib/api/boatActions";
 
 export default function BoatEditForm({
   boatDetails,
@@ -46,6 +47,7 @@ export default function BoatEditForm({
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(editTeller, null);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleModalClose = () => {
@@ -143,8 +145,20 @@ export default function BoatEditForm({
   //   }
   // }, [state?.success]);
 
+  const fetchImages = async () => {
+    try {
+      setIsLoading(true);
+      const reqImages = await fetchBoatImages(inputs._id);
+      setInputs((prev) => ({ ...prev, images: reqImages }))
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
   useEffect(() => {
     setMainImagePreview(boatDetails?.mainImage as string);
+    fetchImages();
   }, [boatDetails]);
 
   return (
@@ -233,7 +247,7 @@ export default function BoatEditForm({
                   />
                 </Label>
                 {/* Images */}
-                <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
+                {!isLoading ? <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
                   {inputs?.images?.map((img, idx) => (
                     <div className="relative">
                       <Image
@@ -269,7 +283,7 @@ export default function BoatEditForm({
                       onChange={handleImageUpload}
                     />
                   </Label>
-                </div>
+                </div> : <div>Loading...</div>}
               </div>
               {/* Fields */}
               <div className="w-full mx-5 space-y-2">

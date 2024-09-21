@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -31,7 +32,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import { Edit, Ship, Trash } from "lucide-react";
+import { ChevronDown, Edit, Ship, Trash } from "lucide-react";
 import { Boat } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import BoatEditForm from "./BoatEditForm";
@@ -332,10 +333,36 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
             onChange={(event) =>
               table.getColumn("boatName")?.setFilterValue(event.target.value)
             }
-            className="w-[200px] max-w-sm md:w-full"
+            className="w-full max-w-sm md:w-full mr-2"
           />
           <div className="flex items-center gap-2">
             <AddBoatModal setViewImage={setViewImage} />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Columns <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <div className="rounded-md border">
@@ -349,9 +376,9 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       </TableHead>
                     );
                   })}
@@ -371,9 +398,8 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
                         return (
                           <TableCell
                             key={cell.id}
-                            className={`${
-                              cell?.column?.id === "actions" && "w-24"
-                            }`}
+                            className={`${cell?.column?.id === "actions" && "w-24"
+                              }`}
                           >
                             {flexRender(
                               cell.column.columnDef.cell,

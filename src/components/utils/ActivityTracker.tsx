@@ -58,7 +58,7 @@ export default function ActivityTracker({
         </p>
       </div>
       <ScrollArea className="p-4">
-        {activities.map((activity, index) => {
+        {activities?.length > 0 ? activities.map((activity, index) => {
           const ActivityIcon = activityIcons[activity.type];
           return (
             <div key={`activity-${index}`}>
@@ -108,7 +108,7 @@ export default function ActivityTracker({
               {index < activities.length - 1 && <Separator className="my-4" />}
             </div>
           );
-        })}
+        }) : <div className="text-center">There are currently no activites so far.</div>}
       </ScrollArea>
     </Card>
   );

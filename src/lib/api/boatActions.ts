@@ -84,3 +84,18 @@ export const deleteBoatAccount = async (id: string) => {
   }
   return true;
 };
+
+export const fetchBoatImages = async (id: string) => {
+  try {
+    const boat: any = await Boat.findById(id).select("images").lean();
+    if (!boat) {
+        throw new Error("Boat not found");
+    }
+    const imagesArray = boat.images;
+
+    return imagesArray;
+} catch (error) {
+    console.error(error);
+}
+
+}
