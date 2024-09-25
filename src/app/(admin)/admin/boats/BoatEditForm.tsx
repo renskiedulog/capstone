@@ -271,6 +271,12 @@ export default function BoatEditForm({
                           size={20}
                           onClick={() => handleRemoveImage(idx)}
                         />
+                        <Input
+                          type="string"
+                          name={`images-${idx}`}
+                          className="hidden"
+                          value={img as string}
+                        />
                       </div>
                     ))}
                     <Label

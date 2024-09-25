@@ -53,9 +53,9 @@ export const createBoat = async (prevState: any, formData: FormData) => {
 export const editBoat = async (prevState: any, formData: FormData) => {
   try {
     const newValues: { [key: string]: any } = {};
-    for (const [key, value] of formData.entries()) {
+    formData.forEach((value, key) => {
       newValues[key] = value;
-    }
+    });
 
     const boatId = newValues.id;
     if (!boatId) {
@@ -65,64 +65,46 @@ export const editBoat = async (prevState: any, formData: FormData) => {
       };
     }
 
-    const existingBoat: Document | null = await Boat.findById(boatId).exec();
-    if (!existingBoat) {
-      return {
-        success: false,
-        message: "Boat not found. Please try again.",
-      };
-    }
-
-    const existingBoatObject = existingBoat?.toObject();
     const updatedFields: { [key: string]: any } = {};
-
-    if (newValues.mainImageUpload !== existingBoatObject.mainImage) {
-      updatedFields.mainImage = newValues.mainImageUpload ?? "";
-    }
-
-    const images: string[] = Object.keys(newValues)
-      .filter((key) => key.startsWith("images-"))
-      .map((key) => newValues[key]);
+    const images: string[] =
+      Object.keys(newValues)
+        .filter((key) => key.startsWith("images-"))
+        .map((key) => newValues[key]) ?? [];
 
     if (images.length > 0) {
       updatedFields.images = images;
     }
 
-    const fieldsToUpdate = [
-      "mainImage",
-      "images",
-      "registrationNumber",
-      "boatCode",
-      "ownerName",
-      "ownerContactNumber",
-      "driverName",
-      "driverContactNumber",
-      "boatName",
-      "capacity",
-      "lastCheck",
-      "checkingStatus",
-      "boatFeatures",
-      "additionalInfo",
-    ];
-
-    fieldsToUpdate.forEach((field) => {
-      if (newValues[field] != existingBoatObject[field]) {
-        updatedFields[field] = newValues[field];
+    for (const [key, value] of Object.entries(newValues)) {
+      if (
+        key !== "id" &&
+        key !== "mainImg" &&
+        key !== "uploadDocs" &&
+        !key.startsWith("images-")
+      ) {
+        updatedFields[key] = value;
       }
-    });
+    }
 
     if (Object.keys(updatedFields).length === 0) {
       return {
         success: false,
-        message: "No changes applied.",
+        message: "No changes detected.",
       };
     }
 
-    const req = await Boat.findByIdAndUpdate(
+    const updatedBoat = await Boat.findByIdAndUpdate(
       boatId,
       { $set: updatedFields },
       { new: true }
     ).exec();
+
+    if (!updatedBoat) {
+      return {
+        success: false,
+        message: "Boat not found. Please try again.",
+      };
+    }
 
     return {
       success: true,
