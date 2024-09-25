@@ -51,7 +51,7 @@ const boatSchema = new Schema(
       required: true,
     },
     lastCheck: {
-      type: [Date, String],
+      type: String,
     },
     checkingDetails: {
       type: String,

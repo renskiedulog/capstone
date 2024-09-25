@@ -50,6 +50,92 @@ export const createBoat = async (prevState: any, formData: FormData) => {
   }
 };
 
+export const editBoat = async (prevState: any, formData: FormData) => {
+  try {
+    const newValues: { [key: string]: any } = {};
+    for (const [key, value] of formData.entries()) {
+      newValues[key] = value;
+    }
+
+    const boatId = newValues.id;
+    if (!boatId) {
+      return {
+        success: false,
+        message: "Boat ID is required.",
+      };
+    }
+
+    const existingBoat: Document | null = await Boat.findById(boatId).exec();
+    if (!existingBoat) {
+      return {
+        success: false,
+        message: "Boat not found. Please try again.",
+      };
+    }
+
+    const existingBoatObject = existingBoat?.toObject();
+    const updatedFields: { [key: string]: any } = {};
+
+    if (newValues.mainImageUpload !== existingBoatObject.mainImage) {
+      updatedFields.mainImage = newValues.mainImageUpload ?? "";
+    }
+
+    const images: string[] = Object.keys(newValues)
+      .filter((key) => key.startsWith("images-"))
+      .map((key) => newValues[key]);
+
+    if (images.length > 0) {
+      updatedFields.images = images;
+    }
+
+    const fieldsToUpdate = [
+      "registrationNumber",
+      "boatCode",
+      "ownerName",
+      "ownerContactNumber",
+      "driverName",
+      "driverContactNumber",
+      "boatName",
+      "capacity",
+      "lastCheck",
+      "checkingStatus",
+      "boatFeatures",
+      "additionalInfo",
+    ];
+
+    fieldsToUpdate.forEach((field) => {
+      if (newValues[field] !== existingBoatObject[field]) {
+        updatedFields[field] = newValues[field];
+        console.log(newValues[field], existingBoatObject[field]);
+      }
+    });
+
+    if (Object.keys(updatedFields).length === 0) {
+      return {
+        success: false,
+        message: "No changes applied.",
+      };
+    }
+
+    // await Boat.findByIdAndUpdate(
+    //   boatId,
+    //   { $set: updatedFields },
+    //   { new: true }
+    // ).exec();
+
+    // return {
+    //   success: true,
+    //   message: "Boat updated successfully",
+    // };
+  } catch (error: any) {
+    console.error("Error updating boat:", error);
+    return {
+      success: false,
+      message: error.message || "Something went wrong.",
+    };
+  }
+};
+
 export const fetchBoats = async (isDeleted: boolean = false) => {
   const checkAuth = await checkSession();
   if (!checkAuth) {
@@ -77,11 +163,11 @@ export const fetchBoats = async (isDeleted: boolean = false) => {
 
 export const deleteBoatAccount = async (id: string) => {
   await connectMongoDB();
-  const req = await Boat.updateOne({ _id: id }, { $set: { isDeleted: true } });
+  const req = await Boat.deleteOne({ _id: id });
 
-  if (req.modifiedCount === 0) {
-    return false;
-  }
+  // if (req?.modifiedCount === 0) {
+  //   return false;
+  // }
   return true;
 };
 
@@ -89,13 +175,12 @@ export const fetchBoatImages = async (id: string) => {
   try {
     const boat: any = await Boat.findById(id).select("images").lean();
     if (!boat) {
-        throw new Error("Boat not found");
+      throw new Error("Boat not found");
     }
     const imagesArray = boat.images;
 
     return imagesArray;
-} catch (error) {
+  } catch (error) {
     console.error(error);
-}
-
-}
+  }
+};

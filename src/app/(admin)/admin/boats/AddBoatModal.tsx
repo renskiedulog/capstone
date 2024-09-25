@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createBoat } from "@/lib/api/boatActions";
+import { addNewActivity } from "@/lib/api/activity";
 
 const initialInputs: Boat = {
   _id: "",
@@ -63,6 +64,8 @@ export default function AddBoatModal({
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(createBoat, null);
   const [error, setError] = useState("");
+
+  console.log(inputs);
 
   const handleModal = () => {
     const hasValues = Object.values(inputs).some((value) => {
@@ -172,11 +175,22 @@ export default function AddBoatModal({
     }));
   };
 
+  const addActivity = async (boatName: string) => {
+    await addNewActivity({
+      type: "boat",
+      title: "Added Boat Account",
+      details: `Boat with the name '${boatName}' has been added.`,
+      link: `/boat/${inputs?.registrationNumber}`,
+    });
+    socket.emit("newActivity");
+  };
+
   useEffect(() => {
     if (state?.success) {
       socket.emit("boatRefresh");
       handleReset();
       setIsModalOpen(false);
+      addActivity(inputs?.boatName as string);
       toast({
         title: "Boat Successfully Created.",
         description:
@@ -442,7 +456,7 @@ export default function AddBoatModal({
                       />
                     </div>
                     <div className="flex-1">
-                      <Label htmlFor="lastCheck">Checking Status</Label>
+                      <Label htmlFor="checkingStatus">Checking Status</Label>
                       <Select
                         defaultValue="not-checked"
                         name="checkingStatus"

@@ -65,7 +65,7 @@ export interface Boat {
   updatedAt?: Date;
   driverName?: string;
   boatName?: string;
-  lastCheck?: Date | string;
+  lastCheck?: Date | string | null;
   checkingDetails?: string;
 }
 

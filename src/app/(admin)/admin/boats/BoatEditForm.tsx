@@ -13,9 +13,8 @@ import { useCallback, useEffect, useState } from "react";
 import { ImageIcon, PlusCircleIcon, XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { formatInputDate, isEqual } from "@/lib/utils";
+import { formatInputDate } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
-import { editTeller } from "@/lib/api/tellerActions";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { Boat } from "@/lib/types";
@@ -30,7 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchBoatImages } from "@/lib/api/boatActions";
+import { editBoat, fetchBoatImages } from "@/lib/api/boatActions";
 
 export default function BoatEditForm({
   boatDetails,
@@ -45,7 +44,7 @@ export default function BoatEditForm({
   const [inputs, setInputs] = useState(boatDetails);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
-  const [state, formAction] = useFormState(editTeller, null);
+  const [state, formAction] = useFormState(editBoat, null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -149,10 +148,10 @@ export default function BoatEditForm({
     try {
       setIsLoading(true);
       const reqImages = await fetchBoatImages(inputs._id);
-      setInputs((prev) => ({ ...prev, images: reqImages }))
+      setInputs((prev) => ({ ...prev, images: reqImages }));
       setIsLoading(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -198,6 +197,14 @@ export default function BoatEditForm({
           </CardHeader>
           <CardContent className="mx-auto">
             <div className="flex w-full flex-col sm:flex-row items-center sm:items-start gap-2">
+              {/* ID */}
+              <Input
+                type="text"
+                className="hidden"
+                value={boatDetails._id}
+                name="id"
+                id="id"
+              />
               {/* Images */}
               <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square p-2">
                 {/* Main Image */}
@@ -247,43 +254,47 @@ export default function BoatEditForm({
                   />
                 </Label>
                 {/* Images */}
-                {!isLoading ? <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
-                  {inputs?.images?.map((img, idx) => (
-                    <div className="relative">
-                      <Image
-                        width={150}
-                        height={150}
-                        src={img as string}
-                        alt="sad"
-                        className="w-full aspect-square rounded cursor-pointer hover:brightness-100 brightness-[0.8] object-cover"
-                        onClick={() => setViewImage(img as string)}
+                {!isLoading ? (
+                  <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
+                    {inputs?.images?.map((img, idx) => (
+                      <div className="relative">
+                        <Image
+                          width={150}
+                          height={150}
+                          src={img as string}
+                          alt="sad"
+                          className="w-full aspect-square rounded cursor-pointer hover:brightness-100 brightness-[0.8] object-cover"
+                          onClick={() => setViewImage(img as string)}
+                        />
+                        <XIcon
+                          className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
+                          size={20}
+                          onClick={() => handleRemoveImage(idx)}
+                        />
+                      </div>
+                    ))}
+                    <Label
+                      htmlFor="uploadDocs"
+                      className={`bg-white z-10 space-y-1 group w-full aspect-square flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded border-dashed`}
+                    >
+                      <PlusCircleIcon className="group-hover:opacity-70 opacity-50" />
+                      <p className="group-hover:opacity-70 opacity-50 text-center text-[10px] sm:text-xs px-2">
+                        Upload An Image or Document
+                      </p>
+                      <Input
+                        type="file"
+                        id="uploadDocs"
+                        name="uploadDocs"
+                        accept=".png,.jpg,.jpeg"
+                        className="hidden"
+                        multiple
+                        onChange={handleImageUpload}
                       />
-                      <XIcon
-                        className="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
-                        size={20}
-                        onClick={() => handleRemoveImage(idx)}
-                      />
-                    </div>
-                  ))}
-                  <Label
-                    htmlFor="uploadDocs"
-                    className={`bg-white z-10 space-y-1 group w-full aspect-square flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded border-dashed`}
-                  >
-                    <PlusCircleIcon className="group-hover:opacity-70 opacity-50" />
-                    <p className="group-hover:opacity-70 opacity-50 text-center text-[10px] sm:text-xs px-2">
-                      Upload An Image or Document
-                    </p>
-                    <Input
-                      type="file"
-                      id="uploadDocs"
-                      name="uploadDocs"
-                      accept=".png,.jpg,.jpeg"
-                      className="hidden"
-                      multiple
-                      onChange={handleImageUpload}
-                    />
-                  </Label>
-                </div> : <div>Loading...</div>}
+                    </Label>
+                  </div>
+                ) : (
+                  <div>Loading...</div>
+                )}
               </div>
               {/* Fields */}
               <div className="w-full mx-5 space-y-2">
@@ -405,7 +416,7 @@ export default function BoatEditForm({
                       name="lastCheck"
                       required
                       type="date"
-                      value={formatInputDate(inputs.lastCheck as string)}
+                      value={formatInputDate(inputs.lastCheck ?? "")}
                       onChange={handleInputChange}
                     />
                   </div>
@@ -444,7 +455,6 @@ export default function BoatEditForm({
                   <Input
                     id="boatFeatures"
                     name="boatFeatures"
-                    required
                     type="text"
                     placeholder="Enter boat details"
                     value={inputs.boatFeatures}
@@ -456,7 +466,6 @@ export default function BoatEditForm({
                   <Textarea
                     id="additionalInfo"
                     name="additionalInfo"
-                    required
                     placeholder="Enter additional info"
                     value={inputs.additionalInfo}
                     onChange={handleInputChange}
@@ -467,7 +476,7 @@ export default function BoatEditForm({
             </div>
           </CardContent>
           <CardFooter className="flex justify-end items-center">
-            <SubmitButton disabled={isEqual(inputs, boatDetails)} />
+            <SubmitButton />
           </CardFooter>
         </Card>
       </form>

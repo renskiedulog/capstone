@@ -58,57 +58,67 @@ export default function ActivityTracker({
         </p>
       </div>
       <ScrollArea className="p-4">
-        {activities?.length > 0 ? activities.map((activity, index) => {
-          const ActivityIcon = activityIcons[activity.type];
-          return (
-            <div key={`activity-${index}`}>
-              <div className="space-y-1">
-                <div className="flex justify-between items-center gap-5">
-                  <div className="flex items-center space-x-1">
-                    <ActivityIcon className="h-4 w-4" />
-                    <h3 className="text-sm font-bold leading-none uppercase">
-                      {activity.type}
-                    </h3>
+        {activities?.length > 0 ? (
+          activities.map((activity, index) => {
+            const ActivityIcon = activityIcons[activity.type];
+            return (
+              <div key={`activity-${index}`}>
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center gap-5">
+                    <div className="flex items-center space-x-1">
+                      <ActivityIcon className="h-4 w-4" />
+                      <h3 className="text-sm font-bold leading-none uppercase">
+                        {activity.type}
+                      </h3>
+                    </div>
+                    <span className="text-[10px]">
+                      {formatDateToReadable(activity?.createdAt)}
+                    </span>
                   </div>
-                  <span className="text-[10px]">
-                    {formatDateToReadable(activity?.createdAt)}
-                  </span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {activity.title}
-                </p>
-                <p className="text-sm">{activity.details}</p>
-                <div className="flex justify-between items-center">
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto cursor-pointer"
-                    asChild
-                  >
-                    <a
-                      href={activity.link}
-                      className="flex items-center text-sm text-primary"
+                  <p className="text-sm text-muted-foreground">
+                    {activity.title}
+                  </p>
+                  <p className="text-sm">{activity.details}</p>
+                  <div className="flex justify-between items-center">
+                    {activity.link && (
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto cursor-pointer"
+                        asChild
+                      >
+                        <a
+                          href={activity.link}
+                          className="flex items-center text-sm text-primary"
+                        >
+                          View Account
+                        </a>
+                      </Button>
+                    )}
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto cursor-pointer"
+                      asChild
                     >
-                      View Change
-                    </a>
-                  </Button>
-                  <Button
-                    variant="link"
-                    className="p-0 h-auto cursor-pointer"
-                    asChild
-                  >
-                    <a
-                      href={`/activity/${activity._id}`}
-                      className="flex items-center text-sm text-primary"
-                    >
-                      View Details
-                    </a>
-                  </Button>
+                      <a
+                        href={`/activity/${activity._id}`}
+                        className="flex items-center text-sm text-primary"
+                      >
+                        View Details
+                      </a>
+                    </Button>
+                  </div>
                 </div>
+                {index < activities.length - 1 && (
+                  <Separator className="my-4" />
+                )}
               </div>
-              {index < activities.length - 1 && <Separator className="my-4" />}
-            </div>
-          );
-        }) : <div className="text-center">There are currently no activites so far.</div>}
+            );
+          })
+        ) : (
+          <div className="text-center">
+            There are currently no activites so far.
+          </div>
+        )}
       </ScrollArea>
     </Card>
   );

@@ -42,6 +42,7 @@ import Image from "next/image";
 import socket from "@/socket";
 import AddBoatModal from "./AddBoatModal";
 import { deleteBoatAccount, fetchBoats } from "@/lib/api/boatActions";
+import { addNewActivity } from "@/lib/api/activity";
 
 export default function BoatTable({ initData }: { initData: Boat[] }) {
   const [data, setData] = React.useState<Boat[]>(initData);
@@ -231,7 +232,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
               <DropdownMenuItem
                 onClick={() => {
                   setIsDeleteAlertOpen(true);
-                  setDeleteBoat(row.original._id);
+                  setDeleteBoat(row?.original?._id);
                 }}
                 className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
               >
@@ -262,9 +263,20 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     },
   });
 
+  const addActivity = async (boatName: string) => {
+    await addNewActivity({
+      type: "boat",
+      title: "Deleted Boat Account",
+      details: `Boat with the name '${boatName}' has been deleted.`,
+    });
+    socket.emit("newActivity");
+  };
+
   const handleAlertConfirm = async () => {
+    const boatName = data.find((k) => k._id === deleteBoat)?.boatName;
     const reqDelete = await deleteBoatAccount(deleteBoat);
     if (reqDelete) {
+      addActivity(boatName as string);
       socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       toast({
         title: "Teller Deleted Successfully.",
@@ -279,7 +291,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     if (pendingModalClose) {
       setPendingModalClose(false);
     }
-    // fetchData();
+    fetchData();
   };
 
   const handleAlertCancel = () => {
@@ -359,7 +371,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
                       >
                         {column.id}
                       </DropdownMenuCheckboxItem>
-                    )
+                    );
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -376,9 +388,9 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </TableHead>
                     );
                   })}
@@ -398,8 +410,9 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
                         return (
                           <TableCell
                             key={cell.id}
-                            className={`${cell?.column?.id === "actions" && "w-24"
-                              }`}
+                            className={`${
+                              cell?.column?.id === "actions" && "w-24"
+                            }`}
                           >
                             {flexRender(
                               cell.column.columnDef.cell,
