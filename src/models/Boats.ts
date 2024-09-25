@@ -56,6 +56,17 @@ const boatSchema = new Schema(
     checkingDetails: {
       type: String,
     },
+    checkingStatus: {
+      type: String,
+      enum: [
+        "not-checked",
+        "checked",
+        "under-inspection",
+        "requires-repair",
+        "not-sailable",
+      ],
+      default: "not-checked",
+    },
     isDeleted: {
       type: Boolean,
       default: false,

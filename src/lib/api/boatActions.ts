@@ -89,6 +89,8 @@ export const editBoat = async (prevState: any, formData: FormData) => {
     }
 
     const fieldsToUpdate = [
+      "mainImage",
+      "images",
       "registrationNumber",
       "boatCode",
       "ownerName",
@@ -104,9 +106,8 @@ export const editBoat = async (prevState: any, formData: FormData) => {
     ];
 
     fieldsToUpdate.forEach((field) => {
-      if (newValues[field] !== existingBoatObject[field]) {
+      if (newValues[field] != existingBoatObject[field]) {
         updatedFields[field] = newValues[field];
-        console.log(newValues[field], existingBoatObject[field]);
       }
     });
 
@@ -117,16 +118,16 @@ export const editBoat = async (prevState: any, formData: FormData) => {
       };
     }
 
-    // await Boat.findByIdAndUpdate(
-    //   boatId,
-    //   { $set: updatedFields },
-    //   { new: true }
-    // ).exec();
+    const req = await Boat.findByIdAndUpdate(
+      boatId,
+      { $set: updatedFields },
+      { new: true }
+    ).exec();
 
-    // return {
-    //   success: true,
-    //   message: "Boat updated successfully",
-    // };
+    return {
+      success: true,
+      message: "Boat updated successfully",
+    };
   } catch (error: any) {
     console.error("Error updating boat:", error);
     return {

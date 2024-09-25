@@ -117,7 +117,7 @@ export default function BoatEditForm({
 
   function clearMainImageInput() {
     const fileInput = document.getElementById(
-      "mainImage"
+      "mainImg"
     ) as HTMLInputElement | null;
     if (fileInput) {
       fileInput.value = "";
@@ -209,7 +209,7 @@ export default function BoatEditForm({
               <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square p-2">
                 {/* Main Image */}
                 <Label
-                  htmlFor="mainImage"
+                  htmlFor="mainImg"
                   className={`bg-white relative z-10 space-y-1 group flex items-center min-h-[200px] justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${mainImagePreview ? "border-solid" : "border-dashed"}`}
                 >
                   {mainImagePreview ? (
@@ -221,8 +221,8 @@ export default function BoatEditForm({
                       />
                       <Input
                         type="string"
-                        id="image"
-                        name="image"
+                        id="mainImage"
+                        name="mainImage"
                         className="hidden"
                         value={mainImagePreview}
                       />
@@ -246,8 +246,8 @@ export default function BoatEditForm({
                   )}
                   <Input
                     type="file"
-                    id="mainImage"
-                    name="mainImage"
+                    id="mainImg"
+                    name="mainImg"
                     accept=".png,.jpg,.jpeg"
                     className="hidden"
                     onChange={handleMainImageUpload}
