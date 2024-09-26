@@ -133,16 +133,16 @@ export default function BoatEditForm({
     }));
   };
 
-  // useEffect(() => {
-  //   if (state?.success) {
-  //     setIsOpen(false);
-  //     socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
-  //     toast({
-  //       title: "Teller Edited Successfully.",
-  //       description: "Please wait for a few seconds for changes to be saved.",
-  //     });
-  //   }
-  // }, [state?.success]);
+  useEffect(() => {
+    if (state?.success) {
+      setIsOpen(false);
+      socket.emit("boatRefresh", { info: "Refresh Boat Infos" });
+      toast({
+        title: "Boat Edited Successfully.",
+        description: "Please wait for a few seconds for changes to be saved.",
+      });
+    }
+  }, [state?.success]);
 
   const fetchImages = async () => {
     try {

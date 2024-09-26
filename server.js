@@ -27,6 +27,10 @@ app.prepare().then(() => {
     socket.on("newActivity", (data) => {
       io.emit("newActivity", data);
     });
+
+    socket.on("boatRefresh", (data) => {
+      io.emit("boatRefresh", data);
+    });
   });
 
   httpServer
