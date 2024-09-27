@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { editBoat, fetchBoatImages } from "@/lib/api/boatActions";
+import { addNewActivity } from "@/lib/api/activity";
 
 export default function BoatEditForm({
   boatDetails,
@@ -56,6 +57,7 @@ export default function BoatEditForm({
 
   const handleAlertConfirm = () => {
     setIsAlertOpen(false);
+    setError("");
     if (pendingModalClose) {
       setIsOpen(false);
       setPendingModalClose(false);
@@ -133,16 +135,31 @@ export default function BoatEditForm({
     }));
   };
 
+  const addActivity = async () => {
+    await addNewActivity({
+      type: "boat",
+      title: "Updated Boat Details",
+      details: `Boat with the name '${inputs.boatName}' has been updated.`,
+      link: `/boat/${inputs?.boatCode}`,
+    });
+    socket.emit("newActivity");
+  };
+
   useEffect(() => {
     if (state?.success) {
       setIsOpen(false);
       socket.emit("boatRefresh", { info: "Refresh Boat Infos" });
+      addActivity();
       toast({
         title: "Boat Edited Successfully.",
         description: "Please wait for a few seconds for changes to be saved.",
       });
+    } else if (!state?.success && state?.message) {
+      setError(
+        state?.message ?? "Something went wrong, please enter valid inputs."
+      );
     }
-  }, [state?.success]);
+  }, [state]);
 
   const fetchImages = async () => {
     try {
@@ -426,6 +443,7 @@ export default function BoatEditForm({
                           checkingStatus: val,
                         }))
                       }
+                      value={inputs?.checkingStatus}
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a status" />

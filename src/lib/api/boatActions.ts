@@ -65,6 +65,17 @@ export const editBoat = async (prevState: any, formData: FormData) => {
       newValues[key] = value;
     });
 
+    const currentBoat = await Boat.findOne({ _id: newValues.id });
+
+    const isExisting = await Boat.findOne({ boatCode: newValues.boatCode });
+
+    if (currentBoat.boatCode !== newValues.boatCode && isExisting) {
+      return {
+        success: false,
+        message: "A boat with the code is already existing.",
+      };
+    }
+
     const boatId = newValues.id;
     if (!boatId) {
       return {

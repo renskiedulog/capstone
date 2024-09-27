@@ -2,6 +2,7 @@
 import User from "@/models/User";
 import { connectMongoDB } from "../db";
 import Activity from "@/models/Activity";
+import Boat from "@/models/Boats";
 
 export const getRecentTellers = async () => {
   try {
@@ -98,4 +99,44 @@ export const getRecentActivities = async () => {
     console.error("Error fetching activities:", error);
     return [];
   }
+};
+
+export const getBoatCount = async () => {
+  const startOfMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+  const endOfMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0
+  );
+
+  const results = await Boat.aggregate([
+    {
+      $match: { isDeleted: false },
+    },
+    {
+      $facet: {
+        totalBoats: [{ $count: "count" }],
+        currentMonthBoats: [
+          {
+            $match: {
+              createdAt: {
+                $gte: startOfMonth,
+                $lte: endOfMonth,
+              },
+            },
+          },
+          { $count: "count" },
+        ],
+      },
+    },
+  ]);
+
+  const totalBoatCount = results[0].totalBoats[0]?.count || 0;
+  const currentMonthBoatsCount = results[0].currentMonthBoats[0]?.count || 0;
+
+  return { totalBoatCount, currentMonthBoatsCount };
 };

@@ -1,9 +1,10 @@
 import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import StatCards from "@/app/(teller)/dashboard/StatCards";
-import { UserIcon } from "lucide-react";
+import { Sailboat, UserIcon } from "lucide-react";
 import RecentTellers from "./RecentTellers";
 import {
+  getBoatCount,
   getRecentActivities,
   getRecentTellers,
   getTellerCount,
@@ -23,6 +24,7 @@ const page = async () => {
   const tellerCount = await getTellerCount();
   const recentTellers = await getRecentTellers();
   const activities = await getRecentActivities();
+  const boatCount = await getBoatCount();
 
   const cards = [
     {
@@ -35,13 +37,13 @@ const page = async () => {
           : "No new tellers this month.",
     },
     {
-      cardTitle: "Total Teller Accounts",
-      icon: <UserIcon className="h-4 w-4 text-muted-foreground" />,
-      stats: tellerCount?.totalTellersCount,
+      cardTitle: "Total Registered Boat",
+      icon: <Sailboat className="h-4 w-4 text-muted-foreground" />,
+      stats: boatCount?.totalBoatCount,
       info:
-        tellerCount?.currentMonthTellersCount > 0
-          ? `There are ${tellerCount?.currentMonthTellersCount} new tellers this month.`
-          : "No new tellers this month.",
+        boatCount?.currentMonthBoatsCount > 0
+          ? `There are ${boatCount?.currentMonthBoatsCount} new boats registered this month.`
+          : "No new boats registered this month.",
     },
     {
       cardTitle: "Total Teller Accounts",

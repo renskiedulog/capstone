@@ -2,6 +2,10 @@ import mongoose, { Schema, models } from "mongoose";
 
 const boatSchema = new Schema(
   {
+    boatCode: {
+      type: String,
+      unique: true,
+    },
     ownerName: {
       type: String,
       required: true,
@@ -16,21 +20,12 @@ const boatSchema = new Schema(
       type: Number,
       required: true,
     },
-    status: {
-      type: String,
-      enum: ["Queueing", "Loading", "Standby"],
-      default: "Standby",
-    },
     boatFeatures: {
       type: String,
     },
     images: [String],
     additionalInfo: {
       type: String,
-    },
-    boatCode: {
-      type: String,
-      unique: true,
     },
     ownerContactNumber: {
       type: String,
