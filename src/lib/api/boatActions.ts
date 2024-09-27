@@ -1,5 +1,4 @@
 "use server";
-
 import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
@@ -20,6 +19,15 @@ export const createBoat = async (prevState: any, formData: FormData) => {
     });
 
     await connectMongoDB();
+
+    const isExisting = await Boat.findOne({ boatCode: values.boatCode });
+
+    if (isExisting) {
+      return {
+        success: false,
+        message: "A boat with the code is already existing.",
+      };
+    }
 
     await Boat.create({
       mainImage: values.mainImageUpload ?? "",
@@ -42,9 +50,10 @@ export const createBoat = async (prevState: any, formData: FormData) => {
       message: "Boat created successfully",
     };
   } catch (error: any) {
+    console.log(error);
     return {
       success: false,
-      message: error.message || "An unexpected error occurred.",
+      message: "An unexpected error occurred.",
     };
   }
 };
@@ -166,5 +175,17 @@ export const fetchBoatImages = async (id: string) => {
     return imagesArray;
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const checkBoatCode = async (boatCode: string) => {
+  try {
+    await connectMongoDB();
+    const existingBoat = await Boat.findOne({ boatCode });
+    console.log(existingBoat);
+
+    return existingBoat ? true : false;
+  } catch (error: any) {
+    throw new Error("Error checking username availability");
   }
 };

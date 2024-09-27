@@ -55,6 +55,7 @@ export default function AddTellerModal() {
 
   const handleAlertConfirm = () => {
     handleReset();
+    setError("");
     setIsAlertOpen(false);
     if (pendingModalClose) {
       setIsModalOpen(false);
@@ -142,7 +143,7 @@ export default function AddTellerModal() {
     } else if (!state?.success && state?.message) {
       setError("Something went wrong, please enter valid inputs.");
     }
-  }, [state?.success]);
+  }, [state]);
 
   return (
     <>

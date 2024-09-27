@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createBoat } from "@/lib/api/boatActions";
+import { checkBoatCode, createBoat } from "@/lib/api/boatActions";
 import { addNewActivity } from "@/lib/api/activity";
 
 const initialInputs: Boat = {
@@ -90,6 +90,7 @@ export default function AddBoatModal({
   const handleAlertConfirm = () => {
     handleReset();
     setIsAlertOpen(false);
+    setError("");
     if (pendingModalClose) {
       setIsModalOpen(false);
       setPendingModalClose(false);
@@ -195,9 +196,20 @@ export default function AddBoatModal({
           "You can edit, delete and view this boat by clicking the actions tab.",
       });
     } else if (!state?.success && state?.message) {
-      setError("Something went wrong, please enter valid inputs.");
+      setError(
+        state?.message ?? "Something went wrong, please enter valid inputs."
+      );
     }
-  }, [state?.success]);
+  }, [state]);
+
+  const isBoatCodeTaken = async () => {
+    const existing = await checkBoatCode(inputs?.boatCode as string);
+    if (existing) {
+      setError("Boat Code already taken.");
+    } else {
+      setError("");
+    }
+  };
 
   return (
     <>
@@ -343,6 +355,7 @@ export default function AddBoatModal({
                         placeholder="Enter boat code"
                         value={inputs.boatCode}
                         onChange={handleInputChange}
+                        onBlur={isBoatCodeTaken}
                       />
                     </div>
                   </div>
