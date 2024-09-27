@@ -105,11 +105,15 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       },
     },
     {
-      id: "registrationNumber",
-      accessorKey: "registrationNumber",
-      header: "Registration Number",
+      id: "boatCode",
+      accessorKey: "boatCode",
+      header: () => {
+        return <p>Boat Code</p>;
+      },
       cell: ({ row }) => (
-        <div className="text-left">{row.getValue("registrationNumber")}</div>
+        <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
+          {row.getValue("boatCode")}
+        </div>
       ),
     },
     {
@@ -118,6 +122,22 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       header: "Owner",
       cell: ({ row }) => (
         <div className="text-left">{row.getValue("ownerName")}</div>
+      ),
+    },
+    {
+      id: "ownerContactNumber",
+      accessorKey: "ownerContactNumber",
+      header: "Owner Contact Number",
+      cell: ({ row }) => (
+        <div className="text-left">{row.getValue("ownerContactNumber")}</div>
+      ),
+    },
+    {
+      id: "driverName",
+      accessorKey: "driverName",
+      header: "Ship Captain",
+      cell: ({ row }) => (
+        <div className="text-left">{row.getValue("driverName")}</div>
       ),
     },
     {
@@ -131,65 +151,39 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       ),
     },
     {
-      id: "boatCode",
-      accessorKey: "boatCode",
-      header: () => {
-        return <p>Boat Code</p>;
-      },
-      cell: ({ row }) => (
-        <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
-          {row.getValue("boatCode")}
-        </div>
-      ),
-    },
-    {
-      id: "registrationStatus",
-      accessorKey: "registrationStatus",
+      id: "checkingStatus",
+      accessorKey: "checkingStatus",
       header: () => {
         return (
           <div className="w-full p-0 text-center hover:bg-transparent">
-            Registration Status
+            Checking Status
           </div>
         );
       },
       cell: ({ row }: { row: any }) => {
         const bgColors: any = {
-          registered: "bg-green-700",
-          unregistered: "bg-slate-400",
-          pending: "bg-orange-500",
+          "not-checked": "bg-yellow-700",
+          checked: "bg-green-500",
+          pending: "bg-gray-500",
+          "under-inspection": "bg-blue-500",
+          "requires-repair": "bg-red-500",
+          "not-sailable": "bg-gray-700",
+        };
+
+        const statusLabels: any = {
+          "not-checked": "Not Checked",
+          checked: "Checked",
+          pending: "Pending",
+          "under-inspection": "Under Inspection",
+          "requires-repair": "Requires Repair",
+          "not-sailable": "Not Sailable",
         };
 
         return (
           <div
-            className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${bgColors[row?.getValue("registrationStatus").toLowerCase()]}`}
+            className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${bgColors[row?.getValue("checkingStatus").toLowerCase()]}`}
           >
-            {row.getValue("registrationStatus")}
-          </div>
-        );
-      },
-    },
-    {
-      id: "status",
-      accessorKey: "status",
-      header: () => {
-        return (
-          <div className="w-full p-0 text-center hover:bg-transparent">
-            Queue Status
-          </div>
-        );
-      },
-      cell: ({ row }: { row: any }) => {
-        const bgColors: any = {
-          boarding: "bg-green-700",
-          queueing: "bg-orange-500",
-          standby: "bg-slate-400",
-        };
-
-        return (
-          <div
-            className={`mx-auto w-max rounded px-2 py-1 text-center text-xs capitalize text-white ${bgColors[row?.getValue("status").toLowerCase()]}`}
-          >
-            {row.getValue("status")}
+            {statusLabels[row.getValue("checkingStatus")]}
           </div>
         );
       },

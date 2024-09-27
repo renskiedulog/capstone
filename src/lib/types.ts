@@ -42,12 +42,10 @@ export interface AccountDetailsTypes extends UserTypes {
 
 export interface Boat {
   _id: string;
-  registrationNumber: string;
   mainImage?: string;
   ownerName?: string;
   capacity: number;
   status?: "queueing" | "boarding" | "standby";
-  registrationStatus?: "registered" | "pending" | "unregistered";
   checkingStatus?:
     | "not-checked"
     | "checked"

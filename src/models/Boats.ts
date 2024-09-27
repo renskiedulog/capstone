@@ -2,11 +2,6 @@ import mongoose, { Schema, models } from "mongoose";
 
 const boatSchema = new Schema(
   {
-    registrationNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
     ownerName: {
       type: String,
       required: true,
@@ -25,11 +20,6 @@ const boatSchema = new Schema(
       type: String,
       enum: ["Queueing", "Loading", "Standby"],
       default: "Standby",
-    },
-    registrationStatus: {
-      type: String,
-      enum: ["Registered", "Pending", "Unregistered"],
-      default: "Unregistered",
     },
     boatFeatures: {
       type: String,
@@ -61,6 +51,7 @@ const boatSchema = new Schema(
       enum: [
         "not-checked",
         "checked",
+        "pending",
         "under-inspection",
         "requires-repair",
         "not-sailable",

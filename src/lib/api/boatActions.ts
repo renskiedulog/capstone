@@ -24,7 +24,6 @@ export const createBoat = async (prevState: any, formData: FormData) => {
     await Boat.create({
       mainImage: values.mainImageUpload ?? "",
       images: images,
-      registrationNumber: values.registrationNumber,
       boatCode: values.boatCode,
       ownerName: values.ownerName,
       ownerContactNumber: values.ownerContactNumber,
@@ -71,8 +70,10 @@ export const editBoat = async (prevState: any, formData: FormData) => {
         .filter((key) => key.startsWith("images-"))
         .map((key) => newValues[key]) ?? [];
 
-    if (images.length > 0) {
+    if (images.length !== 0) {
       updatedFields.images = images;
+    } else {
+      updatedFields.images = [];
     }
 
     for (const [key, value] of Object.entries(newValues)) {

@@ -204,6 +204,7 @@ export default function BoatEditForm({
                 value={boatDetails._id}
                 name="id"
                 id="id"
+                readOnly
               />
               {/* Images */}
               <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square p-2">
@@ -225,6 +226,7 @@ export default function BoatEditForm({
                         name="mainImage"
                         className="hidden"
                         value={mainImagePreview}
+                        readOnly
                       />
                       <XIcon
                         className="absolute z-20 -top-3 -right-2 bg-red-500 rounded-full p-0.5 text-white cursor-pointer hover:scale-105"
@@ -257,7 +259,7 @@ export default function BoatEditForm({
                 {!isLoading ? (
                   <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
                     {inputs?.images?.map((img, idx) => (
-                      <div className="relative">
+                      <div className="relative" key={idx}>
                         <Image
                           width={150}
                           height={150}
@@ -276,6 +278,7 @@ export default function BoatEditForm({
                           name={`images-${idx}`}
                           className="hidden"
                           value={img as string}
+                          readOnly
                         />
                       </div>
                     ))}
@@ -305,20 +308,6 @@ export default function BoatEditForm({
               {/* Fields */}
               <div className="w-full mx-5 space-y-2">
                 <div className="w-full flex sm:flex-row flex-col gap-2">
-                  <div className="flex-1">
-                    <Label htmlFor="registrationNumber">
-                      Registration Number
-                    </Label>
-                    <Input
-                      id="registrationNumber"
-                      name="registrationNumber"
-                      required
-                      type="text"
-                      placeholder="Enter registration number"
-                      value={inputs.registrationNumber}
-                      onChange={handleInputChange}
-                    />
-                  </div>
                   <div className="flex-1">
                     <Label htmlFor="boatCode">Boat Code</Label>
                     <Input
@@ -427,11 +416,16 @@ export default function BoatEditForm({
                     />
                   </div>
                   <div className="flex-1">
-                    <Label htmlFor="lastCheck">Checking Status</Label>
+                    <Label htmlFor="checkingStatus">Checking Status</Label>
                     <Select
                       defaultValue="not-checked"
                       name="checkingStatus"
-                      onValueChange={handleInputChange}
+                      onValueChange={(val) =>
+                        setInputs((prev) => ({
+                          ...prev,
+                          checkingStatus: val,
+                        }))
+                      }
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a status" />
@@ -441,6 +435,7 @@ export default function BoatEditForm({
                           <SelectItem value="not-checked">
                             Not Checked
                           </SelectItem>
+                          <SelectItem value="pending">Pending</SelectItem>
                           <SelectItem value="checked">Checked</SelectItem>
                           <SelectItem value="under-inspection">
                             Under Inspection

@@ -32,7 +32,6 @@ import { addNewActivity } from "@/lib/api/activity";
 
 const initialInputs: Boat = {
   _id: "",
-  registrationNumber: "",
   ownerName: "",
   driverName: "",
   boatName: "",
@@ -47,7 +46,6 @@ const initialInputs: Boat = {
   ownerContactNumber: "",
   driverContactNumber: "",
   status: "standby",
-  registrationStatus: "registered",
   checkingStatus: "not-checked",
 };
 
@@ -180,7 +178,7 @@ export default function AddBoatModal({
       type: "boat",
       title: "Added Boat Account",
       details: `Boat with the name '${boatName}' has been added.`,
-      link: `/boat/${inputs?.registrationNumber}`,
+      link: `/boat/${inputs?.boatCode}`,
     });
     socket.emit("newActivity");
   };
@@ -336,20 +334,6 @@ export default function AddBoatModal({
                 <div className="w-full mx-5 space-y-2 sticky">
                   <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
-                      <Label htmlFor="registrationNumber">
-                        Registration Number
-                      </Label>
-                      <Input
-                        id="registrationNumber"
-                        name="registrationNumber"
-                        required
-                        type="text"
-                        placeholder="Enter registration number"
-                        value={inputs.registrationNumber}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    <div className="flex-1">
                       <Label htmlFor="boatCode">Boat Code</Label>
                       <Input
                         id="boatCode"
@@ -475,6 +459,7 @@ export default function AddBoatModal({
                             <SelectItem value="not-checked">
                               Not Checked
                             </SelectItem>
+                            <SelectItem value="pending">Pending</SelectItem>
                             <SelectItem value="checked">Checked</SelectItem>
                             <SelectItem value="under-inspection">
                               Under Inspection
