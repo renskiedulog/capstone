@@ -44,19 +44,13 @@ const page = async () => {
       stats: "123,123,123.12",
       info: "+40% since last month.",
     },
-    {
-      cardTitle: "Total",
-      icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      stats: "123,123,123.12",
-      info: "+40% since last month.",
-    },
   ];
 
   const recentActivities = await getRecentActivities();
 
   return (
     session && (
-      <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[75%,25%] gap-2">
+      <div className="grid grid-cols-1 xl:grid-cols-[70%,30%] gap-2">
         <div className="flex flex-col gap-2 z-10">
           <StatCards data={cards} />
           <Card>

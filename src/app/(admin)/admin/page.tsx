@@ -21,10 +21,12 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
 
-  const tellerCount = await getTellerCount();
-  const recentTellers = await getRecentTellers();
-  const activities = await getRecentActivities();
-  const boatCount = await getBoatCount();
+  const [tellerCount, recentTellers, activities, boatCount] = await Promise.all([
+    getTellerCount(),
+    getRecentTellers(),
+    getRecentActivities(),
+    getBoatCount(),
+  ]);
 
   const cards = [
     {
@@ -58,10 +60,6 @@ const page = async () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[70%,30%] gap-2">
-      {/* <HorizontalCardChart />
-      <LineChartCard />
-      <WaveChartCard />
-      <CircularChartCard /> */}
       <div className="space-y-2">
         <StatCards data={cards} />
         <RecentTellers data={recentTellers} />
