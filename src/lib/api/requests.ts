@@ -9,7 +9,7 @@ export const checkSession = async () => {
   let session: CustomSessionType;
   try {
     session = (await getServerSession(options)) ?? {};
-    if (!session || !session?.user?.isAdmin) return false;
+    if (!session) return false;
     return true;
   } catch (error) {}
 };

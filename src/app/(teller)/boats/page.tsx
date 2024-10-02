@@ -1,4 +1,6 @@
+import BoatTable from "@/app/(admin)/admin/boats/BoatTable";
 import { checkSession } from "@/components/utils/Authenticator";
+import { fetchBoats } from "@/lib/api/boatActions";
 
 import { redirect } from "next/navigation";
 
@@ -11,7 +13,9 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
-  return session && <div></div>;
+  const initBoats = await fetchBoats();
+
+  return session && <BoatTable initData={initBoats} />;
 };
 
 export default page;

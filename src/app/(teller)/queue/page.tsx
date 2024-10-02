@@ -1,8 +1,7 @@
 import { checkSession } from "@/components/utils/Authenticator";
 
-import Board from "./Board";
 import { redirect } from "next/navigation";
-import HistoryTable from "./HistoryTable";
+import Queue from "./Queue";
 
 export const metadata = {
   title: "Queue",
@@ -15,9 +14,8 @@ const page = async () => {
 
   return (
     session && (
-      <div className="h-screen w-full text-black">
-        <Board />
-        <HistoryTable />
+      <div className="w-full text-black grid grid-cols-1 md:grid-cols-[450px,auto]">
+        <Queue />
       </div>
     )
   );
