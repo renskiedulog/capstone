@@ -35,7 +35,7 @@ export default function AddQueueButton() {
   const handleAlertConfirm = async () => {
     const insertQueue = boatIds?.find((boat) => boat.id === value);
     if (insertQueue)
-      addQueue(
+      await addQueue(
         insertQueue?.id,
         insertQueue.boatName,
         insertQueue?.boatCode,

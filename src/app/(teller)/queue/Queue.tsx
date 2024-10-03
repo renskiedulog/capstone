@@ -44,8 +44,9 @@ export default function Queue({
     setLoading(false);
   };
 
-  const handleAlertConfirm = () => {
+  const handleAlertConfirm = async () => {
     // Set New Data
+    await handleReorder();
     socket.emit("queueRefresh");
     setDropped(false);
   };
@@ -61,15 +62,14 @@ export default function Queue({
     }
   }, [dropped]);
 
-  const handleReorder = async (newItems: QueueBoats[]) => {
+  const handleReorder = async () => {
     setLoading(true);
-    setItems(newItems);
 
-    newItems.forEach((item, index) => {
+    items.forEach((item, index) => {
       item.position = index + 1;
     });
 
-    await updateQueuePositions(newItems);
+    await updateQueuePositions(items);
     setLoading(false);
   };
 
@@ -98,7 +98,7 @@ export default function Queue({
         <CardContent className="p-2" ref={queueRef}>
           <Reorder.Group
             axis="y"
-            onReorder={handleReorder}
+            onReorder={setItems}
             values={items}
             layout
             dragConstraints={queueRef}
