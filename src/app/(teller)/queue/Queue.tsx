@@ -61,7 +61,7 @@ export default function Queue({
     }
   }, [dropped]);
 
-  const handleReorder = (newItems: QueueBoats[]) => {
+  const handleReorder = async (newItems: QueueBoats[]) => {
     setLoading(true);
     setItems(newItems);
 
@@ -69,7 +69,7 @@ export default function Queue({
       item.position = index + 1;
     });
 
-    updateQueuePositions(newItems);
+    await updateQueuePositions(newItems);
     setLoading(false);
   };
 
