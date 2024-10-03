@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useMotionValue, Reorder, AnimatePresence } from "framer-motion";
 import { useRaisedShadow } from "./use-raised-shadow";
-import { Edit, Ellipsis, Ship, Trash } from "lucide-react";
+import { Ship, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { QueueBoats } from "@/lib/types";
+import { deleteQueueItem } from "@/lib/api/queue";
+import socket from "@/socket";
 
 interface Props {
   item: QueueBoats;
@@ -24,6 +26,16 @@ interface Props {
 export const Item = ({ item, setDropped, dragConstraints }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
+
+  const handleDeleteQueue = async (id: string) => {
+    try {
+      await deleteQueueItem(id);
+      socket.emit("queueRefresh");
+      //TODO: Notification
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Reorder.Item
@@ -51,14 +63,20 @@ export const Item = ({ item, setDropped, dragConstraints }: Props) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <Link href={"#"} className="text-black/80 group-hover:text-black">
+          <Link
+            href={`/boat/${item?.boatCode}`}
+            className="text-black/80 group-hover:text-black"
+          >
             <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
               <Ship size={18} />
               <span>Details</span>
             </DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5">
+          <DropdownMenuItem
+            className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
+            onClick={() => handleDeleteQueue(item?.id)}
+          >
             <Trash size={18} />
             <span>Delete</span>
           </DropdownMenuItem>

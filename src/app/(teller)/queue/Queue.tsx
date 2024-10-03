@@ -12,31 +12,41 @@ import {
 } from "@/components/ui/card";
 import AddQueueButton from "./AddQueueButton";
 import Alert from "@/components/utils/Alert";
+import { QueueBoats } from "@/lib/types";
+import { fetchQueue } from "@/lib/api/queue";
+import socket from "@/socket";
 
-const initialItems = [
-  { id: "651a1b5f8f4d1f0c12345678", boatCode: "", boatName: "Seafarer" },
-  { id: "651a1b5f8f4d1f0c12345679", boatCode: "", boatName: "Ocean Explorer" },
-  { id: "651a1b5f8f4d1f0c12345680", boatCode: "", boatName: "Wave Rider" },
-  { id: "651a1b5f8f4d1f0c12345681", boatCode: "", boatName: "Blue Horizon" },
-  { id: "651a1b5f8f4d1f0c12345682", boatCode: "", boatName: "Coast Runner" },
-];
-
-export default function Queue() {
+export default function Queue({
+  initialItems,
+}: {
+  initialItems: QueueBoats[] | [];
+}) {
   const queueRef = React.useRef(null);
   const [items, setItems] = useState(initialItems);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [dropped, setDropped] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  React.useEffect(() => {
+    socket.on("queueRefresh", (data) => {
+      syncData();
+    });
+
+    return () => {
+      socket.off("queueRefresh");
+    };
+  }, []);
+
   const syncData = async () => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const queue = await fetchQueue();
+    setItems(queue as any);
     setLoading(false);
   };
 
   const handleAlertConfirm = () => {
     // Set New Data
-    syncData();
+    socket.emit("queueRefresh");
     setDropped(false);
   };
 
@@ -50,6 +60,16 @@ export default function Queue() {
       setIsAlertOpen(true);
     }
   }, [dropped]);
+
+  // const handleReorder = (newItems) => {
+  //   setItems(newItems);
+
+  //   newItems.forEach((item, index) => {
+  //     item.position = index + 1;
+  //   });
+
+  //   updateQueuePositions(newItems);
+  // };
 
   return (
     <>
@@ -81,7 +101,7 @@ export default function Queue() {
             layout
             dragConstraints={queueRef}
           >
-            {items.map((item) => (
+            {items?.map((item) => (
               <Item
                 key={item.id}
                 item={item}
@@ -90,7 +110,7 @@ export default function Queue() {
               />
             ))}
           </Reorder.Group>
-          <AddQueueButton addQueue={setItems} syncData={syncData} />
+          <AddQueueButton />
         </CardContent>
         {loading && (
           <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-2">

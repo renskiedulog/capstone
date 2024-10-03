@@ -2,6 +2,7 @@
 import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
+import { revalidatePath } from "next/cache";
 
 export const createBoat = async (prevState: any, formData: FormData) => {
   try {
@@ -44,6 +45,8 @@ export const createBoat = async (prevState: any, formData: FormData) => {
       boatFeatures: values.boatFeatures,
       additionalInfo: values.additionalInfo,
     });
+
+    revalidatePath("/boats");
 
     return {
       success: true,
@@ -127,6 +130,8 @@ export const editBoat = async (prevState: any, formData: FormData) => {
       };
     }
 
+    revalidatePath("/boats");
+
     return {
       success: true,
       message: "Boat updated successfully",
@@ -169,9 +174,7 @@ export const deleteBoatAccount = async (id: string) => {
   await connectMongoDB();
   const req = await Boat.deleteOne({ _id: id });
 
-  // if (req?.modifiedCount === 0) {
-  //   return false;
-  // }
+  revalidatePath("/boats");
   return true;
 };
 
@@ -193,7 +196,6 @@ export const checkBoatCode = async (boatCode: string) => {
   try {
     await connectMongoDB();
     const existingBoat = await Boat.findOne({ boatCode });
-    console.log(existingBoat);
 
     return existingBoat ? true : false;
   } catch (error: any) {

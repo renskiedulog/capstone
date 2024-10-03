@@ -1,9 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -20,36 +18,41 @@ import {
 } from "@/components/ui/popover";
 import { Info, PlusCircle } from "lucide-react";
 import Alert from "@/components/utils/Alert";
-import { fetchBoatIds } from "@/lib/api/queue";
+import { addQueue, fetchBoatIds } from "@/lib/api/queue";
 import { QueueBoats } from "@/lib/types";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import socket from "@/socket";
 
-export default function AddQueueButton({
-  addQueue,
-  syncData,
-}: {
-  addQueue: (e: any) => void;
-  syncData: () => void;
-}) {
+export default function AddQueueButton() {
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
   const [open, setOpen] = React.useState(false);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [boatIds, setBoatIds] = React.useState([] as QueueBoats[]);
 
-  const handleAlertConfirm = () => {
+  const handleAlertConfirm = async () => {
     const insertQueue = boatIds?.find((boat) => boat.id === value);
-    addQueue((prev: QueueBoats[]) => [...prev, insertQueue]);
+    if (insertQueue)
+      addQueue(
+        insertQueue?.id,
+        insertQueue.boatName,
+        insertQueue?.boatCode,
+        username
+      );
     setValue("");
-    syncData();
+    socket.emit("queueRefresh");
   };
 
-  const handleAlertCancel = () => {};
+  const handleAlertCancel = () => {
+    return;
+  };
 
   const getBoatIds = async () => {
     try {
       const req = await fetchBoatIds();
       setBoatIds(req as QueueBoats[]);
-      console.log(req);
     } catch (error) {
       console.log(error);
     }

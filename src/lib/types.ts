@@ -81,4 +81,5 @@ export interface QueueBoats {
   id: string;
   boatName: string;
   boatCode: string;
+  position: number;
 }

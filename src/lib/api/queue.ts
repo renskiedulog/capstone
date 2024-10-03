@@ -1,5 +1,8 @@
 "use server";
 import Boat from "@/models/Boats";
+import { connectMongoDB } from "../db";
+import Queue from "@/models/Queue";
+import { revalidatePath } from "next/cache";
 
 export const fetchBoatIds = async () => {
   try {
@@ -15,4 +18,67 @@ export const fetchBoatIds = async () => {
     console.error("Error fetching boat IDs:", error);
     return [];
   }
+};
+
+export const fetchQueue = async () => {
+  try {
+    connectMongoDB();
+    const queue = await Queue.find({ status: "in-queue" }).sort({
+      position: 1,
+    });
+    return (
+      queue?.map((k) => ({
+        id: k?._id.toString(),
+        position: k?.position,
+        boatName: k?.boatName,
+        boatCode: k?.boatCode,
+      })) ?? []
+    );
+  } catch (error) {
+    console.log(error);
+  }
+  return [];
+};
+
+export const addQueue = async (
+  id: string,
+  boatName: string,
+  boatCode: string,
+  username: string
+) => {
+  try {
+    connectMongoDB();
+    const inQueueCount = await Queue.countDocuments({ status: "in-queue" });
+
+    await Queue.create({
+      boatId: id,
+      boatName: boatName,
+      boatCode: boatCode,
+      createdBy: username,
+      lastUpdatedBy: username,
+      position: inQueueCount + 1,
+      status: "in-queue",
+    });
+    revalidatePath("/queue");
+    return true;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteQueueItem = async (queueId: string) => {
+  const itemToDelete = await Queue.findById(queueId);
+
+  if (itemToDelete) {
+    const position = itemToDelete.position;
+
+    await Queue.deleteOne({ _id: queueId });
+
+    await Queue.updateMany(
+      { position: { $gt: position } },
+      { $inc: { position: -1 } }
+    );
+  }
+  revalidatePath("/queue");
+  return true;
 };

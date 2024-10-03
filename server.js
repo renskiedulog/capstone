@@ -31,6 +31,9 @@ app.prepare().then(() => {
     socket.on("boatRefresh", (data) => {
       io.emit("boatRefresh", data);
     });
+    socket.on("queueRefresh", (data) => {
+      io.emit("queueRefresh", data);
+    });
   });
 
   httpServer

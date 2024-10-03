@@ -2,22 +2,55 @@ import mongoose, { Schema, models } from "mongoose";
 
 const queueSchema = new Schema(
   {
-    boatCode: {
+    boatId: {
       type: String,
       required: true,
     },
+    boatName: {
+      type: String,
+    },
+    boatCode: {
+      type: String,
+    },
     position: {
       type: Number,
-      required: true,
     },
     status: {
-      enum: ["queued", "loading", "sailing"],
-      default: "queued",
+      type: String,
+      enum: ["in-queue", "boarding", "sailing"],
+      default: "in-queue",
+    },
+    passengerCount: {
+      type: Number,
+    },
+    passengerIds: [
+      {
+        type: String,
+      },
+    ],
+    queuedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    estimatedDepartureTime: {
+      type: Date,
+    },
+    createdBy: {
+      type: String,
+    },
+    lastUpdatedBy: {
+      type: String,
+    },
+    destination: {
+      type: String,
+    },
+    departureTime: {
+      type: Date,
     },
   },
   { timestamps: true }
 );
 
-const Activity = models.Queue || mongoose.model("Queue", queueSchema);
+const Queue = models.Queue || mongoose.model("Queue", queueSchema);
 
-export default Activity;
+export default Queue;
