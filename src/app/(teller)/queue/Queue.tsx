@@ -13,7 +13,7 @@ import {
 import AddQueueButton from "./AddQueueButton";
 import Alert from "@/components/utils/Alert";
 import { QueueBoats } from "@/lib/types";
-import { fetchQueue } from "@/lib/api/queue";
+import { fetchQueue, updateQueuePositions } from "@/lib/api/queue";
 import socket from "@/socket";
 
 export default function Queue({
@@ -61,15 +61,17 @@ export default function Queue({
     }
   }, [dropped]);
 
-  // const handleReorder = (newItems) => {
-  //   setItems(newItems);
+  const handleReorder = (newItems: QueueBoats[]) => {
+    setLoading(true);
+    setItems(newItems);
 
-  //   newItems.forEach((item, index) => {
-  //     item.position = index + 1;
-  //   });
+    newItems.forEach((item, index) => {
+      item.position = index + 1;
+    });
 
-  //   updateQueuePositions(newItems);
-  // };
+    updateQueuePositions(newItems);
+    setLoading(false);
+  };
 
   return (
     <>
@@ -96,7 +98,7 @@ export default function Queue({
         <CardContent className="p-2" ref={queueRef}>
           <Reorder.Group
             axis="y"
-            onReorder={setItems}
+            onReorder={handleReorder}
             values={items}
             layout
             dragConstraints={queueRef}

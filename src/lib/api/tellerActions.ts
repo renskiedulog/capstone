@@ -3,6 +3,7 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
+import { revalidatePath } from "next/cache";
 
 export const createTeller = async (prevState: any, formData: FormData) => {
   try {
@@ -27,6 +28,8 @@ export const createTeller = async (prevState: any, formData: FormData) => {
       birthdate: new Date(values.birthdate),
       image: values.imageBase64,
     });
+
+    revalidatePath("/admin/tellers");
 
     return {
       success: true,
@@ -83,6 +86,7 @@ export const deleteTellerAccount = async (id: string) => {
   if (req.modifiedCount === 0) {
     return false;
   }
+  revalidatePath("/admin/tellers");
   return true;
 };
 
@@ -182,6 +186,8 @@ export const editTeller = async (prevState: any, formData: FormData) => {
       { $set: updatedFields },
       { new: true }
     ).exec();
+
+    revalidatePath("/admin/tellers");
 
     return {
       success: true,

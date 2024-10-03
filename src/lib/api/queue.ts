@@ -3,6 +3,7 @@ import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import Queue from "@/models/Queue";
 import { revalidatePath } from "next/cache";
+import { QueueBoats } from "../types";
 
 export const fetchBoatIds = async () => {
   try {
@@ -81,4 +82,21 @@ export const deleteQueueItem = async (queueId: string) => {
   }
   revalidatePath("/queue");
   return true;
+};
+
+export const updateQueuePositions = async (newItems: QueueBoats[]) => {
+  try {
+    const updatePromises = newItems.map((item) =>
+      Queue.findByIdAndUpdate(item.id, { position: item.position })
+    );
+
+    await Promise.all(updatePromises);
+
+    revalidatePath("/queue");
+
+    return true;
+  } catch (error) {
+    console.error("Error updating queue positions:", error);
+    return false;
+  }
 };

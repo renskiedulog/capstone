@@ -96,6 +96,7 @@ export default function EditForm({
   }
 
   const handleCheckUsername = async (inputUsername: string) => {
+    if (inputUsername === accountDetails.username) return;
     const res = await isUsernameTaken(inputUsername);
     if (res) {
       setError("Username already taken.");
