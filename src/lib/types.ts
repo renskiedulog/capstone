@@ -76,3 +76,9 @@ export interface ActivityTypes {
   type: "teller" | "boat" | "passenger" | "queue";
   createdAt: string;
 }
+
+export interface QueueBoats {
+  id: string;
+  boatName: string;
+  boatCode: string;
+}

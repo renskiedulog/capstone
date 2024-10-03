@@ -14,24 +14,15 @@ import AddQueueButton from "./AddQueueButton";
 import Alert from "@/components/utils/Alert";
 
 const initialItems = [
-  "123",
-  "abc",
-  "xyz",
-  "qwe",
-  "rty",
-  // "uio",
-  // "asd",
-  // "fgh",
-  // "jkl",
-  // "zxc",
-  // "vbn",
-  // "mno",
-  // "pqr",
-  // "stu",
-  // "lmn",
+  { id: "651a1b5f8f4d1f0c12345678", boatCode: "", boatName: "Seafarer" },
+  { id: "651a1b5f8f4d1f0c12345679", boatCode: "", boatName: "Ocean Explorer" },
+  { id: "651a1b5f8f4d1f0c12345680", boatCode: "", boatName: "Wave Rider" },
+  { id: "651a1b5f8f4d1f0c12345681", boatCode: "", boatName: "Blue Horizon" },
+  { id: "651a1b5f8f4d1f0c12345682", boatCode: "", boatName: "Coast Runner" },
 ];
 
 export default function Queue() {
+  const queueRef = React.useRef(null);
   const [items, setItems] = useState(initialItems);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [dropped, setDropped] = useState(false);
@@ -39,7 +30,7 @@ export default function Queue() {
 
   const syncData = async () => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     setLoading(false);
   };
 
@@ -76,19 +67,30 @@ export default function Queue() {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-2">
             <CardTitle>Queue</CardTitle>
-            <p className="font-bold text-2xl">{initialItems?.length}</p>
+            <p className="font-bold text-2xl">{items?.length}</p>
           </div>
           <CardDescription>
             All the current boats in line waiting for passengers.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-2">
-          <Reorder.Group axis="y" onReorder={setItems} values={items} layout>
+        <CardContent className="p-2" ref={queueRef}>
+          <Reorder.Group
+            axis="y"
+            onReorder={setItems}
+            values={items}
+            layout
+            dragConstraints={queueRef}
+          >
             {items.map((item) => (
-              <Item key={item} item={item} setDropped={setDropped as any} />
+              <Item
+                key={item.id}
+                item={item}
+                setDropped={setDropped}
+                dragConstraints={queueRef}
+              />
             ))}
           </Reorder.Group>
-          <AddQueueButton addQueue={setItems} />
+          <AddQueueButton addQueue={setItems} syncData={syncData} />
         </CardContent>
         {loading && (
           <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-2">
