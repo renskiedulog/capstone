@@ -77,9 +77,18 @@ export interface ActivityTypes {
   createdAt: string;
 }
 
-export interface QueueBoats {
-  id: string;
+export interface Queue {
+  id: string; // Maps to boatId in the schema
   boatName: string;
-  boatCode: string;
-  position: number;
+  boatCode?: string;
+  position?: number;
+  status: "in-queue" | "boarding" | "sailing";
+  passengerCount?: number;
+  passengerIds?: string[];
+  queuedAt?: Date;
+  estimatedDepartureTime?: Date;
+  createdBy?: string;
+  lastUpdatedBy?: string;
+  destination?: string;
+  departureTime?: Date;
 }

@@ -19,7 +19,7 @@ import {
 import { Info, PlusCircle } from "lucide-react";
 import Alert from "@/components/utils/Alert";
 import { addQueue, fetchBoatIds } from "@/lib/api/queue";
-import { QueueBoats } from "@/lib/types";
+import { Queue } from "@/lib/types";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import socket from "@/socket";
@@ -30,7 +30,7 @@ export default function AddQueueButton() {
   const [open, setOpen] = React.useState(false);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
-  const [boatIds, setBoatIds] = React.useState([] as QueueBoats[]);
+  const [boatIds, setBoatIds] = React.useState([] as Queue[]);
 
   const handleAlertConfirm = async () => {
     const insertQueue = boatIds?.find((boat) => boat.id === value);
@@ -52,7 +52,7 @@ export default function AddQueueButton() {
   const getBoatIds = async () => {
     try {
       const req = await fetchBoatIds();
-      setBoatIds(req as QueueBoats[]);
+      setBoatIds(req as Queue[]);
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +90,7 @@ export default function AddQueueButton() {
             <CommandList>
               <CommandEmpty>No boat found.</CommandEmpty>
               <CommandGroup>
-                {boatIds?.map((boat: QueueBoats) => (
+                {boatIds?.map((boat: Queue) => (
                   <div
                     key={boat.id}
                     className="flex items-center justify-between hover:bg-secondary mt-1 rounded"

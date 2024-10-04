@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useMotionValue, Reorder, AnimatePresence } from "framer-motion";
 import { useRaisedShadow } from "./use-raised-shadow";
-import { Ship, Trash } from "lucide-react";
+import { Info, Ship, Trash } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,12 +13,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { QueueBoats } from "@/lib/types";
+import { Queue } from "@/lib/types";
 import { deleteQueueItem } from "@/lib/api/queue";
 import socket from "@/socket";
 
 interface Props {
-  item: QueueBoats;
+  item: Queue;
   setDropped: (e: boolean) => void;
   dragConstraints: React.RefObject<HTMLDivElement>;
 }
@@ -26,6 +26,7 @@ interface Props {
 export const Item = ({ item, setDropped, dragConstraints }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
+  const [showInfo, setShowInfo] = React.useState(false);
 
   const handleDeleteQueue = async (id: string) => {
     try {
@@ -54,7 +55,10 @@ export const Item = ({ item, setDropped, dragConstraints }: Props) => {
       }}
       className="border p-2 rounded mb-1 cursor-grab bg-secondary flex items-center justify-between"
     >
-      {item?.boatName}
+      <div>
+        {item?.boatName}
+        {showInfo && <div></div>}
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -63,13 +67,20 @@ export const Item = ({ item, setDropped, dragConstraints }: Props) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            className="cursor-pointer gap-1.5 font-medium"
+            onClick={() => setShowInfo((prev) => !prev)}
+          >
+            <Info size={18} />
+            <span>Details</span>
+          </DropdownMenuItem>
           <Link
             href={`/boat/${item?.boatCode}`}
             className="text-black/80 group-hover:text-black"
           >
             <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
               <Ship size={18} />
-              <span>Details</span>
+              <span>Boat</span>
             </DropdownMenuItem>
           </Link>
           <DropdownMenuSeparator />

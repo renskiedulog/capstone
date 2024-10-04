@@ -2,7 +2,7 @@ import { checkSession } from "@/components/utils/Authenticator";
 
 import { redirect } from "next/navigation";
 import Queue from "./Queue";
-import { QueueBoats } from "@/lib/types";
+import { Queue as QueueType } from "@/lib/types";
 import { fetchQueue } from "@/lib/api/queue";
 
 export const metadata = {
@@ -19,7 +19,7 @@ const page = async () => {
   return (
     session && (
       <div className="w-full text-black grid grid-cols-1 md:grid-cols-[450px,auto]">
-        <Queue initialItems={queue as QueueBoats[]} />
+        <Queue initialItems={queue as QueueType[]} />
       </div>
     )
   );

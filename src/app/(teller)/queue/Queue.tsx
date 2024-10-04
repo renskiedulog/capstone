@@ -12,14 +12,14 @@ import {
 } from "@/components/ui/card";
 import AddQueueButton from "./AddQueueButton";
 import Alert from "@/components/utils/Alert";
-import { QueueBoats } from "@/lib/types";
+import { Queue as QueueTypes } from "@/lib/types";
 import { fetchQueue, updateQueuePositions } from "@/lib/api/queue";
 import socket from "@/socket";
 
 export default function Queue({
   initialItems,
 }: {
-  initialItems: QueueBoats[] | [];
+  initialItems: QueueTypes[] | [];
 }) {
   const queueRef = React.useRef(null);
   const [items, setItems] = useState(initialItems);
