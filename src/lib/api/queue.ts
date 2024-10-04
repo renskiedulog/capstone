@@ -41,12 +41,33 @@ export const fetchQueue = async () => {
       return acc;
     }, {});
 
-    return queues.map(({ _id, boatId, ...rest }: any) => ({
-      id: _id.toString(),
-      boatCode: boatMap[boatId.toString()]?.boatCode || null,
-      boatName: boatMap[boatId.toString()]?.boatName || null,
-      ...rest,
-    }));
+    const updatedQueues = [];
+    const queuesToDelete = [];
+
+    // Process each queue entry
+    for (const { _id, boatId, ...rest } of queues) {
+      if (boatMap[boatId.toString()]) {
+        updatedQueues.push({
+          id: _id?.toString(),
+          boatCode: boatMap[boatId.toString()].boatCode,
+          boatName: boatMap[boatId.toString()].boatName,
+          ...rest,
+        });
+      } else {
+        queuesToDelete.push(_id);
+      }
+    }
+
+    // Delete queues with missing boatIds
+    if (queuesToDelete.length > 0) {
+      await Queue.deleteMany({ _id: { $in: queuesToDelete } });
+    }
+
+    const reorderedQueues = updatedQueues.sort(
+      (a: any, b: any) => a.position - b.position
+    );
+
+    return reorderedQueues;
   } catch (error) {
     console.error("Error fetching queue:", error);
   }

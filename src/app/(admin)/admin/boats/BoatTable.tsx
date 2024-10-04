@@ -272,6 +272,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     if (reqDelete) {
       addActivity(boatName as string);
       socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
+      socket.emit("queueRefresh");
       toast({
         title: "Teller Deleted Successfully.",
       });

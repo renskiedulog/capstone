@@ -130,8 +130,6 @@ export const editBoat = async (prevState: any, formData: FormData) => {
       };
     }
 
-    revalidatePath("/boats");
-
     return {
       success: true,
       message: "Boat updated successfully",
@@ -174,7 +172,6 @@ export const deleteBoatAccount = async (id: string) => {
   await connectMongoDB();
   const req = await Boat.deleteOne({ _id: id });
 
-  revalidatePath("/boats");
   return true;
 };
 
