@@ -3,7 +3,7 @@ import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import Queue from "@/models/Queue";
 import { revalidatePath } from "next/cache";
-import { Queue } from "../types";
+import { Queue as QueueTypes } from "../types";
 
 export const fetchBoatIds = async () => {
   try {
@@ -23,40 +23,44 @@ export const fetchBoatIds = async () => {
 
 export const fetchQueue = async () => {
   try {
-    connectMongoDB();
-    const queue = await Queue.find({ status: "in-queue" }).sort({
-      position: 1,
-    });
-    return (
-      queue?.map((k) => ({
-        id: k?._id.toString(),
-        position: k?.position,
-        boatName: k?.boatName,
-        boatCode: k?.boatCode,
-      })) ?? []
-    );
+    await connectMongoDB();
+
+    const queues = await Queue.find({ status: "in-queue" })
+      .sort({ position: 1 })
+      .lean();
+
+    const boatIds = queues.map((queue) => queue?.boatId);
+
+    const boats = await Boat.find({ _id: { $in: boatIds } }).lean();
+
+    const boatMap = boats.reduce((acc: any, boat: any) => {
+      acc[boat._id.toString()] = {
+        boatCode: boat.boatCode,
+        boatName: boat.boatName,
+      };
+      return acc;
+    }, {});
+
+    return queues.map(({ _id, boatId, ...rest }: any) => ({
+      id: _id.toString(),
+      boatCode: boatMap[boatId.toString()]?.boatCode || null,
+      boatName: boatMap[boatId.toString()]?.boatName || null,
+      ...rest,
+    }));
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching queue:", error);
   }
   return [];
 };
 
-export const addQueue = async (
-  id: string,
-  boatName: string,
-  boatCode: string,
-  username: string
-) => {
+export const addQueue = async (id: string, username: string) => {
   try {
     connectMongoDB();
     const inQueueCount = await Queue.countDocuments({ status: "in-queue" });
 
     await Queue.create({
       boatId: id,
-      boatName: boatName,
-      boatCode: boatCode,
       createdBy: username,
-      lastUpdatedBy: username,
       position: inQueueCount + 1,
       status: "in-queue",
     });
@@ -84,7 +88,7 @@ export const deleteQueueItem = async (queueId: string) => {
   return true;
 };
 
-export const updateQueuePositions = async (newItems: Queue[]) => {
+export const updateQueuePositions = async (newItems: QueueTypes[]) => {
   try {
     const updatePromises = newItems.map((item) =>
       Queue.findByIdAndUpdate(item.id, { position: item.position })

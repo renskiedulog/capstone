@@ -88,7 +88,6 @@ export interface Queue {
   queuedAt?: Date;
   estimatedDepartureTime?: Date;
   createdBy?: string;
-  lastUpdatedBy?: string;
   destination?: string;
   departureTime?: Date;
 }

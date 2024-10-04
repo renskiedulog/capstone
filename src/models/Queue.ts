@@ -6,12 +6,6 @@ const queueSchema = new Schema(
       type: String,
       required: true,
     },
-    boatName: {
-      type: String,
-    },
-    boatCode: {
-      type: String,
-    },
     position: {
       type: Number,
     },
@@ -36,9 +30,6 @@ const queueSchema = new Schema(
       type: Date,
     },
     createdBy: {
-      type: String,
-    },
-    lastUpdatedBy: {
       type: String,
     },
     destination: {

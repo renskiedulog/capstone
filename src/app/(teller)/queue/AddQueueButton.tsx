@@ -34,13 +34,7 @@ export default function AddQueueButton() {
 
   const handleAlertConfirm = async () => {
     const insertQueue = boatIds?.find((boat) => boat.id === value);
-    if (insertQueue)
-      await addQueue(
-        insertQueue?.id,
-        insertQueue.boatName,
-        insertQueue?.boatCode,
-        username
-      );
+    if (insertQueue) await addQueue(insertQueue?.id, username);
     setValue("");
     socket.emit("queueRefresh");
   };

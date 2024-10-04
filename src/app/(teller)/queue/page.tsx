@@ -1,5 +1,4 @@
 import { checkSession } from "@/components/utils/Authenticator";
-
 import { redirect } from "next/navigation";
 import Queue from "./Queue";
 import { Queue as QueueType } from "@/lib/types";

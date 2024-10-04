@@ -26,6 +26,7 @@ export default function Queue({
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [dropped, setDropped] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showInfo, setShowInfo] = useState("");
 
   React.useEffect(() => {
     socket.on("queueRefresh", (data) => {
@@ -73,6 +74,12 @@ export default function Queue({
     setLoading(false);
   };
 
+  const handleShowInfoToggle = (id: string) => {
+    if (showInfo === id) {
+      setShowInfo("");
+    } else setShowInfo(id);
+  };
+
   return (
     <>
       <Alert
@@ -109,6 +116,8 @@ export default function Queue({
                 item={item}
                 setDropped={setDropped}
                 dragConstraints={queueRef}
+                showInfo={showInfo}
+                setShowInfo={handleShowInfoToggle}
               />
             ))}
           </Reorder.Group>

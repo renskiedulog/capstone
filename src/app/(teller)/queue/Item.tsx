@@ -1,12 +1,11 @@
 import * as React from "react";
 import { useMotionValue, Reorder, AnimatePresence } from "framer-motion";
 import { useRaisedShadow } from "./use-raised-shadow";
-import { Info, Ship, Trash } from "lucide-react";
+import { Clock, Info, Ship, Trash, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -16,17 +15,25 @@ import Link from "next/link";
 import { Queue } from "@/lib/types";
 import { deleteQueueItem } from "@/lib/api/queue";
 import socket from "@/socket";
+import { motion } from "framer-motion";
 
 interface Props {
   item: Queue;
   setDropped: (e: boolean) => void;
   dragConstraints: React.RefObject<HTMLDivElement>;
+  showInfo: string;
+  setShowInfo: (e: string) => void;
 }
 
-export const Item = ({ item, setDropped, dragConstraints }: Props) => {
+export const Item = ({
+  item,
+  setDropped,
+  dragConstraints,
+  showInfo,
+  setShowInfo,
+}: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
-  const [showInfo, setShowInfo] = React.useState(false);
 
   const handleDeleteQueue = async (id: string) => {
     try {
@@ -39,60 +46,91 @@ export const Item = ({ item, setDropped, dragConstraints }: Props) => {
   };
 
   return (
-    <Reorder.Item
-      value={item}
-      id={item.id}
-      layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      style={{ boxShadow, y }}
-      dragConstraints={dragConstraints}
-      onMouseDown={(e: any) => e.target.classList.add("cursor-grabbing")}
-      onDragEnd={(e: any) => {
-        e.target.classList.remove("cursor-grabbing");
-        setDropped(true);
-      }}
-      className="border p-2 rounded mb-1 cursor-grab bg-secondary flex items-center justify-between"
-    >
-      <div>
-        {item?.boatName}
-        {showInfo && <div></div>}
-      </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Open menu</span>
-            <DotsHorizontalIcon className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className="cursor-pointer gap-1.5 font-medium"
-            onClick={() => setShowInfo((prev) => !prev)}
-          >
-            <Info size={18} />
-            <span>Details</span>
-          </DropdownMenuItem>
-          <Link
-            href={`/boat/${item?.boatCode}`}
-            className="text-black/80 group-hover:text-black"
-          >
-            <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
-              <Ship size={18} />
-              <span>Boat</span>
+    <>
+      <Reorder.Item
+        value={item}
+        id={item.id}
+        layout
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        style={{ boxShadow, y }}
+        dragConstraints={dragConstraints}
+        onMouseDown={(e: any) => e.target.classList.add("cursor-grabbing")}
+        onDragEnd={(e: any) => {
+          e.target.classList.remove("cursor-grabbing");
+          setDropped(true);
+        }}
+        className="border p-2 rounded mb-1 cursor-grab bg-secondary flex items-center justify-between"
+      >
+        {item.boatName}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <DotsHorizontalIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              className="cursor-pointer gap-1.5 font-medium"
+              onClick={() => setShowInfo(item?.id)}
+            >
+              <Info size={18} />
+              <span>Details</span>
             </DropdownMenuItem>
-          </Link>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
-            onClick={() => handleDeleteQueue(item?.id)}
+            <Link
+              href={`/boat/${item?.boatCode}`}
+              className="text-black/80 group-hover:text-black"
+            >
+              <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
+                <Ship size={18} />
+                <span>Boat</span>
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
+              onClick={() => handleDeleteQueue(item?.id)}
+            >
+              <Trash size={18} />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </Reorder.Item>
+      <AnimatePresence>
+        {showInfo === item.id && (
+          <motion.div
+            key="info"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="p-2 bg-secondary mb-1 border rounded"
           >
-            <Trash size={18} />
-            <span>Delete</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </Reorder.Item>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="flex items-center gap-2">
+                <Ship size={18} />
+                <span>
+                  <strong>Boat Code:</strong> {item.boatCode}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <User size={18} />
+                <span>
+                  <strong>Created By:</strong> {item.createdBy}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={18} />
+                <span>
+                  <strong>Queued At:</strong> {item.createdBy}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
