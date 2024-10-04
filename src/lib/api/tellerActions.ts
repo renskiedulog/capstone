@@ -29,6 +29,7 @@ export const createTeller = async (prevState: any, formData: FormData) => {
       image: values.imageBase64,
     });
 
+    revalidatePath("/admin");
     revalidatePath("/admin/tellers");
 
     return {
@@ -86,6 +87,7 @@ export const deleteTellerAccount = async (id: string) => {
   if (req.modifiedCount === 0) {
     return false;
   }
+  revalidatePath("/admin");
   revalidatePath("/admin/tellers");
   return true;
 };

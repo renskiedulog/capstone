@@ -149,6 +149,7 @@ export default function BoatEditForm({
     if (state?.success) {
       setIsOpen(false);
       socket.emit("boatRefresh", { info: "Refresh Boat Infos" });
+      socket.emit("queueRefresh");
       addActivity();
       toast({
         title: "Boat Edited Successfully.",

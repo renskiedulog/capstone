@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useMotionValue, Reorder, AnimatePresence } from "framer-motion";
 import { useRaisedShadow } from "./use-raised-shadow";
-import { Clock, Info, Ship, Trash, User } from "lucide-react";
+import { ArrowRightSquare, Clock, Info, Ship, Trash, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,7 @@ import { Queue } from "@/lib/types";
 import { deleteQueueItem } from "@/lib/api/queue";
 import socket from "@/socket";
 import { motion } from "framer-motion";
+import Alert from "@/components/utils/Alert";
 
 interface Props {
   item: Queue;
@@ -34,6 +35,7 @@ export const Item = ({
 }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
 
   const handleDeleteQueue = async (id: string) => {
     try {
@@ -45,8 +47,20 @@ export const Item = ({
     }
   };
 
+  const handleAlertConfirm = async () => {};
+
+  const handleAlertCancel = () => {};
+
   return (
     <>
+      <Alert
+        title="Confirm changes?"
+        description="You might not have clicked or dragged on purpose."
+        open={isAlertOpen}
+        openChange={setIsAlertOpen}
+        onConfirm={handleAlertConfirm}
+        onCancel={handleAlertCancel}
+      />
       <Reorder.Item
         value={item}
         id={item.id}
@@ -72,6 +86,10 @@ export const Item = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
+              <ArrowRightSquare size={18} />
+              <span>Board</span>
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer gap-1.5 font-medium"
               onClick={() => setShowInfo(item?.id)}
