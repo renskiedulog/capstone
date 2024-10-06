@@ -41,8 +41,9 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Image from "next/image";
 import socket from "@/socket";
 import AddBoatModal from "./AddBoatModal";
-import { deleteBoatAccount, fetchBoats } from "@/lib/api/boatActions";
+import { checkInQueue, deleteBoatAccount, fetchBoats } from "@/lib/api/boatActions";
 import { addNewActivity } from "@/lib/api/activity";
+import { useSession } from "next-auth/react";
 
 export default function BoatTable({ initData }: { initData: Boat[] }) {
   const [data, setData] = React.useState<Boat[]>(initData);
@@ -61,6 +62,8 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
   );
   const [page, setPage] = React.useState(1);
   const [viewImage, setViewImage] = React.useState("");
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
 
   React.useEffect(() => {
     socket.on("boatRefresh", (data) => {
@@ -81,7 +84,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "mainImage",
       accessorKey: "mainImage",
-      header: "Image",
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Main Image</p>,
       cell: ({ row }) => {
         return (
           <div className="size-12 cursor-pointer">
@@ -108,7 +111,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       id: "boatCode",
       accessorKey: "boatCode",
       header: () => {
-        return <p>Boat Code</p>;
+        return <p className="md:text-sm text-xs text-center md:text-left">Boat Code</p>;
       },
       cell: ({ row }) => (
         <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
@@ -119,7 +122,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "ownerName",
       accessorKey: "ownerName",
-      header: "Owner",
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Owner</p>,
       cell: ({ row }) => (
         <div className="text-left">{row.getValue("ownerName")}</div>
       ),
@@ -127,7 +130,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "ownerContactNumber",
       accessorKey: "ownerContactNumber",
-      header: "Owner Contact Number",
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Owner Contact</p>,
       cell: ({ row }) => (
         <div className="text-left">{row.getValue("ownerContactNumber")}</div>
       ),
@@ -135,7 +138,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "driverName",
       accessorKey: "driverName",
-      header: "Ship Captain",
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Ship Captain</p>,
       cell: ({ row }) => (
         <div className="text-left">{row.getValue("driverName")}</div>
       ),
@@ -143,9 +146,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "boatName",
       accessorKey: "boatName",
-      header: () => {
-        return <p>Boat Name</p>;
-      },
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Boat Name</p>,
       cell: ({ row }) => (
         <div className="text-left reverse">{row.getValue("boatName")}</div>
       ),
@@ -153,13 +154,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     {
       id: "checkingStatus",
       accessorKey: "checkingStatus",
-      header: () => {
-        return (
-          <div className="w-full p-0 text-center hover:bg-transparent">
-            Checking Status
-          </div>
-        );
-      },
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Checking Status</p>,
       cell: ({ row }: { row: any }) => {
         const bgColors: any = {
           "not-checked": "bg-yellow-700",
@@ -190,7 +185,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
     },
     {
       id: "actions",
-      header: () => <div className="w-full text-center">Actions</div>,
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Actions</p>,
       enableHiding: false,
       cell: ({ row }) => {
         return (
@@ -262,19 +257,31 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       type: "boat",
       title: "Deleted Boat Account",
       details: `Boat with the name '${boatName}' has been deleted.`,
+      actionBy: username,
     });
     socket.emit("newActivity");
   };
 
   const handleAlertConfirm = async () => {
+    // Filter And GET ID
     const boatName = data.find((k) => k._id === deleteBoat)?.boatName;
+    // Check if boat existing in Queue
+    const check = await checkInQueue(deleteBoat);
+    if(check) {
+      toast({
+        title: "Boat exists in the Queue.",
+        description: "Remove any instances of the boat before removing it.",
+      });
+      return;
+    }
+    
     const reqDelete = await deleteBoatAccount(deleteBoat);
     if (reqDelete) {
       addActivity(boatName as string);
-      socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
+      socket.emit("boatRefresh");
       socket.emit("queueRefresh");
       toast({
-        title: "Teller Deleted Successfully.",
+        title: "Boat Deleted Successfully.",
       });
     } else {
       toast({

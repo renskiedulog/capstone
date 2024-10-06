@@ -3,6 +3,7 @@ import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
 import { revalidatePath } from "next/cache";
+import Queue from "@/models/Queue";
 
 export const createBoat = async (prevState: any, formData: FormData) => {
   try {
@@ -197,5 +198,16 @@ export const checkBoatCode = async (boatCode: string) => {
     return existingBoat ? true : false;
   } catch (error: any) {
     throw new Error("Error checking username availability");
+  }
+};
+
+export const checkInQueue = async (boatId: string) => {
+  try {
+    await connectMongoDB();
+    const existingBoatInQueue = await Queue.findOne({ boatId });
+
+    return existingBoatInQueue ? true : false;
+  } catch (error) {
+    console.log(error);
   }
 };

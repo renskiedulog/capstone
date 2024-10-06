@@ -33,7 +33,7 @@ import {
 import Link from "next/link";
 import AddTellerModal from "./AddTellerModal";
 import { Edit, Trash, User2Icon } from "lucide-react";
-import { UserTypes } from "@/lib/types";
+import { AccountDetailsTypes, UserTypes } from "@/lib/types";
 import Alert from "@/components/utils/Alert";
 import EditForm from "./EditForm";
 import { useToast } from "@/components/ui/use-toast";
@@ -79,7 +79,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     {
       id: "image",
       accessorKey: "image",
-      header: "Image",
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Image</p>,
       cell: ({ row }) => {
         return (
           <div className="size-12 cursor-pointer">
@@ -110,7 +110,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="w-max"
+            className="w-max md:text-sm text-xs py-2 px-2"
           >
             Name
             <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -124,9 +124,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     {
       id: "username",
       accessorKey: "username",
-      header: ({ column }) => {
-        return <p>Username</p>;
-      },
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Username</p>,
       cell: ({ row }) => (
         <div className="text-left lowercase">{row.getValue("username")}</div>
       ),
@@ -134,9 +132,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     {
       id: "password",
       accessorKey: "password",
-      header: ({ column }) => {
-        return <p>Password</p>;
-      },
+      header: () => <p className="md:text-sm text-xs">Password</p>,
       cell: ({ row }) => (
         <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
           {row.getValue("password")}
@@ -146,9 +142,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     {
       id: "address",
       accessorKey: "address",
-      header: ({ column }) => {
-        return <p>Address</p>;
-      },
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Address</p>,
       cell: ({ row }) => (
         <div className="text-left">{row.getValue("address")}</div>
       ),
@@ -156,9 +150,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     {
       id: "contact",
       accessorKey: "contact",
-      header: ({ column }) => {
-        return <p>Contact Number</p>;
-      },
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Contact Number</p>,
       cell: ({ row }) => (
         <div className="text-left lowercase">{row.getValue("contact")}</div>
       ),
@@ -171,7 +163,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="w-full p-0 text-center hover:bg-transparent"
+            className="w-full p-0 text-center hover:bg-transparent md:text-sm text-xs md:text-left"
           >
             Status
             <CaretSortIcon className="ml-1 h-4 w-4" />
@@ -192,7 +184,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     },
     {
       id: "actions",
-      header: () => <div className="w-full text-center">Actions</div>,
+      header: () => <p className="md:text-sm text-xs text-center md:text-left">Actions</p>,
       enableHiding: false,
       cell: ({ row }) => {
         return (
@@ -313,7 +305,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
         />
       )}
       {editMode && (
-        <EditForm accountDetails={editDetails} setIsOpen={setEditMode} />
+        <EditForm accountDetails={editDetails as AccountDetailsTypes} setIsOpen={setEditMode} />
       )}
       {/* Table */}
       <div className="w-full">

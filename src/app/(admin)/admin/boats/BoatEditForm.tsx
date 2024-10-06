@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/select";
 import { editBoat, fetchBoatImages } from "@/lib/api/boatActions";
 import { addNewActivity } from "@/lib/api/activity";
+import { useSession } from "next-auth/react";
 
 export default function BoatEditForm({
   boatDetails,
@@ -49,6 +50,8 @@ export default function BoatEditForm({
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -141,6 +144,7 @@ export default function BoatEditForm({
       title: "Updated Boat Details",
       details: `Boat with the name '${inputs.boatName}' has been updated.`,
       link: `/boat/${inputs?.boatCode}`,
+      actionBy: username,
     });
     socket.emit("newActivity");
   };

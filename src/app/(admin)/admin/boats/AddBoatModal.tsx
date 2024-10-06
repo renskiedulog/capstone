@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/select";
 import { checkBoatCode, createBoat } from "@/lib/api/boatActions";
 import { addNewActivity } from "@/lib/api/activity";
+import { useSession } from "next-auth/react";
 
 const initialInputs: Boat = {
   _id: "",
@@ -62,8 +63,8 @@ export default function AddBoatModal({
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [state, formAction] = useFormState(createBoat, null);
   const [error, setError] = useState("");
-
-  console.log(inputs);
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
 
   const handleModal = () => {
     const hasValues = Object.values(inputs).some((value) => {
@@ -180,6 +181,7 @@ export default function AddBoatModal({
       title: "Added Boat Account",
       details: `Boat with the name '${boatName}' has been added.`,
       link: `/boat/${inputs?.boatCode}`,
+      actionBy: username,
     });
     socket.emit("newActivity");
   };

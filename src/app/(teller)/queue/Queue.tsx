@@ -15,6 +15,8 @@ import Alert from "@/components/utils/Alert";
 import { Queue as QueueTypes } from "@/lib/types";
 import { fetchQueue, updateQueuePositions } from "@/lib/api/queue";
 import socket from "@/socket";
+import { addNewActivity } from "@/lib/api/activity";
+import { useSession } from "next-auth/react";
 
 export default function Queue({
   initialItems,
@@ -27,6 +29,9 @@ export default function Queue({
   const [dropped, setDropped] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showInfo, setShowInfo] = useState("");
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
+  const [grabbedQueue, setGrabbedQueue] = useState("");
 
   React.useEffect(() => {
     socket.on("queueRefresh", (data) => {
@@ -63,6 +68,16 @@ export default function Queue({
     }
   }, [dropped]);
 
+  const addActivity = async (boatName: string) => {
+    await addNewActivity({
+      type: "queue",
+      title: "Reordered Queue",
+      details: `The queue of the boat named '${grabbedQueue}' has been reordered.`,
+      actionBy: username,
+    });
+    socket.emit("newActivity");
+  };
+
   const handleReorder = async () => {
     setLoading(true);
 
@@ -71,6 +86,8 @@ export default function Queue({
     });
 
     await updateQueuePositions(items);
+    await addActivity(grabbedQueue);
+    setGrabbedQueue("");
     setLoading(false);
   };
 
@@ -110,16 +127,21 @@ export default function Queue({
             layout
             dragConstraints={queueRef}
           >
-            {items?.map((item) => (
-              <Item
-                key={item.id}
-                item={item}
-                setDropped={setDropped}
-                dragConstraints={queueRef}
-                showInfo={showInfo}
-                setShowInfo={handleShowInfoToggle}
-              />
-            ))}
+            {items?.length > 0 ? (
+              items?.map((item) => (
+                <Item
+                  key={item.id}
+                  item={item}
+                  setDropped={setDropped}
+                  dragConstraints={queueRef}
+                  showInfo={showInfo}
+                  setShowInfo={handleShowInfoToggle}
+                  setGrabbedQueue={setGrabbedQueue}
+                />
+              ))
+            ) : (
+              <p className="text-center p-2">No Queues Found. Make one.</p>
+            )}
           </Reorder.Group>
           <AddQueueButton />
         </CardContent>

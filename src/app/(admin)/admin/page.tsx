@@ -35,7 +35,7 @@ const page = async () => {
       stats: tellerCount?.totalTellersCount,
       info:
         tellerCount?.currentMonthTellersCount > 0
-          ? `There are ${tellerCount?.currentMonthTellersCount} new teller${tellerCount?.currentMonthTellersCount > 1 ? "s" : ""} this month.`
+          ? `${tellerCount?.currentMonthTellersCount} new teller${tellerCount?.currentMonthTellersCount > 1 ? "s" : ""} this month.`
           : "No new tellers this month.",
     },
     {
@@ -44,7 +44,7 @@ const page = async () => {
       stats: boatCount?.totalBoatCount,
       info:
         boatCount?.currentMonthBoatsCount > 0
-          ? `There are ${boatCount?.currentMonthBoatsCount} new boats registered this month.`
+          ? `${boatCount?.currentMonthBoatsCount} new boat${boatCount?.currentMonthBoatsCount > 1 ? "s" : ""} this month.`
           : "No new boats registered this month.",
     },
     {
@@ -53,7 +53,7 @@ const page = async () => {
       stats: tellerCount?.totalTellersCount,
       info:
         tellerCount?.currentMonthTellersCount > 0
-          ? `There are ${tellerCount?.currentMonthTellersCount} new tellers this month.`
+          ? `${tellerCount?.currentMonthTellersCount} new tellers this month.`
           : "No new tellers this month.",
     },
   ];

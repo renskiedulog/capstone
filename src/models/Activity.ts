@@ -19,6 +19,7 @@ const activitySchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    actionBy: String,
     link: String,
   },
   { timestamps: true }

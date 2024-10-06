@@ -7,22 +7,13 @@ interface Activity {
   title: string;
   details: string;
   link?: string;
+  actionBy: string;
 }
 
-export const addNewActivity = async ({
-  type,
-  title,
-  details,
-  link,
-}: Activity) => {
+export const addNewActivity = async (activityData: Activity) => {
   try {
     await connectMongoDB();
-    const newActivity = new Activity({
-      type,
-      title,
-      details,
-      link,
-    });
+    const newActivity = new Activity(activityData);
 
     await newActivity.save();
 

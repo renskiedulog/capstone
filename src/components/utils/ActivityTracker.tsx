@@ -94,17 +94,8 @@ export default function ActivityTracker({
                         </a>
                       </Button>
                     )}
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto cursor-pointer"
-                      asChild
-                    >
-                      <a
-                        href={`/activity/${activity._id}`}
-                        className="flex items-center text-sm text-primary"
-                      >
-                        View Details
-                      </a>
+                    <Button className="p-0 h-auto cursor-pointer hover:underline" variant="link">
+                      View Details
                     </Button>
                   </div>
                 </div>

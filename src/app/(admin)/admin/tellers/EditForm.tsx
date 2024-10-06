@@ -20,6 +20,7 @@ import { AccountDetailsTypes } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { addNewActivity } from "@/lib/api/activity";
+import { useSession } from "next-auth/react";
 
 export default function EditForm({
   accountDetails,
@@ -35,6 +36,8 @@ export default function EditForm({
   const [state, formAction] = useFormState(editTeller, null);
   const [error, setError] = useState("");
   const { toast } = useToast();
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -112,6 +115,7 @@ export default function EditForm({
       title: "Updated Teller Account",
       details: `Account with the username '${inputs.username}' has been updated.`,
       link: `/profile/${inputs?.username}`,
+      actionBy: username,
     });
     socket.emit("newActivity");
   };

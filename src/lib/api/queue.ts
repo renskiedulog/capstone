@@ -44,7 +44,6 @@ export const fetchQueue = async () => {
     const updatedQueues = [];
     const queuesToDelete = [];
 
-    // Process each queue entry
     for (const { _id, boatId, ...rest } of queues) {
       if (boatMap[boatId.toString()]) {
         updatedQueues.push({
@@ -58,7 +57,6 @@ export const fetchQueue = async () => {
       }
     }
 
-    // Delete queues with missing boatIds
     if (queuesToDelete.length > 0) {
       await Queue.deleteMany({ _id: { $in: queuesToDelete } });
     }
