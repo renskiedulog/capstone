@@ -46,6 +46,11 @@ export const adminLinks = [
   {
     link: "/admin/boats",
     name: "Boats",
+    icon: <Table />,
+  },
+  {
+    link: "/queue",
+    name: "Queue",
     icon: <Ship />,
   },
 ];

@@ -69,6 +69,7 @@ export default function Queue({
   }, [dropped]);
 
   const addActivity = async (boatName: string) => {
+    if(session?.data?.user?.isAdmin) return;
     await addNewActivity({
       type: "queue",
       title: "Reordered Queue",
