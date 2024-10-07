@@ -6,24 +6,31 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import React from "react";
-import BoardingBoat from "./BoardingBoat";
 
 const boardingBoats = ["asd", "asd"];
 
-const Boarding = () => {
+const Boarding = ({ initData }: any) => {
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-2">
         <CardTitle>Boarding</CardTitle>
         <CardDescription>
           All the current boats boarding passengers.
         </CardDescription>
-        <CardContent className="p-0">
-          {boardingBoats?.map((board) => <BoardingBoat />)}
-        </CardContent>
       </CardHeader>
+      <div className="px-2">
+        {boardingBoats?.map((board) => <BoardingBoat boats={board} />)}
+      </div>
     </Card>
   );
 };
 
 export default Boarding;
+
+const BoardingBoat = ({ boats }) => {
+  return (
+    <div className="bg-secondary mt-1.5 p-2 rounded-md border">
+      BoardingBoat
+    </div>
+  );
+};
