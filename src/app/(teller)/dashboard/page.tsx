@@ -1,7 +1,7 @@
 import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import StatCards from "./StatCards";
-import { DollarSign } from "lucide-react";
+import { DollarSign, Sailboat } from "lucide-react";
 import QueuedTable from "./QueuedTable";
 import LineChart from "./LineChart";
 import {
@@ -11,9 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { DashboardPieChart } from "./DashboardPieChart";
 import ActivityTracker from "@/components/utils/ActivityTracker";
-import { getRecentActivities } from "@/lib/api/common";
+import { getBoatCount, getRecentActivities } from "@/lib/api/common";
 import { ActivityTypes } from "@/lib/types";
 
 export const metadata = {
@@ -25,12 +24,17 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
+  const boatCount = await getBoatCount();
+
   const cards = [
     {
-      cardTitle: "Total",
-      icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      stats: "123,123,123.12",
-      info: "+40% since last month.",
+      cardTitle: "Total Registered Boat",
+      icon: <Sailboat className="h-4 w-4 text-muted-foreground" />,
+      stats: boatCount?.totalBoatCount,
+      info:
+        boatCount?.currentMonthBoatsCount > 0
+          ? `${boatCount?.currentMonthBoatsCount} new boat${boatCount?.currentMonthBoatsCount > 1 ? "s" : ""} this month.`
+          : "No new boats registered this month.",
     },
     {
       cardTitle: "Total",
