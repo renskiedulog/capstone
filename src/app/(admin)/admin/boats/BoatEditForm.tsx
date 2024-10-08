@@ -229,7 +229,7 @@ export default function BoatEditForm({
                 readOnly
               />
               {/* Images */}
-              <div className="flex flex-col gap-2 w-5/6 sm:w-7/12 aspect-square p-2">
+              <div className="flex flex-col gap-2 w-full sm:w-7/12 aspect-square p-2">
                 {/* Main Image */}
                 <Label
                   htmlFor="mainImg"
@@ -309,8 +309,8 @@ export default function BoatEditForm({
                       className={`bg-white z-10 space-y-1 group w-full aspect-square flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded border-dashed`}
                     >
                       <PlusCircleIcon className="group-hover:opacity-70 opacity-50" />
-                      <p className="group-hover:opacity-70 opacity-50 text-center text-[10px] sm:text-xs px-2">
-                        Upload An Image or Document
+                      <p className="group-hover:opacity-70 opacity-50 text-center text-[8px] sm:text-xs px-2">
+                        Upload An Image
                       </p>
                       <Input
                         type="file"

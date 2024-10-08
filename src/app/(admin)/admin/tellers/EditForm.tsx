@@ -39,6 +39,8 @@ export default function EditForm({
   const session: any = useSession() || null;
   const username = session?.data?.user?.username;
 
+  console.log(username)
+
   const handleModalClose = () => {
     setIsAlertOpen(true);
     setPendingModalClose(true);
@@ -109,7 +111,7 @@ export default function EditForm({
   };
 
   const addActivity = async () => {
-    if (accountDetails?.isAdmin) return;
+    if (session?.data?.user?.isAdmin) return;
     await addNewActivity({
       type: "teller",
       title: "Updated Teller Account",
@@ -119,7 +121,7 @@ export default function EditForm({
     });
     socket.emit("newActivity");
   };
-
+  
   useEffect(() => {
     if (state?.success) {
       setIsOpen(false);
@@ -160,8 +162,8 @@ export default function EditForm({
             onClick={handleModalClose}
           />
           <CardHeader>
-            <CardTitle>Edit Teller Account</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg sm:text-3xl">Edit Teller Account</CardTitle>
+            <CardDescription className="text-xs sm:text-xl">
               Edit the necessary details for the account. You can leave the
               inputs unchanged.
             </CardDescription>
@@ -172,7 +174,7 @@ export default function EditForm({
             )}
           </CardHeader>
           <CardContent className="mx-auto">
-            <div className="flex w-full flex-col sm:flex-row items-center gap-2">
+            <div className="flex w-full flex-col sm:flex-row items-center gap-2 h-full">
               {/* ID */}
               <Input
                 type="text"
@@ -181,7 +183,7 @@ export default function EditForm({
                 name="id"
                 id="id"
               />
-              <div className="relative w-full max-w-[150px] sm:max-w-[200px] max-h-[150px] sm:max-h-[200px] h-[100vh]">
+              <div className="relative w-full max-w-[150px] sm:max-w-[200px] sm:max-h-[200px] sm:h-[100vh]">
                 <Label
                   htmlFor="uploadImage"
                   className={`bg-white z-10 space-y-1 group w-full h-[150px] sm:h-[200px] flex items-center justify-center flex-col border-2 cursor-pointer border-black/50 rounded ${imagePreview ? "border-solid" : "border-dashed"}`}
@@ -304,6 +306,18 @@ export default function EditForm({
                     type="text"
                     placeholder="Enter permanent address"
                     value={inputs.address}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    required
+                    type="text"
+                    placeholder="Enter permanent email"
+                    value={inputs.email}
                     onChange={handleInputChange}
                   />
                 </div>

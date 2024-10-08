@@ -2,7 +2,7 @@ import React from "react";
 
 export async function generateMetadata({ params }: BoatProfileParams) {
   return {
-    title: params?.boatCode,
+    title: "Boat Info",
   };
 }
 

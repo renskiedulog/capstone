@@ -223,7 +223,7 @@ export default function AddBoatModal({
         onConfirm={handleAlertConfirm}
         onCancel={handleAlertCancel}
       />
-      <Button onClick={handleModal}>Add Boat</Button>
+      <Button className="text-xs sm:text-base" onClick={handleModal}>Add Boat</Button>
       {isModalOpen && (
         <form
           action={formAction}

@@ -32,18 +32,18 @@ export const options: any = {
           const { username, password } = credentials;
 
           try {
-            await connectMongoDB(); // Ensure MongoDB connection is made
+            await connectMongoDB(); 
 
             const checkUser = await User.findOne({ username });
 
             if (!checkUser) {
               console.log("User not found");
-              return null; // No Username Found
+              return null; 
             }
 
             if (checkUser.isDeleted) {
               console.log("User is deleted");
-              return null; // If user is deleted
+              return null; 
             }
 
             const isPasswordMatch = await bcrypt.compare(
@@ -53,17 +53,14 @@ export const options: any = {
 
             if (!isPasswordMatch) {
               console.log("Password mismatch");
-              return null; // Incorrect password
+              return null;
             }
 
-            // Update user status to 'active'
             checkUser.status = "active";
             await checkUser.save();
 
-            // Optionally revalidate the path (depends on your requirements)
             revalidatePath("/admin/tellers");
 
-            // Return user info
             return {
               name: checkUser.username,
               isAdmin: checkUser.isAdmin,
@@ -74,7 +71,7 @@ export const options: any = {
             return null;
           }
         } else {
-          return null; // Credentials are undefined
+          return null; 
         }
       },
     }),
@@ -93,10 +90,9 @@ export const options: any = {
     }) {
       try {
         if (session && token?.name) {
-          await connectMongoDB(); // Ensure MongoDB connection is made
+          await connectMongoDB(); 
 
-          // Find the user and exclude password & _id fields
-          const userDocument: any = await User.findOne({ username: token.name })
+          const userDocument: any = await User?.findOne({ username: token.name })
             .select("-password -_id")
             .lean();
 
@@ -106,7 +102,6 @@ export const options: any = {
 
           return session;
         }
-        return session;
       } catch (error) {
         console.error("Session callback error:", error);
         return session;

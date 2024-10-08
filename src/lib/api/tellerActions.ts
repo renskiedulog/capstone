@@ -29,9 +29,6 @@ export const createTeller = async (prevState: any, formData: FormData) => {
       image: values.imageBase64,
     });
 
-    revalidatePath("/admin");
-    revalidatePath("/admin/tellers");
-
     return {
       success: true,
       message: "Teller created successfully",
@@ -87,8 +84,6 @@ export const deleteTellerAccount = async (id: string) => {
   if (req.modifiedCount === 0) {
     return false;
   }
-  revalidatePath("/admin");
-  revalidatePath("/admin/tellers");
   return true;
 };
 
@@ -188,8 +183,6 @@ export const editTeller = async (prevState: any, formData: FormData) => {
       { $set: updatedFields },
       { new: true }
     ).exec();
-
-    revalidatePath("/admin/tellers");
 
     return {
       success: true,

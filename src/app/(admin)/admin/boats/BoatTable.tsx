@@ -374,7 +374,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       )}
       {/* Table */}
       <div className="w-full">
-        <div className="flex items-center justify-between py-4">
+        <div className="flex sm:flex-row flex-col-reverse gap-2 justify-between py-2 sm:py-4">
           <Input
             placeholder="Search a boat..."
             value={
@@ -383,13 +383,13 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
             onChange={(event) =>
               table.getColumn("boatName")?.setFilterValue(event.target.value)
             }
-            className="w-full max-w-sm md:w-full mr-2"
+            className="w-full mr-2"
           />
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2">
             <AddBoatModal setViewImage={setViewImage} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
+                <Button variant="outline" className="ml-auto text-xs sm:text-base">
                   Columns <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>

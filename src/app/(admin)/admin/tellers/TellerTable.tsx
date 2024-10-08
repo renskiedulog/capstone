@@ -316,7 +316,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
-            className="w-[200px] max-w-sm md:w-full"
+            className="max-w-sm w-full mr-1"
           />
           <div className="flex items-center gap-2">
             <AddTellerModal />

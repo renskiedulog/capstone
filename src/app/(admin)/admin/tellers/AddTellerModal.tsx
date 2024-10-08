@@ -156,7 +156,7 @@ export default function AddTellerModal() {
         onConfirm={handleAlertConfirm}
         onCancel={handleAlertCancel}
       />
-      <Button onClick={handleModal}>Add Teller</Button>
+      <Button className="text-xs sm:text-base" onClick={handleModal}>Add Teller</Button>
       {isModalOpen && (
         <form
           action={formAction}
