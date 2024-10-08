@@ -15,7 +15,6 @@ export interface CustomSessionType {
     username?: string;
     firstName?: string;
     lastName?: string;
-    password?: string;
     isAdmin?: boolean;
   };
 }
@@ -31,15 +30,19 @@ export const options: any = {
       ): Promise<CustomUser | null> {
         if (credentials) {
           const { username, password } = credentials;
+
           try {
-            await connectMongoDB();
-            const checkUser = (await User?.findOne({ username })) || null;
+            await connectMongoDB(); // Ensure MongoDB connection is made
+
+            const checkUser = await User.findOne({ username });
 
             if (!checkUser) {
+              console.log("User not found");
               return null; // No Username Found
             }
 
             if (checkUser.isDeleted) {
+              console.log("User is deleted");
               return null; // If user is deleted
             }
 
@@ -49,25 +52,29 @@ export const options: any = {
             );
 
             if (!isPasswordMatch) {
-              return null; // wrong password
+              console.log("Password mismatch");
+              return null; // Incorrect password
             }
 
+            // Update user status to 'active'
             checkUser.status = "active";
             await checkUser.save();
 
-            revalidatePath("/admin/tellers", "page");
+            // Optionally revalidate the path (depends on your requirements)
+            revalidatePath("/admin/tellers");
 
+            // Return user info
             return {
               name: checkUser.username,
               isAdmin: checkUser.isAdmin,
               id: checkUser.id,
             };
           } catch (error) {
-            console.log(error);
+            console.error("Authorization error:", error);
             return null;
           }
         } else {
-          return null; // Credentials object is undefined
+          return null; // Credentials are undefined
         }
       },
     }),
@@ -84,13 +91,26 @@ export const options: any = {
       session: CustomSessionType;
       token: JWT;
     }) {
-      if (session) {
-        const userDocument: any = await User.findOne({
-          username: token?.name,
-        }).select("-password -_id");
-        session.user = userDocument?.toObject();
+      try {
+        if (session && token?.name) {
+          await connectMongoDB(); // Ensure MongoDB connection is made
+
+          // Find the user and exclude password & _id fields
+          const userDocument: any = await User.findOne({ username: token.name })
+            .select("-password -_id")
+            .lean();
+
+          if (userDocument) {
+            session.user = userDocument;
+          }
+
+          return session;
+        }
         return session;
-      } else return session;
+      } catch (error) {
+        console.error("Session callback error:", error);
+        return session;
+      }
     },
   },
 };
