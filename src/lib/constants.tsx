@@ -1,9 +1,11 @@
 import { DashboardIcon } from "@radix-ui/react-icons";
 import {
   CalendarIcon,
+  History,
   LineChart,
   PlusIcon,
   SailboatIcon,
+  SaveAll,
   Ship,
   Table,
   User2Icon,
@@ -30,6 +32,16 @@ export const navLinks = [
     name: "Statistics",
     icon: <LineChart />,
   },
+  {
+    link: "/activity",
+    name: "Activity",
+    icon: <SaveAll />,
+  },
+  {
+    link: "/queue-history",
+    name: "Queue History",
+    icon: <History />,
+  },
 ];
 
 export const adminLinks = [
@@ -52,6 +64,16 @@ export const adminLinks = [
     link: "/queue",
     name: "Queue",
     icon: <Ship />,
+  },
+  {
+    link: "/activity",
+    name: "Activity",
+    icon: <SaveAll />,
+  },
+  {
+    link: "/queue-history",
+    name: "Queue History",
+    icon: <History />,
   },
 ];
 

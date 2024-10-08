@@ -38,7 +38,7 @@ const NavigationBar = () => {
       session?.status === "authenticated" &&
       !hideNav?.includes(pathname) && (
         <aside className="fixed inset-y-0 left-0 z-50 flex w-full sm:w-14 flex-col border-r bg-background py-2 sm:py-0 h-max sm:h-full border-b">
-          <nav className="flex flex-row sm:flex-col items-center gap-4 px-2 sm:py-4 h-max sm:h-full w-full">
+          <nav className="flex flex-row sm:flex-col items-center gap-4 px-2 sm:py-4 h-max sm:h-full w-full overflow-x-auto scrollbar-hidden">
             <Link
               href={`/profile/${username}`}
               className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full text-lg font-semibold text-primary-foreground hover:scale-105 md:h-10 md:w-10 md:text-base"
