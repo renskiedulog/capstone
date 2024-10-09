@@ -135,6 +135,8 @@ export default function EditForm({
         isProfile &&
         !session?.data?.user?.isAdmin
       ) {
+        addActivity();
+        socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
         handleLogout();
         return;
       }

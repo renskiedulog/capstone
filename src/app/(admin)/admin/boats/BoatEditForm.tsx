@@ -32,17 +32,16 @@ import {
 import { editBoat, fetchBoatImages } from "@/lib/api/boatActions";
 import { addNewActivity } from "@/lib/api/activity";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function BoatEditForm({
   boatDetails,
   setIsOpen,
   setViewImage,
-  setBoatCode,
 }: {
   boatDetails: Boat;
   setIsOpen: (state: boolean) => void;
   setViewImage: (url: string) => void;
-  setBoatCode?: (string: string) => void;
 }) {
   const [mainImagePreview, setMainImagePreview] = useState("");
   const [inputs, setInputs] = useState(boatDetails);
@@ -54,6 +53,7 @@ export default function BoatEditForm({
   const { toast } = useToast();
   const session: any = useSession() || null;
   const username = session?.data?.user?.username;
+  const router = useRouter();
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -153,6 +153,9 @@ export default function BoatEditForm({
 
   useEffect(() => {
     if (state?.success) {
+      if(boatDetails.boatCode !== inputs.boatCode) {
+        router.replace(`/boat/${inputs.boatCode}`)
+      }
       setIsOpen(false);
       socket.emit("boatRefresh", { info: "Refresh Boat Infos" });
       socket.emit("queueRefresh");
@@ -183,13 +186,6 @@ export default function BoatEditForm({
     setMainImagePreview(boatDetails?.mainImage as string);
     fetchImages();
   }, [boatDetails]);
-
-  // Reset boatcode reference for the page
-  useEffect(() => {
-    if (setBoatCode) {
-      setBoatCode(inputs.boatCode);
-    }
-  }, [inputs.boatCode]);
 
   return (
     <>
