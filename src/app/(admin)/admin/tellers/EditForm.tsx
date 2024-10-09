@@ -20,14 +20,18 @@ import { AccountDetailsTypes } from "@/lib/types";
 import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { addNewActivity } from "@/lib/api/activity";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { logOutDB } from "@/lib/api/common";
+import { useRouter } from "next/navigation";
 
 export default function EditForm({
   accountDetails,
   setIsOpen,
+  isProfile = false,
 }: {
   accountDetails: AccountDetailsTypes;
   setIsOpen: (state: boolean) => void;
+  isProfile?: boolean;
 }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [inputs, setInputs] = useState(accountDetails);
@@ -36,10 +40,9 @@ export default function EditForm({
   const [state, formAction] = useFormState(editTeller, null);
   const [error, setError] = useState("");
   const { toast } = useToast();
-  const session: any = useSession() || null;
+  const session: any = useSession();
   const username = session?.data?.user?.username;
-
-  console.log(username)
+  const router = useRouter();
 
   const handleModalClose = () => {
     setIsAlertOpen(true);
@@ -101,13 +104,16 @@ export default function EditForm({
   }
 
   const handleCheckUsername = async (inputUsername: string) => {
-    if (inputUsername === accountDetails.username) return;
+    if (inputUsername === accountDetails.username) {
+      setError("");
+      return;
+    }
     const res = await isUsernameTaken(inputUsername);
     if (res) {
       setError("Username already taken.");
-    } else {
-      setError("");
-    }
+    } else if (!session?.data?.user?.isAdmin) {
+      setError("Note: Changing your username will cause a forceful logout.");
+    } else setError("");
   };
 
   const addActivity = async () => {
@@ -121,9 +127,17 @@ export default function EditForm({
     });
     socket.emit("newActivity");
   };
-  
+
   useEffect(() => {
     if (state?.success) {
+      if (
+        accountDetails.username !== inputs.username &&
+        isProfile &&
+        !session?.data?.user?.isAdmin
+      ) {
+        handleLogout();
+        return;
+      }
       setIsOpen(false);
       socket.emit("tellerRefresh", { info: "Refresh Teller Infos" });
       addActivity();
@@ -131,12 +145,20 @@ export default function EditForm({
         title: "Edited Successfully.",
         description: "If changes do not occur, refreshing the page might help.",
       });
+      if (accountDetails.username !== inputs.username && isProfile)
+        router.replace(`/profile/${inputs.username}`);
     }
   }, [state?.success]);
 
   useEffect(() => {
     setImagePreview(accountDetails?.image);
   }, [accountDetails]);
+
+  const handleLogout = async () => {
+    await logOutDB(inputs.username);
+    socket.emit("tellerRefresh");
+    await signOut();
+  };
 
   return (
     <>
@@ -162,7 +184,9 @@ export default function EditForm({
             onClick={handleModalClose}
           />
           <CardHeader>
-            <CardTitle className="text-lg sm:text-3xl">Edit Teller Account</CardTitle>
+            <CardTitle className="text-lg sm:text-3xl">
+              Edit Teller Account
+            </CardTitle>
             <CardDescription className="text-xs sm:text-xl">
               Edit the necessary details for the account. You can leave the
               inputs unchanged.
@@ -182,6 +206,7 @@ export default function EditForm({
                 value={accountDetails._id}
                 name="id"
                 id="id"
+                readOnly
               />
               <div className="relative w-full max-w-[150px] sm:max-w-[200px] sm:max-h-[200px] sm:h-[100vh]">
                 <Label
@@ -201,6 +226,7 @@ export default function EditForm({
                         name="image"
                         className="hidden"
                         value={imagePreview}
+                        readOnly
                       />
                     </>
                   ) : (
@@ -239,6 +265,7 @@ export default function EditForm({
                       name="imageBase64"
                       className="hidden"
                       value={imagePreview}
+                      readOnly
                     />
                   </>
                 )}

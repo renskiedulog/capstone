@@ -37,10 +37,12 @@ export default function BoatEditForm({
   boatDetails,
   setIsOpen,
   setViewImage,
+  setBoatCode,
 }: {
   boatDetails: Boat;
   setIsOpen: (state: boolean) => void;
   setViewImage: (url: string) => void;
+  setBoatCode?: (string: string) => void;
 }) {
   const [mainImagePreview, setMainImagePreview] = useState("");
   const [inputs, setInputs] = useState(boatDetails);
@@ -181,6 +183,13 @@ export default function BoatEditForm({
     setMainImagePreview(boatDetails?.mainImage as string);
     fetchImages();
   }, [boatDetails]);
+
+  // Reset boatcode reference for the page
+  useEffect(() => {
+    if (setBoatCode) {
+      setBoatCode(inputs.boatCode);
+    }
+  }, [inputs.boatCode]);
 
   return (
     <>

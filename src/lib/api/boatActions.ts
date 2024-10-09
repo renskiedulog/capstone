@@ -211,3 +211,16 @@ export const checkInQueue = async (boatId: string) => {
     console.log(error);
   }
 };
+
+export const fetchBoatDetails = async (boatCode: string) => {
+  try {
+    const boat = await Boat.findOne({ boatCode }).lean();
+    if (!boat) {
+      throw new Error("Boat not found");
+    }
+
+    return boat;
+  } catch (error) {
+    console.error(error);
+  }
+};

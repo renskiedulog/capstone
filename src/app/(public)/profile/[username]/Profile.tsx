@@ -35,7 +35,7 @@ const Profile = ({
   const [isEditing, setIsEditing] = useState(false);
 
   React.useEffect(() => {
-    socket.on("tellerRefresh", (data) => {
+    socket.on("tellerRefresh", () => {
       fetchData();
     });
 
@@ -45,7 +45,7 @@ const Profile = ({
   }, []);
 
   const fetchData = async () => {
-    const req = await getTellerInfo(data.username);
+    const req = await getTellerInfo(data?.username);
     setAccountDetails(req);
   };
 
@@ -59,6 +59,7 @@ const Profile = ({
         <EditForm
           accountDetails={accountDetails as AccountDetailsTypes}
           setIsOpen={setIsEditing}
+          isProfile
         />
       )}
       {viewImage !== "" && (

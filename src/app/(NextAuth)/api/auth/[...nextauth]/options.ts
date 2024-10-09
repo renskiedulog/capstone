@@ -32,18 +32,18 @@ export const options: any = {
           const { username, password } = credentials;
 
           try {
-            await connectMongoDB(); 
+            await connectMongoDB();
 
             const checkUser = await User.findOne({ username });
 
             if (!checkUser) {
               console.log("User not found");
-              return null; 
+              return null;
             }
 
             if (checkUser.isDeleted) {
               console.log("User is deleted");
-              return null; 
+              return null;
             }
 
             const isPasswordMatch = await bcrypt.compare(
@@ -71,7 +71,7 @@ export const options: any = {
             return null;
           }
         } else {
-          return null; 
+          return null;
         }
       },
     }),
@@ -81,6 +81,13 @@ export const options: any = {
     signIn: "/login",
   },
   callbacks: {
+    async jwt({ token, user, account, profile }) {
+      // Check if the username has been changed (e.g., when updating the profile)
+      if (user) {
+        token.name = user.username || token.name; // Update token's name with the new username
+      }
+      return token;
+    },
     async session({
       session,
       token,
@@ -90,9 +97,11 @@ export const options: any = {
     }) {
       try {
         if (session && token?.name) {
-          await connectMongoDB(); 
+          await connectMongoDB();
 
-          const userDocument: any = await User?.findOne({ username: token.name })
+          const userDocument: any = await User?.findOne({
+            username: token.name,
+          })
             .select("-password -_id")
             .lean();
 
