@@ -17,6 +17,8 @@ import { fetchQueue, updateQueuePositions } from "@/lib/api/queue";
 import socket from "@/socket";
 import { addNewActivity } from "@/lib/api/activity";
 import { useSession } from "next-auth/react";
+import { LockKeyhole } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Queue({
   initialItems,
@@ -32,6 +34,7 @@ export default function Queue({
   const session: any = useSession() || null;
   const username = session?.data?.user?.username;
   const [grabbedQueue, setGrabbedQueue] = useState("");
+  const [locked, setLocked] = useState(false);
 
   React.useEffect(() => {
     socket.on("queueRefresh", (data) => {
@@ -69,7 +72,7 @@ export default function Queue({
   }, [dropped]);
 
   const addActivity = async (boatName: string) => {
-    if(session?.data?.user?.isAdmin) return;
+    if (session?.data?.user?.isAdmin) return;
     await addNewActivity({
       type: "queue",
       title: "Reordered Queue",
@@ -111,6 +114,22 @@ export default function Queue({
       <Card
         className={`h-max relative ${loading && "opacity-50 pointer-events-none"}`}
       >
+        {locked && (
+          <div
+            className="w-full h-full bg-black/30 absolute top-0 left-0 z-50 flex items-center justify-center cursor-pointer hover:bg-black/10 transition duration-500"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLocked(false);
+            }}
+          >
+            <LockKeyhole size={40} />
+          </div>
+        )}
+        <LockKeyhole
+          size={18}
+          className="absolute top-2 left-1/2 -translate-x-1/2 cursor-pointer sm:hidden block"
+          onClick={() => setLocked(true)}
+        />
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-2">
             <CardTitle>Queue</CardTitle>

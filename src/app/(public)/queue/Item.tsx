@@ -24,7 +24,7 @@ interface Props {
   dragConstraints: React.RefObject<HTMLDivElement>;
   showInfo: string;
   setShowInfo: (e: string) => void;
-  setGrabbedQueue: (e: string) => void
+  setGrabbedQueue: (e: string) => void;
 }
 
 export const Item = ({
@@ -33,7 +33,7 @@ export const Item = ({
   dragConstraints,
   showInfo,
   setShowInfo,
-  setGrabbedQueue
+  setGrabbedQueue,
 }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
@@ -73,8 +73,8 @@ export const Item = ({
         style={{ boxShadow, y }}
         dragConstraints={dragConstraints}
         onMouseDown={(e: any) => {
-          e.target.classList.add("cursor-grabbing")
-          setGrabbedQueue(item.boatName)
+          e.target.classList.add("cursor-grabbing");
+          setGrabbedQueue(item.boatName);
         }}
         onDragEnd={(e: any) => {
           e.target.classList.remove("cursor-grabbing");
