@@ -148,7 +148,7 @@ export default function EditForm({
         description: "If changes do not occur, refreshing the page might help.",
       });
       if (accountDetails.username !== inputs.username && isProfile)
-        router.replace(`/profile/${inputs.username}`);
+        router.push(`/profile/${inputs.username}`);
     }
   }, [state?.success]);
 

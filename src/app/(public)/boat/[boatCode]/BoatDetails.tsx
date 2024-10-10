@@ -24,7 +24,7 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
   }, []);
 
   const fetchData = async () => {
-    const req = (await fetchBoatDetails(boatDetails.boatCode)) ?? null;
+    const req = (await fetchBoatDetails(boatDetails?.boatCode)) ?? null;
 
     setBoatInfo(req as Boat);
   };
@@ -51,7 +51,7 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
         <BoatEditForm
           setViewImage={setViewImage}
           setIsOpen={setOpen}
-          boatDetails={boatDetails}
+          boatDetails={boatInfo}
         />
       )}
     </div>

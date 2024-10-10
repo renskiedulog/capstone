@@ -153,8 +153,8 @@ export default function BoatEditForm({
 
   useEffect(() => {
     if (state?.success) {
-      if(boatDetails.boatCode !== inputs.boatCode) {
-        router.replace(`/boat/${inputs.boatCode}`)
+      if (boatDetails.boatCode !== inputs.boatCode) {
+        router.push(`/boat/${inputs.boatCode}`);
       }
       setIsOpen(false);
       socket.emit("boatRefresh", { info: "Refresh Boat Infos" });
