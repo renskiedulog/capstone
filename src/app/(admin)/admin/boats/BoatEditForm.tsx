@@ -33,6 +33,7 @@ import { editBoat, fetchBoatImages } from "@/lib/api/boatActions";
 import { addNewActivity } from "@/lib/api/activity";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { revalidatePage } from "@/lib/api/common";
 
 export default function BoatEditForm({
   boatDetails,

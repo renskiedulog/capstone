@@ -36,6 +36,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
+    "embla-carousel-react": "^8.3.0",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.383.0",
     "mongoose": "^8.4.1",

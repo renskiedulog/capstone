@@ -3,6 +3,8 @@ import { getTellerInfo } from "@/lib/api/tellerActions";
 import { redirect } from "next/navigation";
 import Profile from "./Profile";
 
+export const revalidate = 0;
+
 type ProfileParams = {
   params: {
     username: string;

@@ -21,7 +21,7 @@ import { useToast } from "@/components/ui/use-toast";
 import socket from "@/socket";
 import { addNewActivity } from "@/lib/api/activity";
 import { signOut, useSession } from "next-auth/react";
-import { logOutDB } from "@/lib/api/common";
+import { logOutDB, revalidatePage } from "@/lib/api/common";
 import { useRouter } from "next/navigation";
 
 export default function EditForm({
