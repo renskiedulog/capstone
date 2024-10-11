@@ -16,10 +16,12 @@ const page = async () => {
   const queue = await fetchQueue();
 
   return (
-    <div className="w-full text-black grid grid-cols-1 md:grid-cols-[450px,auto,350px] gap-x-5">
+    <div className="w-full text-black flex lg:flex-row flex-col gap-5">
       <Queue initialItems={queue as QueueType[]} />
-      <Boarding />
-      <Sailing />
+      <div className="flex gap-5 flex-wrap lg:flex-row flex-col w-full">
+        <Boarding />
+        <Sailing />
+      </div>
     </div>
   );
 };

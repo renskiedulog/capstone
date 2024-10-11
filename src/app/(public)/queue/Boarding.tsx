@@ -11,7 +11,7 @@ const boardingBoats = ["asd", "asd"];
 
 const Boarding = ({ initData }: any) => {
   return (
-    <Card>
+    <Card className="flex-1 lg:min-w-[500px]">
       <CardHeader className="pb-2">
         <CardTitle>Boarding</CardTitle>
         <CardDescription>

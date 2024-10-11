@@ -12,12 +12,14 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { fetchBoatDetails } from "@/lib/api/boatActions";
 import { Boat } from "@/lib/types";
+import { formatDateToReadable } from "@/lib/utils";
 import socket from "@/socket";
 import {
   Anchor,
   Badge,
   CheckCircle,
   Contact,
+  Contact2,
   Info,
   Ship,
   User,
@@ -56,7 +58,7 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
       </Button>
       {viewImage !== "" && (
         <Dialog open={viewImage !== ""} onOpenChange={() => setViewImage("")}>
-          <DialogContent>
+          <DialogContent aria-describedby="image">
             <Image
               src={viewImage}
               width={500}
@@ -105,7 +107,7 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
                   {boatInfo?.images?.map((img, index) => (
                     <CarouselItem
                       key={index}
-                      className="pl-1 md:basis-1/2 lg:basis-1/3"
+                      className="pl-1 basis-1/3 sm:basis-1/2 lg:basis-1/3"
                     >
                       <Image
                         width={500}
@@ -126,15 +128,15 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
             )}
           </div>
           {/* Details */}
-          <div>
-            <Card className="p-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 grid-rows-1 md:grid-rows-[auto,auto] gap-2 h-max">
+            <Card className="p-2 col-span-1 md:col-span-2 h-max">
               <CardHeader className="p-2">
                 <CardTitle className="text-2xl flex items-center gap-1">
-                  <Info size={18} />
+                  <Info size={24} className="mb-1" />
                   Details
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-2 text-lg">
+              <CardContent className="p-2 text-sm sm:text-base md:text-lg">
                 {boatInfo?.boatName && (
                   <p>
                     <span className="font-bold">Boat Name: </span>
@@ -145,6 +147,88 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
                   <p>
                     <span className="font-bold">Boat Code: </span>
                     {boatInfo?.boatCode}
+                  </p>
+                )}
+                <p>
+                  <span className="font-bold">Features: </span>
+                  {boatInfo?.boatFeatures ||
+                    "No features provided for this boat yet."}
+                </p>
+                <p>
+                  <span className="font-bold">Additional Info: </span>
+                  {boatInfo?.additionalInfo ||
+                    "No additional info provided for this boat yet."}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="p-2">
+              <CardHeader className="p-2">
+                <CardTitle className="text-2xl flex items-center gap-1">
+                  <Contact2 size={24} className="mb-1" />
+                  Contact Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-2 text-sm sm:text-base md:text-lg">
+                {boatInfo?.ownerName && (
+                  <p>
+                    <span className="font-bold">Owner Name: </span>
+                    {boatInfo?.ownerName}
+                  </p>
+                )}
+                {boatInfo?.ownerContactNumber && (
+                  <p>
+                    <span className="font-bold">Owner Contact Number: </span>
+                    {boatInfo?.ownerContactNumber}
+                  </p>
+                )}
+                {boatInfo?.driverName && (
+                  <p>
+                    <span className="font-bold">Driver Name: </span>
+                    {boatInfo?.driverName}
+                  </p>
+                )}
+                {boatInfo?.driverContactNumber && (
+                  <p>
+                    <span className="font-bold">Driver Contact Number: </span>
+                    {boatInfo?.driverContactNumber}
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+            <Card className="p-2">
+              <CardHeader className="p-2">
+                <CardTitle className="text-2xl flex items-center gap-1">
+                  <CheckCircle size={24} className="mb-0.5" />
+                  Additional Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-2 text-sm sm:text-base">
+                <p>
+                  <span className="font-bold">Capacity: </span>
+                  {boatInfo?.capacity}
+                </p>
+                {boatInfo?.checkingStatus && (
+                  <p>
+                    <span className="font-bold">Checking Status: </span>
+                    {boatInfo?.checkingStatus?.toUpperCase()}
+                  </p>
+                )}
+                {boatInfo?.lastCheck && (
+                  <p>
+                    <span className="font-bold">Last Checking: </span>
+                    {formatDateToReadable(boatInfo?.lastCheck)}
+                  </p>
+                )}
+                {boatInfo?.createdAt && (
+                  <p>
+                    <span className="font-bold">Created At: </span>
+                    {formatDateToReadable(boatInfo?.createdAt)}
+                  </p>
+                )}
+                {boatInfo?.updatedAt && (
+                  <p>
+                    <span className="font-bold">Updated At: </span>
+                    {formatDateToReadable(boatInfo?.updatedAt)}
                   </p>
                 )}
               </CardContent>

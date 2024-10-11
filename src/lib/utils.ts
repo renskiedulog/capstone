@@ -59,7 +59,7 @@ export function isEqual(a: any, b: any) {
  * @param timestamp - An ISO 8601 formatted date string (e.g., "2024-08-21T00:57:13.497+00:00").
  * @returns A formatted date string in the form of "HH:MM AM/PM - Month Day, Year".
  */
-export function formatDateToReadable(timestamp: string): string {
+export function formatDateToReadable(timestamp: string | Date): string {
   const date = new Date(timestamp);
 
   const hours = date.getHours();

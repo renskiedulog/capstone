@@ -112,17 +112,18 @@ export default function Queue({
         onCancel={handleAlertCancel}
       />
       <Card
-        className={`h-max relative ${loading && "opacity-50 pointer-events-none"}`}
+        className={`h-max relative min-w-[420px] ${loading && "opacity-50 pointer-events-none"}`}
       >
         {locked && (
           <div
-            className="w-full h-full bg-black/30 absolute top-0 left-0 z-50 flex items-center justify-center cursor-pointer hover:bg-black/10 transition duration-500"
+            className="w-full h-full bg-black/30 absolute top-0 left-0 z-50 flex flex-col items-center justify-center cursor-pointer hover:bg-black/10 transition duration-500 rounded"
             onClick={(e) => {
               e.stopPropagation();
               setLocked(false);
             }}
           >
             <LockKeyhole size={40} />
+            <p className="text-lg font-medium">Locked</p>
           </div>
         )}
         <LockKeyhole
