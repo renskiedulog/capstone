@@ -142,18 +142,6 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       ),
     },
     {
-      id: "ownerContactNumber",
-      accessorKey: "ownerContactNumber",
-      header: () => (
-        <p className="md:text-sm text-xs text-center md:text-left">
-          Owner Contact
-        </p>
-      ),
-      cell: ({ row }) => (
-        <div className="text-left">{row.getValue("ownerContactNumber")}</div>
-      ),
-    },
-    {
       id: "driverName",
       accessorKey: "driverName",
       header: () => <p className="md:text-sm text-xs">Ship Captain</p>,
@@ -162,23 +150,19 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       ),
     },
     {
-      id: "driverContactNumber",
-      accessorKey: "driverContactNumber",
-      header: () => (
-        <p className="md:text-sm text-xs text-center md:text-left">
-          Driver Contact
-        </p>
-      ),
-      cell: ({ row }) => (
-        <div className="text-left">{row.getValue("driverContactNumber")}</div>
-      ),
-    },
-    {
       id: "boatName",
       accessorKey: "boatName",
       header: () => <p className="md:text-sm text-xs">Boat Name</p>,
       cell: ({ row }) => (
         <div className="text-left reverse">{row.getValue("boatName")}</div>
+      ),
+    },
+    {
+      id: "capacity",
+      accessorKey: "capacity",
+      header: () => <p className="md:text-sm text-xs">Capacity</p>,
+      cell: ({ row }) => (
+        <div className="text-left reverse">{row.getValue("capacity")}</div>
       ),
     },
     {

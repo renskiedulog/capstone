@@ -103,7 +103,7 @@ export default function ActivityTracker({
                         </Button>
                       )}
                       <button
-                        className="p-0 h-auto cursor-pointer hover:underline"
+                        className="p-0 h-auto cursor-pointer hover:underline text-sm"
                         onClick={() => {
                           setActivityDetails(activity);
                           setOpenDetails(true);

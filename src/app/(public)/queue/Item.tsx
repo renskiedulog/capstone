@@ -18,6 +18,7 @@ import socket from "@/socket";
 import { motion } from "framer-motion";
 import Alert from "@/components/utils/Alert";
 import { formatDateTime } from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Props {
   item: Queue;
@@ -41,14 +42,17 @@ export const Item = ({
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
-  const [elapsedTime, setElapsedTime] = React.useState('');
-
+  const [elapsedTime, setElapsedTime] = React.useState("");
+  const { toast } = useToast();
 
   const handleDeleteQueue = async (id: string) => {
     try {
       await deleteQueueItem(id);
       socket.emit("queueRefresh");
       //TODO: Notification
+      toast({
+        title: "Queue Deleted Successfully.",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -59,10 +63,9 @@ export const Item = ({
     syncData();
   };
 
-  console.log(item)
-  const handleAlertCancel = () => { };
+  const handleAlertCancel = () => {};
 
-  const getTimeElapsed = (startDate: string) => {
+  const getTimeElapsed = (startDate: any) => {
     const now = new Date();
     const elapsed = Math.floor((now - new Date(startDate)) / 1000); // Time in seconds
 
@@ -72,22 +75,25 @@ export const Item = ({
     const seconds = elapsed % 60;
 
     if (days > 0) {
-      return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      return `${String(days).padStart(2, "0")}:${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     } else {
-      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     }
   };
 
   React.useEffect(() => {
-    const intervalId = setInterval(() => {
+    if (showInfo === item.id) {
+      const intervalId = setInterval(() => {
+        setElapsedTime(getTimeElapsed(item?.createdAt as string));
+      }, 1000);
+
       setElapsedTime(getTimeElapsed(item?.createdAt as string));
-    }, 1000);
 
-    setElapsedTime(getTimeElapsed(item?.createdAt as string));
-
-    return () => clearInterval(intervalId);
-  }, [showInfo]);
-
+      return () => clearInterval(intervalId);
+    } else {
+      setElapsedTime("");
+    }
+  }, [showInfo, item.id, item.createdAt]);
 
   return (
     <>
@@ -127,7 +133,10 @@ export const Item = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium" onClick={() => setIsAlertOpen(true)}>
+            <DropdownMenuItem
+              className="cursor-pointer gap-1.5 font-medium"
+              onClick={() => setIsAlertOpen(true)}
+            >
               <ArrowRightSquare size={18} />
               <span>Board</span>
             </DropdownMenuItem>
@@ -183,7 +192,8 @@ export const Item = ({
               <div className="flex items-center gap-2">
                 <Clock size={18} />
                 <span>
-                  <strong>Queued At:</strong> <br /> {formatDateTime(item?.createdAt as string)}
+                  <strong>Queued At:</strong> <br />{" "}
+                  {formatDateTime(item?.createdAt as string)}
                 </span>
               </div>
               <div className="flex items-center gap-2">

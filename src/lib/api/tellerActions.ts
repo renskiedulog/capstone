@@ -79,12 +79,9 @@ export const fetchTellers = async (isDeleted: boolean = false) => {
 
 export const deleteTellerAccount = async (id: string) => {
   await connectMongoDB();
-  const req = await User.updateOne({ _id: id }, { $set: { isDeleted: true } });
+  const req = await User.findByIdAndDelete(id);
 
-  if (req.modifiedCount === 0) {
-    return false;
-  }
-  return true;
+  return req !== null;
 };
 
 export const isUsernameTaken = async (username: string) => {
@@ -117,7 +114,7 @@ export const editTeller = async (prevState: any, formData: FormData) => {
       };
     }
 
-    const existingUser: Document | null = await User.findById(userId).exec();
+    const existingUser: any = await User.findById(userId).exec();
     if (!existingUser) {
       return {
         success: false,

@@ -23,6 +23,7 @@ import { Queue } from "@/lib/types";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import socket from "@/socket";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function AddQueueButton() {
   const session: any = useSession() || null;
@@ -31,12 +32,17 @@ export default function AddQueueButton() {
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
   const [boatIds, setBoatIds] = React.useState([] as Queue[]);
+  const { toast } = useToast();
 
   const handleAlertConfirm = async () => {
     const insertQueue = boatIds?.find((boat) => boat.id === value);
     if (insertQueue) await addQueue(insertQueue?.id, username);
     setValue("");
     socket.emit("queueRefresh");
+    toast({
+      title: "Successfully added an entry to the queue.",
+      description: `You can view the details by clicking the icon on the right side.`
+    })
   };
 
   const handleAlertCancel = () => {
@@ -80,7 +86,6 @@ export default function AddQueueButton() {
         </PopoverTrigger>
         <PopoverContent className="p-0 w-[430px]">
           <Command>
-            <CommandInput placeholder="Search boat..." className="h-9" />
             <CommandList>
               <CommandEmpty>No boat found.</CommandEmpty>
               <CommandGroup>
@@ -96,7 +101,7 @@ export default function AddQueueButton() {
                         setIsAlertOpen(true);
                         setValue(boatId);
                         setOpen(false);
-                      }}
+                      }}  
                       className="w-full cursor-pointer aria-selected:bg-transparent"
                     >
                       {boat.boatName}

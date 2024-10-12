@@ -47,8 +47,6 @@ export const createBoat = async (prevState: any, formData: FormData) => {
       additionalInfo: values.additionalInfo,
     });
 
-    revalidatePath("/boats");
-
     return {
       success: true,
       message: "Boat created successfully",

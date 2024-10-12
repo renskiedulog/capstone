@@ -130,32 +130,6 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
       ),
     },
     {
-      id: "password",
-      accessorKey: "password",
-      header: () => <p className="md:text-sm text-xs">Password</p>,
-      cell: ({ row }) => (
-        <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
-          {row.getValue("password")}
-        </div>
-      ),
-    },
-    {
-      id: "address",
-      accessorKey: "address",
-      header: () => <p className="md:text-sm text-xs text-center md:text-left">Address</p>,
-      cell: ({ row }) => (
-        <div className="text-left">{row.getValue("address")}</div>
-      ),
-    },
-    {
-      id: "contact",
-      accessorKey: "contact",
-      header: () => <p className="md:text-sm text-xs text-center md:text-left">Contact Number</p>,
-      cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("contact")}</div>
-      ),
-    },
-    {
       id: "status",
       accessorKey: "status",
       header: ({ column }) => {

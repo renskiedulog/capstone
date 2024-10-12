@@ -128,18 +128,22 @@ export const changeToBoarding = async (queueId: string) => {
   try {
     await connectMongoDB();
 
-    const queue = await Queue.findById(queueId);
-    console.log(queue)
-    
-    if (queue) {
-      queue.status = "boarding";
-      await queue.save();
+    const result = await Queue.findByIdAndUpdate(
+      queueId,
+      { $set: { status: "boarding", boardingAt: new Date() } },
+      { new: true }
+    );
+
+    if (result) {
       return { success: true, message: "Boat status updated to boarding." };
     } else {
       return { success: false, message: "Boat not found." };
     }
   } catch (error) {
     console.error("Error changing boat status:", error);
-    return { success: false, message: "An error occurred while updating the boat status." };
+    return {
+      success: false,
+      message: "An error occurred while updating the boat status.",
+    };
   }
 };
