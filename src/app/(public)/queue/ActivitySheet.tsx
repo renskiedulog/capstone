@@ -19,6 +19,8 @@ export function ActivitySheet({
   setOpenDetails,
   activityDetails,
 }: SheetTypes) {
+  console.log(activityDetails)
+
   return (
     <Sheet open={open} onOpenChange={setOpenDetails}>
       <SheetContent>
@@ -29,7 +31,7 @@ export function ActivitySheet({
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
-
+          
         </div>
       </SheetContent>
     </Sheet>

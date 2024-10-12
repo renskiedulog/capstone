@@ -90,4 +90,5 @@ export interface Queue {
   createdBy?: string;
   destination?: string;
   departureTime?: Date;
+  createdAt?: String | Date;
 }

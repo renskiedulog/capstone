@@ -13,10 +13,11 @@ import { Button } from "@/components/ui/button";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Queue } from "@/lib/types";
-import { deleteQueueItem } from "@/lib/api/queue";
+import { changeToBoarding, deleteQueueItem } from "@/lib/api/queue";
 import socket from "@/socket";
 import { motion } from "framer-motion";
 import Alert from "@/components/utils/Alert";
+import { formatDateTime } from "@/lib/utils";
 
 interface Props {
   item: Queue;
@@ -25,6 +26,7 @@ interface Props {
   showInfo: string;
   setShowInfo: (e: string) => void;
   setGrabbedQueue: (e: string) => void;
+  syncData: () => void;
 }
 
 export const Item = ({
@@ -34,10 +36,13 @@ export const Item = ({
   showInfo,
   setShowInfo,
   setGrabbedQueue,
+  syncData,
 }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const [isAlertOpen, setIsAlertOpen] = React.useState(false);
+  const [elapsedTime, setElapsedTime] = React.useState('');
+
 
   const handleDeleteQueue = async (id: string) => {
     try {
@@ -49,14 +54,45 @@ export const Item = ({
     }
   };
 
-  const handleAlertConfirm = async () => {};
+  const handleAlertConfirm = async () => {
+    await changeToBoarding(item.id as string);
+    syncData();
+  };
 
-  const handleAlertCancel = () => {};
+  console.log(item)
+  const handleAlertCancel = () => { };
+
+  const getTimeElapsed = (startDate: string) => {
+    const now = new Date();
+    const elapsed = Math.floor((now - new Date(startDate)) / 1000); // Time in seconds
+
+    const days = Math.floor(elapsed / (3600 * 24));
+    const hours = Math.floor((elapsed % (3600 * 24)) / 3600);
+    const minutes = Math.floor((elapsed % 3600) / 60);
+    const seconds = elapsed % 60;
+
+    if (days > 0) {
+      return `${String(days).padStart(2, '0')}:${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    } else {
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+  };
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      setElapsedTime(getTimeElapsed(item?.createdAt as string));
+    }, 1000);
+
+    setElapsedTime(getTimeElapsed(item?.createdAt as string));
+
+    return () => clearInterval(intervalId);
+  }, [showInfo]);
+
 
   return (
     <>
       <Alert
-        title="Confirm changes?"
+        title="Change to Boarding?"
         description="You might not have clicked or dragged on purpose."
         open={isAlertOpen}
         openChange={setIsAlertOpen}
@@ -91,7 +127,7 @@ export const Item = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
+            <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium" onClick={() => setIsAlertOpen(true)}>
               <ArrowRightSquare size={18} />
               <span>Board</span>
             </DropdownMenuItem>
@@ -147,7 +183,13 @@ export const Item = ({
               <div className="flex items-center gap-2">
                 <Clock size={18} />
                 <span>
-                  <strong>Queued At:</strong> {item.createdBy}
+                  <strong>Queued At:</strong> <br /> {formatDateTime(item?.createdAt as string)}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock size={18} />
+                <span>
+                  <strong>Time Elapsed:</strong> <br /> {elapsedTime}
                 </span>
               </div>
             </div>

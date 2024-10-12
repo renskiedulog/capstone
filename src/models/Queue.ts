@@ -38,6 +38,12 @@ const queueSchema = new Schema(
     departureTime: {
       type: Date,
     },
+    boardingAt: {
+      type: Date,
+    },
+    sailedAt: {
+      type: Date
+    }
   },
   { timestamps: true }
 );

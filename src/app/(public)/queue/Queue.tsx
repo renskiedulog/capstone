@@ -112,7 +112,7 @@ export default function Queue({
         onCancel={handleAlertCancel}
       />
       <Card
-        className={`h-max relative min-w-[420px] ${loading && "opacity-50 pointer-events-none"}`}
+        className={`h-max relative w-full sm:w-[420px] ${loading && "opacity-50 pointer-events-none"}`}
       >
         {locked && (
           <div
@@ -140,7 +140,7 @@ export default function Queue({
             All the current boats in line waiting for passengers.
           </CardDescription>
         </CardHeader>
-        <CardContent className="p-2" ref={queueRef}>
+        <CardContent className="p-2 w" ref={queueRef}>
           <Reorder.Group
             axis="y"
             onReorder={setItems}
@@ -158,6 +158,7 @@ export default function Queue({
                   showInfo={showInfo}
                   setShowInfo={handleShowInfoToggle}
                   setGrabbedQueue={setGrabbedQueue}
+                  syncData={syncData}
                 />
               ))
             ) : (
