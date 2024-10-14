@@ -25,9 +25,10 @@ import { Queue } from "@/lib/types";
 import { changeToBoarding, deleteQueueItem } from "@/lib/api/queue";
 import socket from "@/socket";
 import { motion } from "framer-motion";
-import Alert from "@/components/utils/Alert";
 import { formatDateTime } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
+import Alert from "@/components/utils/Alert";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   item: Queue;
@@ -50,7 +51,6 @@ export const Item = ({
 }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
-  const [alert, setAlert] = React.useState(false);
   const [elapsedTime, setElapsedTime] = React.useState("");
   const { toast } = useToast();
 
@@ -58,7 +58,6 @@ export const Item = ({
     try {
       await deleteQueueItem(id);
       socket.emit("queueRefresh");
-      //TODO: Notification
       toast({
         title: "Queue Deleted Successfully.",
       });
@@ -67,18 +66,13 @@ export const Item = ({
     }
   };
 
-  const handleAlertConfirm = async () => {
+  const handleChangeToBoarding = async () => {
     await changeToBoarding(item.id as string);
     syncData();
   };
 
-  const handleAlertCancel = () => {
-    setAlert(false);
-    setGrabbedQueue("");
-  };
-
   const getTimeElapsed = (startDate: any) => {
-    const now = new Date();
+    const now: any = new Date();
     const elapsed = Math.floor((now - new Date(startDate)) / 1000); // Time in seconds
 
     const days = Math.floor(elapsed / (3600 * 24));
@@ -107,18 +101,26 @@ export const Item = ({
     }
   }, [showInfo, item.id, item.createdAt]);
 
+  const capacityCategory = {
+    small: 15,
+    medium: 30,
+    large: 50,
+  };
+
+  function checkBoatCapacity(capacity: number) {
+    if (capacity <= capacityCategory.small) {
+      return "small";
+    } else if (capacity <= capacityCategory.medium) {
+      return "medium";
+    } else if (capacity <= capacityCategory.large) {
+      return "large";
+    } else {
+      return "extra";
+    }
+  }
+
   return (
     <>
-      {alert && (
-        <Alert
-          title="Change to Boarding?"
-          description="You might not have clicked or dragged on purpose."
-          open={alert}
-          openChange={setAlert}
-          onConfirm={handleAlertConfirm}
-          onCancel={handleAlertCancel}
-        />
-      )}
       <Reorder.Item
         value={item}
         id={item.id}
@@ -139,47 +141,53 @@ export const Item = ({
         className="border p-2 rounded mb-1 cursor-grab bg-secondary flex items-center justify-between"
       >
         {item.boatName}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              className="cursor-pointer gap-1.5 font-medium"
-              onClick={() => setAlert(true)}
-            >
-              <ArrowRightSquare size={18} />
-              <span>Board</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer gap-1.5 font-medium"
-              onClick={() => setShowInfo(item?.id)}
-            >
-              <Info size={18} />
-              <span>Details</span>
-            </DropdownMenuItem>
-            <Link
-              href={`/boat/${item?.boatCode}`}
-              className="text-black/80 group-hover:text-black"
-            >
-              <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
-                <Ship size={18} />
-                <span>Boat</span>
+
+        <div className="flex gap-2 items-center">
+          <Badge className="uppercase !text-[9px] tracking-wider font-bold py-0.5 px-2 min-w-[70px] items-center justify-center">
+            {checkBoatCapacity(item?.capacity as number)}
+          </Badge>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <DotsHorizontalIcon className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                className="cursor-pointer gap-1.5 font-medium"
+                onClick={handleChangeToBoarding}
+              >
+                <ArrowRightSquare size={18} />
+                <span>Board</span>
               </DropdownMenuItem>
-            </Link>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
-              onClick={() => handleDeleteQueue(item?.id)}
-            >
-              <Trash size={18} />
-              <span>Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuItem
+                className="cursor-pointer gap-1.5 font-medium"
+                onClick={() => setShowInfo(item?.id)}
+              >
+                <Info size={18} />
+                <span>Details</span>
+              </DropdownMenuItem>
+              <Link
+                href={`/boat/${item?.boatCode}`}
+                className="text-black/80 group-hover:text-black"
+              >
+                <DropdownMenuItem className="cursor-pointer gap-1.5 font-medium">
+                  <Ship size={18} />
+                  <span>Boat</span>
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer text-red-500 hover:!text-red-500 gap-1.5"
+                onClick={() => handleDeleteQueue(item?.id)}
+              >
+                <Trash size={18} />
+                <span>Delete</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </Reorder.Item>
       <AnimatePresence>
         {showInfo === item.id && (
