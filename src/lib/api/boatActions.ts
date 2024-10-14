@@ -2,7 +2,6 @@
 import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
-import { revalidatePath } from "next/cache";
 import Queue from "@/models/Queue";
 
 export const createBoat = async (prevState: any, formData: FormData) => {

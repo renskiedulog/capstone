@@ -112,7 +112,7 @@ export default function Queue({
         onCancel={handleAlertCancel}
       />
       <Card
-        className={`h-max relative w-full sm:w-[420px] ${loading && "opacity-50 pointer-events-none"}`}
+        className={`h-max relative w-full md:w-[600px] ${loading && "opacity-50 pointer-events-none"}`}
       >
         {locked && (
           <div

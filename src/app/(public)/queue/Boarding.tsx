@@ -8,11 +8,11 @@ import {
 import { Boat } from "@/lib/types";
 import React from "react";
 
-const boardingBoats = [{} as Boat];
+const boardingBoats = [];
 
 const Boarding = ({ initData }: { initData: Boat[] }) => {
   return (
-    <Card className="flex-none sm:flex-1 lg:min-w-[500px] pb-2">
+    <Card className="flex-none sm:flex-1 lg:min-w-[500px] pb-2 h-max">
       <CardHeader className="pb-2">
         <CardTitle>Boarding</CardTitle>
         <CardDescription>
@@ -20,7 +20,13 @@ const Boarding = ({ initData }: { initData: Boat[] }) => {
         </CardDescription>
       </CardHeader>
       <div className="px-2">
-        {boardingBoats?.map((board) => <BoardingBoat boat={board} />)}
+        {boardingBoats?.length > 0 ? (
+          boardingBoats?.map((board) => <BoardingBoat boat={board} />)
+        ) : (
+          <div className="text-center p-5">
+            There are no boats currently on boarding.
+          </div>
+        )}
       </div>
     </Card>
   );
