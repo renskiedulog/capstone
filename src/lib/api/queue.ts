@@ -37,6 +37,8 @@ export const fetchQueue = async () => {
       acc[boat._id.toString()] = {
         boatCode: boat.boatCode,
         boatName: boat.boatName,
+        driverName: boat.driverName,
+        capacity: boat.capacity,
       };
       return acc;
     }, {});
@@ -50,6 +52,8 @@ export const fetchQueue = async () => {
           id: _id?.toString(),
           boatCode: boatMap[boatId.toString()].boatCode,
           boatName: boatMap[boatId.toString()].boatName,
+          driverName: boatMap[boatId.toString()].driverName,
+          capacity: boatMap[boatId.toString()].capacity,
           ...rest,
         });
       } else {
@@ -130,7 +134,7 @@ export const changeToBoarding = async (queueId: string) => {
 
     const result = await Queue.findByIdAndUpdate(
       queueId,
-      { $set: { status: "boarding", boardingAt: new Date() } },
+      { $set: { status: "boarding", boardingAt: new Date(), position: null } },
       { new: true }
     );
 
@@ -145,5 +149,43 @@ export const changeToBoarding = async (queueId: string) => {
       success: false,
       message: "An error occurred while updating the boat status.",
     };
+  }
+};
+
+export const fetchBoarding = async () => {
+  try {
+    await connectMongoDB();
+
+    const boardingBoats = await Queue.find({ status: "boarding" }).lean();
+    const boatIds = boardingBoats.map((boat) => boat.boatId);
+    const boats = await Boat.find({ _id: { $in: boatIds } }).lean();
+    const boatMap = boats.reduce((acc: any, boat: any) => {
+      acc[boat._id.toString()] = {
+        mainImage: boat.mainImage,
+        capacity: boat.capacity,
+        boatName: boat.boatName,
+        boatCode: boat.boatCode,
+        driverName: boat.driverName,
+      };
+      return acc;
+    }, {});
+
+    const boardingBoatsWithImages = boardingBoats.map((queueBoat) => {
+      const boatData = boatMap[queueBoat.boatId.toString()] || {};
+
+      return {
+        ...queueBoat,
+        mainImage: boatData.mainImage || null,
+        capacity: boatData.capacity || 0,
+        boatName: boatData.boatName || "",
+        boatCode: boatData.boatCode || "",
+        driverName: boatData.driverName || "",
+      };
+    });
+
+    return boardingBoatsWithImages;
+  } catch (error) {
+    console.log(error);
+    return [];
   }
 };

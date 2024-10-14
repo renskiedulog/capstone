@@ -18,7 +18,6 @@ import socket from "@/socket";
 import { addNewActivity } from "@/lib/api/activity";
 import { useSession } from "next-auth/react";
 import { LockKeyhole } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function Queue({
   initialItems,
@@ -103,14 +102,16 @@ export default function Queue({
 
   return (
     <>
-      <Alert
-        title="Confirm changes?"
-        description="You might not have clicked or dragged on purpose."
-        open={isAlertOpen}
-        openChange={setIsAlertOpen}
-        onConfirm={handleAlertConfirm}
-        onCancel={handleAlertCancel}
-      />
+      {isAlertOpen && (
+        <Alert
+          title="Confirm changes?"
+          description="You might not have clicked or dragged on purpose."
+          open={isAlertOpen}
+          openChange={setIsAlertOpen}
+          onConfirm={handleAlertConfirm}
+          onCancel={handleAlertCancel}
+        />
+      )}
       <Card
         className={`h-max relative w-full md:w-[600px] ${loading && "opacity-50 pointer-events-none"}`}
       >

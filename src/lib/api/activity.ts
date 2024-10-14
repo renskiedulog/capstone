@@ -11,7 +11,6 @@ interface Activity {
 }
 
 export const addNewActivity = async (activityData: Activity) => {
-  console.log(activityData)
   try {
     await connectMongoDB();
     const newActivity = new Activity(activityData);

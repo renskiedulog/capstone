@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -8,9 +9,8 @@ import {
 import { Boat } from "@/lib/types";
 import React from "react";
 
-const boardingBoats = [];
-
 const Boarding = ({ initData }: { initData: Boat[] }) => {
+  console.log(initData);
   return (
     <Card className="flex-none sm:flex-1 lg:min-w-[500px] pb-2 h-max">
       <CardHeader className="pb-2">
@@ -20,8 +20,8 @@ const Boarding = ({ initData }: { initData: Boat[] }) => {
         </CardDescription>
       </CardHeader>
       <div className="px-2">
-        {boardingBoats?.length > 0 ? (
-          boardingBoats?.map((board) => <BoardingBoat boat={board} />)
+        {initData?.length > 0 ? (
+          initData?.map((boat, idx) => <BoardingBoat key={idx} boat={boat} />)
         ) : (
           <div className="text-center p-5">
             There are no boats currently on boarding.

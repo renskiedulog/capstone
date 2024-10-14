@@ -91,4 +91,5 @@ export interface Queue {
   destination?: string;
   departureTime?: Date;
   createdAt?: String | Date;
+  driverName?: String;
 }

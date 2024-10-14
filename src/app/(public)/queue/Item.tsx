@@ -1,7 +1,16 @@
 import * as React from "react";
 import { useMotionValue, Reorder, AnimatePresence } from "framer-motion";
 import { useRaisedShadow } from "./use-raised-shadow";
-import { ArrowRightSquare, Clock, Info, Ship, Trash, User } from "lucide-react";
+import {
+  ArrowRightSquare,
+  Clock,
+  Info,
+  Ship,
+  ShipWheel,
+  Trash,
+  User,
+  UsersRound,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,7 +50,7 @@ export const Item = ({
 }: Props) => {
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
-  const [isAlertOpen, setIsAlertOpen] = React.useState(false);
+  const [alert, setAlert] = React.useState(false);
   const [elapsedTime, setElapsedTime] = React.useState("");
   const { toast } = useToast();
 
@@ -63,7 +72,10 @@ export const Item = ({
     syncData();
   };
 
-  const handleAlertCancel = () => {};
+  const handleAlertCancel = () => {
+    setAlert(false);
+    setGrabbedQueue("");
+  };
 
   const getTimeElapsed = (startDate: any) => {
     const now = new Date();
@@ -97,14 +109,16 @@ export const Item = ({
 
   return (
     <>
-      <Alert
-        title="Change to Boarding?"
-        description="You might not have clicked or dragged on purpose."
-        open={isAlertOpen}
-        openChange={setIsAlertOpen}
-        onConfirm={handleAlertConfirm}
-        onCancel={handleAlertCancel}
-      />
+      {alert && (
+        <Alert
+          title="Change to Boarding?"
+          description="You might not have clicked or dragged on purpose."
+          open={alert}
+          openChange={setAlert}
+          onConfirm={handleAlertConfirm}
+          onCancel={handleAlertCancel}
+        />
+      )}
       <Reorder.Item
         value={item}
         id={item.id}
@@ -135,7 +149,7 @@ export const Item = ({
           <DropdownMenuContent align="end">
             <DropdownMenuItem
               className="cursor-pointer gap-1.5 font-medium"
-              onClick={() => setIsAlertOpen(true)}
+              onClick={() => setAlert(true)}
             >
               <ArrowRightSquare size={18} />
               <span>Board</span>
@@ -200,6 +214,18 @@ export const Item = ({
                 <Clock size={18} />
                 <span>
                   <strong>Time Elapsed:</strong> <br /> {elapsedTime}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShipWheel size={18} />
+                <span>
+                  <strong>Ship Captain:</strong> <br /> {item?.driverName}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <UsersRound size={18} />
+                <span>
+                  <strong>Capacity:</strong> <br /> {item?.capacity}
                 </span>
               </div>
             </div>

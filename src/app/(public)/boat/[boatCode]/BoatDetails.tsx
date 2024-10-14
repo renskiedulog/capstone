@@ -49,8 +49,6 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
     setBoatInfo(req as Boat);
   };
 
-  console.log(boatInfo);
-
   return (
     <div className="relative">
       <Button className="absolute right-0 top-0" onClick={() => setOpen(true)}>
