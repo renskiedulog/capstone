@@ -84,7 +84,6 @@ export interface Queue {
   boatCode?: string;
   position?: number;
   status: "in-queue" | "boarding" | "sailing";
-  passengerCount?: number;
   passengerIds?: string[];
   queuedAt?: Date;
   estimatedDepartureTime?: Date;

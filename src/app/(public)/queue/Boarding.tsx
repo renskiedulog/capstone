@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Queue } from "@/lib/types";
 import { getTimeElapsed } from "@/lib/utils";
-import { Info, Ship, ShipWheel } from "lucide-react";
+import { Info, MapPin, Ship, ShipWheel, Users } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
@@ -77,8 +77,8 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
       <div className="flex w-full">
         <Image
           src={boat.mainImage || "/images/default-image.jpg"}
-          width={100}
-          height={100}
+          width={120}
+          height={120}
           alt={boat?.boatName}
           className="aspect-square object-cover rounded"
         />
@@ -100,8 +100,14 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
             {boat?.driverName}
           </p>
           <p className="text-sm flex items-center gap-1">
-            <Info size={15} className="mb-0.5" />
+            <MapPin size={15} className="mb-0.5" />
             {boat?.destination}
+          </p>
+          <p className="text-sm flex items-center gap-1">
+            <Users size={15} className="mb-0.5" />
+            <span>
+              {boat?.passengerIds?.length} / {boat?.capacity}
+            </span>
           </p>
         </div>
       </div>

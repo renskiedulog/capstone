@@ -44,8 +44,11 @@ function RecentTellers({ data }: { data: UserTypes[] }) {
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
         {recentTellers?.length > 0 ? (
-          recentTellers?.map((teller) => (
-            <div key={teller?.username} className="flex items-center gap-4">
+          recentTellers.map((teller, index) => (
+            <div
+              key={teller?.username || `${teller?.email}-${index}`}
+              className="flex items-center gap-4"
+            >
               {teller?.username && (
                 <Link href={`/profile/${teller.username}`}>
                   <Avatar name={teller?.fullName} image={teller?.image} />
@@ -69,17 +72,17 @@ function RecentTellers({ data }: { data: UserTypes[] }) {
                 <div className="ml-auto font-semibold text-[10px] text-right opacity-70">
                   {formatDateToReadable(teller?.createdAt)
                     .split("-")
-                    ?.map((word, idx) => {
-                      if (idx === 0) {
-                        return word;
-                      } else {
-                        return (
+                    .map((word, idx) => (
+                      <span key={idx}>
+                        {idx === 0 ? (
+                          word
+                        ) : (
                           <>
                             <br /> {word}
                           </>
-                        );
-                      }
-                    })}
+                        )}
+                      </span>
+                    ))}
                 </div>
               )}
             </div>

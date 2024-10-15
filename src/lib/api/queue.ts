@@ -156,7 +156,9 @@ export const fetchBoarding = async () => {
   try {
     await connectMongoDB();
 
-    const boardingBoats = await Queue.find({ status: "boarding" }).lean();
+    const boardingBoats = await Queue.find({ status: "boarding" })
+      .sort({ boardingAt: -1 })
+      .lean();
     const boatIds = boardingBoats.map((boat) => boat.boatId);
     const boats = await Boat.find({ _id: { $in: boatIds } }).lean();
     const boatMap = boats.reduce((acc: any, boat: any) => {
