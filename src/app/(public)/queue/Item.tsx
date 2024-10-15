@@ -10,6 +10,7 @@ import {
   Trash,
   User,
   UsersRound,
+  XIcon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -29,6 +30,13 @@ import { formatDateTime, getTimeElapsed } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 import Alert from "@/components/utils/Alert";
 import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface Props {
   item: Queue;
@@ -52,6 +60,9 @@ export const Item = ({
   const y = useMotionValue(0);
   const boxShadow = useRaisedShadow(y);
   const [elapsedTime, setElapsedTime] = React.useState("");
+  const [toBoard, setToBoard] = React.useState(false);
+  const [error, setError] = React.useState("");
+
   const { toast } = useToast();
 
   const handleDeleteQueue = async (id: string) => {
@@ -105,6 +116,35 @@ export const Item = ({
 
   return (
     <>
+      {toBoard && (
+        <form
+          // action={formAction}
+          className="bg-black/50 w-full h-screen fixed top-0 left-0 z-50 flex items-center justify-center"
+          // onClick={handleModal}
+        >
+          <Card
+            className="border-none w-full max-w-3xl mx-5 relative max-h-[90vh] overflow-y-auto scrollbar"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <XIcon
+              className="close-button absolute top-3 right-3 hover:scale-110 transition cursor-pointer"
+              // onClick={handleModal}
+            />
+            <CardHeader>
+              <CardTitle>Add A Boat</CardTitle>
+              <CardDescription>
+                Provide the necessary details for the boat.
+              </CardDescription>
+              {error !== "" && (
+                <CardDescription className="text-red-500">
+                  {error}
+                </CardDescription>
+              )}
+            </CardHeader>
+            <CardContent className="mx-auto "></CardContent>
+          </Card>
+        </form>
+      )}
       <Reorder.Item
         value={item}
         id={item.id}
@@ -125,7 +165,6 @@ export const Item = ({
         className="border p-2 rounded mb-1 cursor-grab bg-secondary flex items-center justify-between"
       >
         {item.boatName}
-
         <div className="flex gap-2 items-center">
           <Badge className="uppercase !text-[9px] tracking-wider font-bold py-0.5 px-2 min-w-[70px] items-center justify-center">
             {checkBoatCapacity(item?.capacity as number)}
@@ -140,7 +179,7 @@ export const Item = ({
             <DropdownMenuContent align="end">
               <DropdownMenuItem
                 className="cursor-pointer gap-1.5 font-medium"
-                onClick={handleChangeToBoarding}
+                onClick={() => setToBoard(true)}
               >
                 <ArrowRightSquare size={18} />
                 <span>Board</span>
