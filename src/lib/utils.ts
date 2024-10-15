@@ -72,3 +72,19 @@ export function formatDateToReadable(timestamp: string | Date): string {
 
   return `${hour12}:${minutes} ${ampm} - ${month} ${day}, ${year}`;
 }
+
+export const getTimeElapsed = (startDate: any) => {
+  const now: any = new Date();
+  const elapsed = Math.floor((now - new Date(startDate)) / 1000); // Time in seconds
+
+  const days = Math.floor(elapsed / (3600 * 24));
+  const hours = Math.floor((elapsed % (3600 * 24)) / 3600);
+  const minutes = Math.floor((elapsed % 3600) / 60);
+  const seconds = elapsed % 60;
+
+  if (days > 0) {
+    return `${String(days).padStart(2, "0")}:${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  } else {
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+};

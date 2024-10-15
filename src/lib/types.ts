@@ -95,4 +95,5 @@ export interface Queue {
   driverName?: String;
   capacity?: number;
   mainImage?: string;
+  boardingAt: Date | string;
 }
