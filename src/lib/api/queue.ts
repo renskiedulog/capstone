@@ -39,6 +39,7 @@ export const fetchQueue = async () => {
         boatName: boat.boatName,
         driverName: boat.driverName,
         capacity: boat.capacity,
+        destination: boat.destination,
       };
       return acc;
     }, {});
@@ -54,6 +55,7 @@ export const fetchQueue = async () => {
           boatName: boatMap[boatId.toString()].boatName,
           driverName: boatMap[boatId.toString()].driverName,
           capacity: boatMap[boatId.toString()].capacity,
+          destination: boatMap[boatId.toString()].destination,
           ...rest,
         });
       } else {

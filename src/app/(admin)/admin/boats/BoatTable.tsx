@@ -367,13 +367,16 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
             onChange={(event) =>
               table.getColumn("boatName")?.setFilterValue(event.target.value)
             }
-            className="w-full mr-2"
+            className="w-full max-w-lg mr-2"
           />
           <div className="flex gap-2">
             <AddBoatModal setViewImage={setViewImage} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto text-xs sm:text-base">
+                <Button
+                  variant="outline"
+                  className="ml-auto text-xs sm:text-base"
+                >
                   Columns <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>

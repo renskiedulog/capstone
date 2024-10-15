@@ -44,6 +44,7 @@ export const createBoat = async (prevState: any, formData: FormData) => {
       checkingStatus: values.checkingStatus,
       boatFeatures: values.boatFeatures,
       additionalInfo: values.additionalInfo,
+      destination: values.destination,
     });
 
     return {

@@ -38,6 +38,7 @@ const boatSchema = new Schema(
     lastCheck: {
       type: String,
     },
+    destination: String,
     checkingDetails: {
       type: String,
     },

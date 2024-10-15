@@ -48,6 +48,7 @@ const initialInputs: Boat = {
   driverContactNumber: "",
   status: "standby",
   checkingStatus: "not-checked",
+  destination: "",
 };
 
 export default function AddBoatModal({
@@ -223,7 +224,9 @@ export default function AddBoatModal({
         onConfirm={handleAlertConfirm}
         onCancel={handleAlertCancel}
       />
-      <Button className="text-xs sm:text-base" onClick={handleModal}>Add Boat</Button>
+      <Button className="text-xs sm:text-base" onClick={handleModal}>
+        Add Boat
+      </Button>
       {isModalOpen && (
         <form
           action={formAction}
@@ -442,6 +445,17 @@ export default function AddBoatModal({
                         onChange={handleInputChange}
                       />
                     </div>
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="destination">Destination</Label>
+                    <Input
+                      id="destination"
+                      name="destination"
+                      type="text"
+                      placeholder="Enter boat details"
+                      value={inputs.destination}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">

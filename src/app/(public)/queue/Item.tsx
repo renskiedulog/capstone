@@ -4,6 +4,7 @@ import { useRaisedShadow } from "./use-raised-shadow";
 import {
   ArrowRightSquare,
   Clock,
+  CopyIcon,
   Info,
   Ship,
   ShipWheel,
@@ -37,6 +38,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface Props {
   item: Queue;
@@ -64,6 +67,10 @@ export const Item = ({
   const [error, setError] = React.useState("");
 
   const { toast } = useToast();
+
+  const handleCloseModal = () => {
+    setToBoard(false);
+  };
 
   const handleDeleteQueue = async (id: string) => {
     try {
@@ -117,23 +124,19 @@ export const Item = ({
   return (
     <>
       {toBoard && (
-        <form
-          // action={formAction}
-          className="bg-black/50 w-full h-screen fixed top-0 left-0 z-50 flex items-center justify-center"
-          // onClick={handleModal}
-        >
+        <div className="bg-black/50 w-full h-screen fixed top-0 left-0 z-50 flex items-center justify-center">
           <Card
-            className="border-none w-full max-w-3xl mx-5 relative max-h-[90vh] overflow-y-auto scrollbar"
+            className="border-none w-full max-w-lg mx-5 relative max-h-[90vh] overflow-y-auto scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             <XIcon
               className="close-button absolute top-3 right-3 hover:scale-110 transition cursor-pointer"
-              // onClick={handleModal}
+              onClick={handleCloseModal}
             />
             <CardHeader>
-              <CardTitle>Add A Boat</CardTitle>
+              <CardTitle>Set To Boat</CardTitle>
               <CardDescription>
-                Provide the necessary details for the boat.
+                Provide the target destination for this boat.
               </CardDescription>
               {error !== "" && (
                 <CardDescription className="text-red-500">
@@ -141,9 +144,26 @@ export const Item = ({
                 </CardDescription>
               )}
             </CardHeader>
-            <CardContent className="mx-auto "></CardContent>
+            <CardContent className="mx-auto ">
+              <div className="flex items-center space-x-2">
+                <div className="grid flex-1 gap-2">
+                  <Label htmlFor="link" className="sr-only">
+                    Link
+                  </Label>
+                  <Input
+                    id="link"
+                    defaultValue={item?.destination ?? ""}
+                    placeholder="Provide a destination for the sail."
+                    readOnly
+                  />
+                </div>
+                <Button size="sm" className="px-3">
+                  Board
+                </Button>
+              </div>
+            </CardContent>
           </Card>
-        </form>
+        </div>
       )}
       <Reorder.Item
         value={item}

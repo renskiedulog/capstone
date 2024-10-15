@@ -65,6 +65,7 @@ export interface Boat {
   boatName?: string;
   lastCheck?: Date | string | null;
   checkingDetails?: string;
+  destination?: string;
 }
 
 export interface ActivityTypes {
