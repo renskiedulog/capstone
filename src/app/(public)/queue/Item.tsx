@@ -89,9 +89,9 @@ export const Item = ({
 
   const handleChangeToBoarding = async () => {
     if (destination == "") return;
-    // await changeToBoarding(item.id as string, destination);
-    // syncData();
-    // setDestination("");
+    await changeToBoarding(item.id as string, destination);
+    syncData();
+    setDestination("");
   };
 
   React.useEffect(() => {

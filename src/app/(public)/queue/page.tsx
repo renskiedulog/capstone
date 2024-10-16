@@ -22,8 +22,8 @@ const page = async () => {
   return (
     <div className="w-full text-black flex lg:flex-row flex-col gap-5">
       <Queue initialItems={queue as QueueType[]} />
-      <div className="flex gap-5 sm:flex-wrap lg:flex-row flex-col w-full">
-        <Boarding initData={boarding} />
+      <div className="flex gap-5 sm:flex-wrap lg:flex-row flex-col w-full h-max">
+        <Boarding initData={boarding as QueueType[]} />
         <Sailing />
       </div>
     </div>

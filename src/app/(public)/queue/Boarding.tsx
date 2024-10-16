@@ -63,12 +63,12 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
           width={130}
           height={130}
           alt={boat?.boatName}
-          className="aspect-square object-cover rounded"
+          className="aspect-square object-cover rounded md:w-[130px] w-[100px]"
         />
         <div className="px-2 w-full">
           <div className="flex items-center w-full justify-between">
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-medium flex items-center gap-1">
+              <h1 className="text-base md:text-xl font-medium flex items-center gap-1">
                 <Ship size={18} />
                 {boat?.boatName}
               </h1>
@@ -94,10 +94,9 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
           </p>
           {/* Actions */}
           <div className="flex items-center mt-1 gap-x-2">
-            <Button>Add</Button>
-            <Button>List</Button>
-            <Button>Add</Button>
-            <Button>Delete</Button>
+            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">Add Passenger</Button>
+            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">List</Button>
+            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">Delete</Button>
           </div>
         </div>
       </div>

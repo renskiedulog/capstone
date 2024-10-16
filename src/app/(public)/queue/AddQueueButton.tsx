@@ -64,8 +64,6 @@ export default function AddQueueButton() {
     getBoatIds();
   }, []);
 
-  console.log(boatIds);
-
   return (
     <>
       <Alert
