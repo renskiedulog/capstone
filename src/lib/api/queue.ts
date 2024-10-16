@@ -130,13 +130,23 @@ export const updateQueuePositions = async (newItems: QueueTypes[]) => {
   }
 };
 
-export const changeToBoarding = async (queueId: string) => {
+export const changeToBoarding = async (
+  queueId: string,
+  destination?: string
+) => {
   try {
     await connectMongoDB();
 
     const result = await Queue.findByIdAndUpdate(
       queueId,
-      { $set: { status: "boarding", boardingAt: new Date(), position: null } },
+      {
+        $set: {
+          status: "boarding",
+          boardingAt: new Date(),
+          position: null,
+          destination: destination ?? null,
+        },
+      },
       { new: true }
     );
 

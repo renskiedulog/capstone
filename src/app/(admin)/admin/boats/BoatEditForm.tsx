@@ -158,12 +158,12 @@ export default function BoatEditForm({
       }
       setIsOpen(false);
       socket.emit("boatRefresh", { info: "Refresh Boat Infos" });
-      socket.emit("queueRefresh");
       addActivity();
       toast({
         title: "Boat Edited Successfully.",
         description: "Please wait for a few seconds for changes to be saved.",
       });
+      socket.emit("queueRefresh");
     } else if (!state?.success && state?.message) {
       setError(
         state?.message ?? "Something went wrong, please enter valid inputs."

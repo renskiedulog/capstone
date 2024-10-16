@@ -13,7 +13,6 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 
 const Boarding = ({ initData }: { initData: Queue[] }) => {
-  console.log(initData);
   return (
     <Card className="flex-none sm:flex-1 lg:min-w-[500px] pb-2 h-max">
       <CardHeader className="pb-2">

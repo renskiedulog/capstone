@@ -65,10 +65,12 @@ export const Item = ({
   const [elapsedTime, setElapsedTime] = React.useState("");
   const [toBoard, setToBoard] = React.useState(false);
   const [error, setError] = React.useState("");
+  const [destination, setDestination] = React.useState(item?.destination);
 
   const { toast } = useToast();
 
   const handleCloseModal = () => {
+    setDestination(item?.destination);
     setToBoard(false);
   };
 
@@ -85,8 +87,9 @@ export const Item = ({
   };
 
   const handleChangeToBoarding = async () => {
-    await changeToBoarding(item.id as string);
+    await changeToBoarding(item.id as string, destination);
     syncData();
+    setDestination("");
   };
 
   React.useEffect(() => {
@@ -152,12 +155,16 @@ export const Item = ({
                   </Label>
                   <Input
                     id="link"
-                    defaultValue={item?.destination ?? ""}
                     placeholder="Provide a destination for the sail."
-                    readOnly
+                    value={destination}
+                    onChange={(e) => setDestination(e.target.value)}
                   />
                 </div>
-                <Button size="sm" className="px-3">
+                <Button
+                  size="sm"
+                  className="px-3"
+                  onClick={() => handleChangeToBoarding()}
+                >
                   Board
                 </Button>
               </div>
