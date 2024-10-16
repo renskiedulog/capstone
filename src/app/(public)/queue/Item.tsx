@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { capacityCategory, checkBoatCapacity } from "@/lib/constants";
 
 interface Props {
   item: Queue;
@@ -105,24 +106,6 @@ export const Item = ({
       setElapsedTime("");
     }
   }, [showInfo, item.id, item.createdAt]);
-
-  const capacityCategory = {
-    small: 15,
-    medium: 30,
-    large: 50,
-  };
-
-  function checkBoatCapacity(capacity: number) {
-    if (capacity <= capacityCategory.small) {
-      return "small";
-    } else if (capacity <= capacityCategory.medium) {
-      return "medium";
-    } else if (capacity <= capacityCategory.large) {
-      return "large";
-    } else {
-      return "extra";
-    }
-  }
 
   return (
     <>

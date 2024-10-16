@@ -8,12 +8,13 @@ import { Queue as QueueTypes } from "../types";
 export const fetchBoatIds = async () => {
   try {
     const boats = await Boat.find()
-      .select("_id boatName boatCode mainImage")
+      .select("_id boatName boatCode capacity")
       .lean();
     return boats?.map((boat) => ({
       boatName: boat?.boatName,
       id: boat?._id?.toString(),
       boatCode: boat?.boatCode,
+      capacity: boat?.capacity,
     }));
   } catch (error) {
     console.error("Error fetching boat IDs:", error);

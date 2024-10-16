@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { fetchBoatDetails } from "@/lib/api/boatActions";
+import { checkBoatCapacity } from "@/lib/constants";
 import { Boat } from "@/lib/types";
 import { formatDateToReadable } from "@/lib/utils";
 import socket from "@/socket";
@@ -74,7 +75,7 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
           boatDetails={boatInfo}
         />
       )}
-      <div className="mx-auto p-4 space-y-6">
+      <div className="mx-auto p-4 space-y-6 sm:pt-0 pt-14">
         <h1 className="text-3xl font-bold text-center mb-8">
           {boatInfo.boatName}
         </h1>
@@ -145,6 +146,14 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
                   <p>
                     <span className="font-bold">Boat Code: </span>
                     {boatInfo?.boatCode}
+                  </p>
+                )}
+                {boatInfo?.capacity && (
+                  <p>
+                    <span className="font-bold">Size: </span>
+                    <span className="uppercase">
+                      {checkBoatCapacity(boatInfo?.capacity)}
+                    </span>
                   </p>
                 )}
                 <p>

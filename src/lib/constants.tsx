@@ -106,3 +106,21 @@ export const commandLinks = [
     ],
   },
 ];
+
+export const capacityCategory = {
+  small: 15,
+  medium: 30,
+  large: 50,
+};
+
+export function checkBoatCapacity(capacity: number) {
+  if (capacity <= capacityCategory.small) {
+    return "small";
+  } else if (capacity <= capacityCategory.medium) {
+    return "medium";
+  } else if (capacity <= capacityCategory.large) {
+    return "large";
+  } else {
+    return "extra";
+  }
+}

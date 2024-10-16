@@ -1,11 +1,13 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { checkBoatCapacity } from "@/lib/constants";
 import { Queue } from "@/lib/types";
 import { getTimeElapsed } from "@/lib/utils";
 import { Info, MapPin, Ship, ShipWheel, Users } from "lucide-react";
@@ -39,24 +41,6 @@ export default Boarding;
 const BoardingBoat = ({ boat }: { boat: Queue }) => {
   const [elapsedTime, setElapsedTime] = useState<string>("");
 
-  const capacityCategory = {
-    small: 15,
-    medium: 30,
-    large: 50,
-  };
-
-  function checkBoatCapacity(capacity: number) {
-    if (capacity <= capacityCategory.small) {
-      return "small";
-    } else if (capacity <= capacityCategory.medium) {
-      return "medium";
-    } else if (capacity <= capacityCategory.large) {
-      return "large";
-    } else {
-      return "extra";
-    }
-  }
-
   useEffect(() => {
     if (boat.boardingAt) {
       const updateElapsedTime = () => {
@@ -76,8 +60,8 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
       <div className="flex w-full">
         <Image
           src={boat.mainImage || "/images/default-image.jpg"}
-          width={120}
-          height={120}
+          width={130}
+          height={130}
           alt={boat?.boatName}
           className="aspect-square object-cover rounded"
         />
@@ -108,6 +92,13 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
               {boat?.passengerIds?.length} / {boat?.capacity}
             </span>
           </p>
+          {/* Actions */}
+          <div className="flex items-center mt-1 gap-x-2">
+            <Button>Add</Button>
+            <Button>List</Button>
+            <Button>Add</Button>
+            <Button>Delete</Button>
+          </div>
         </div>
       </div>
     </div>

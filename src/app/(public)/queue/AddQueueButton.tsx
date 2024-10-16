@@ -24,6 +24,8 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import socket from "@/socket";
 import { useToast } from "@/components/ui/use-toast";
+import { checkBoatCapacity } from "@/lib/constants";
+import { Badge } from "@/components/ui/badge";
 
 export default function AddQueueButton() {
   const session: any = useSession() || null;
@@ -41,8 +43,8 @@ export default function AddQueueButton() {
     socket.emit("queueRefresh");
     toast({
       title: "Successfully added an entry to the queue.",
-      description: `You can view the details by clicking the icon on the right side.`
-    })
+      description: `You can view the details by clicking the icon on the right side.`,
+    });
   };
 
   const handleAlertCancel = () => {
@@ -61,6 +63,8 @@ export default function AddQueueButton() {
   React.useEffect(() => {
     getBoatIds();
   }, []);
+
+  console.log(boatIds);
 
   return (
     <>
@@ -101,10 +105,13 @@ export default function AddQueueButton() {
                         setIsAlertOpen(true);
                         setValue(boatId);
                         setOpen(false);
-                      }}  
-                      className="w-full cursor-pointer aria-selected:bg-transparent"
+                      }}
+                      className="w-full cursor-pointer aria-selected:bg-transparent flex justify-between pr-0"
                     >
                       {boat.boatName}
+                      <Badge className="uppercase !text-[8px] min-w-16 tracking-wider font-bold py-0.5 px-2.5 items-center justify-center">
+                        {checkBoatCapacity(boat?.capacity as number)}
+                      </Badge>
                     </CommandItem>
                     <Link href={`/boat/${boat.boatCode}`} target="_blank">
                       <Info className="w-8 cursor-pointer px-2 hover:scale-105" />
