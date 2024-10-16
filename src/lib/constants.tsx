@@ -1,13 +1,20 @@
-import { DashboardIcon } from "@radix-ui/react-icons";
 import {
+  CounterClockwiseClockIcon,
+  DashboardIcon,
+} from "@radix-ui/react-icons";
+import {
+  Activity,
+  Archive,
   CalendarIcon,
   History,
   LineChart,
+  Plus,
   PlusIcon,
   SailboatIcon,
   SaveAll,
   Ship,
   Table,
+  User,
   User2Icon,
 } from "lucide-react";
 
@@ -93,15 +100,45 @@ export const commandLinks = [
         title: "Boats Page",
         link: "/boats",
       },
+      {
+        icon: <Ship className="mr-2 h-4 w-4" />,
+        title: "Queue Page",
+        link: "/queue",
+      },
+      {
+        icon: <Archive className="mr-2 h-4 w-4" />,
+        title: "Activity Page",
+        link: "/activity",
+      },
+      {
+        icon: <CounterClockwiseClockIcon className="mr-2 h-4 w-4" />,
+        title: "Sail History Page",
+        link: "/queue-history",
+      },
+      {
+        icon: <User className="mr-2 h-4 w-4" />,
+        title: "Profile Page",
+        link: "/profile",
+      },
     ],
   },
   {
-    heading: "Boat Actions",
+    heading: "Actions",
     links: [
       {
-        icon: <PlusIcon className="mr-2 h-4 w-4" />,
+        icon: <Plus className="mr-2 h-4 w-4" />,
         title: "Add Boat",
-        link: "/boats/add",
+        link: "/boats",
+      },
+      {
+        icon: <Plus className="mr-2 h-4 w-4" />,
+        title: "Add Queue",
+        link: "/queue",
+      },
+      {
+        icon: <Plus className="mr-2 h-4 w-4" />,
+        title: "Add Boarding",
+        link: "/queue",
       },
     ],
   },

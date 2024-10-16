@@ -88,9 +88,10 @@ export const Item = ({
   };
 
   const handleChangeToBoarding = async () => {
-    await changeToBoarding(item.id as string, destination);
-    syncData();
-    setDestination("");
+    if (destination == "") return;
+    // await changeToBoarding(item.id as string, destination);
+    // syncData();
+    // setDestination("");
   };
 
   React.useEffect(() => {
@@ -110,7 +111,7 @@ export const Item = ({
   return (
     <>
       {toBoard && (
-        <div className="bg-black/50 w-full h-screen fixed top-0 left-0 z-50 flex items-center justify-center">
+        <div className="bg-black/50 w-full h-screen fixed top-0 left-0 z-[99] flex items-center justify-center">
           <Card
             className="border-none w-full max-w-lg mx-5 relative max-h-[90vh] overflow-y-auto scrollbar"
             onClick={(e) => e.stopPropagation()}

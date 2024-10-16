@@ -431,7 +431,7 @@ export default function BoatEditForm({
                   </div>
                 </div>
                 <div className="flex-1">
-                  <Label htmlFor="destination">Destination</Label>
+                  <Label htmlFor="destination">Default Destination</Label>
                   <Input
                     id="destination"
                     name="destination"
