@@ -94,9 +94,15 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
           </p>
           {/* Actions */}
           <div className="flex items-center mt-1 gap-x-2">
-            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">Add Passenger</Button>
-            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">List</Button>
-            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">Delete</Button>
+            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">
+              Add Passenger
+            </Button>
+            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">
+              Passenger List
+            </Button>
+            <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">
+              Delete
+            </Button>
           </div>
         </div>
       </div>
