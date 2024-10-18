@@ -40,6 +40,7 @@ export default Boarding;
 
 const BoardingBoat = ({ boat }: { boat: Queue }) => {
   const [elapsedTime, setElapsedTime] = useState<string>("");
+  console.log(boat);
 
   useEffect(() => {
     if (boat.boardingAt) {

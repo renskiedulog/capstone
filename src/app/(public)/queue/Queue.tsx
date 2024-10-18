@@ -113,7 +113,7 @@ export default function Queue({
         />
       )}
       <Card
-        className={`h-max relative w-full md:w-[600px] ${loading && "opacity-50 pointer-events-none"}`}
+        className={`h-max relative w-full lg:w-[600px] ${loading && "opacity-50 pointer-events-none"}`}
       >
         {locked && (
           <div

@@ -23,3 +23,15 @@ export const addNewActivity = async (activityData: Activity) => {
     return false;
   }
 };
+
+export const getAllActivities = async () => {
+  try {
+    await connectMongoDB();
+    const activities = await Activity.find().sort({ createdAt: -1 }).exec();
+
+    return activities;
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+    return [];
+  }
+};

@@ -76,6 +76,7 @@ export interface ActivityTypes {
   link: string;
   type: "teller" | "boat" | "passenger" | "queue";
   createdAt: string;
+  actionBy: string;
 }
 
 export interface Queue {
