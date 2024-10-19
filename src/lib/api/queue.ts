@@ -204,3 +204,10 @@ export const fetchBoarding = async () => {
     return [];
   }
 };
+
+export const deleteBoarding = async (id: string) => {
+  await connectMongoDB();
+  const req = await Queue.deleteOne({ _id: id });
+
+  return true;
+};
