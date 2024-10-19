@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Dialog,
@@ -15,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -35,6 +36,7 @@ import {
   User,
   Edit,
   Trash2,
+  Ellipsis,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -44,48 +46,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { formatDateToReadable } from "@/lib/utils";
+import { Queue } from "@/lib/types";
 
 // Sample passenger data
 const passengers = [
-  { id: 1, name: "John Doe", age: 35, ticketNumber: "T001" },
-  { id: 2, name: "Jane Smith", age: 28, ticketNumber: "T002" },
-  { id: 3, name: "Mike Johnson", age: 42, ticketNumber: "T003" },
-  { id: 4, name: "Emily Brown", age: 31, ticketNumber: "T004" },
-  { id: 5, name: "David Lee", age: 39, ticketNumber: "T005" },
+  // { id: 1, name: "John Doe", age: 35, ticketNumber: "T001" },
+  // { id: 2, name: "Jane Smith", age: 28, ticketNumber: "T002" },
+  // { id: 3, name: "Mike Johnson", age: 42, ticketNumber: "T003" },
+  // { id: 4, name: "Emily Brown", age: 31, ticketNumber: "T004" },
+  // { id: 5, name: "David Lee", age: 39, ticketNumber: "T005" },
 ];
 
-const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
-};
-
-export default function BoatInfoDialog() {
-  const boatInfo = {
-    _id: "670f1932fb89dec1a070bdb1",
-    boatId: "670907abcc5da00587c90d5e",
-    position: null,
-    status: "boarding",
-    passengerIds: [],
-    createdBy: "admin",
-    queuedAt: "2024-10-16T01:38:58.584Z",
-    createdAt: "2024-10-16T01:38:58.585Z",
-    updatedAt: "2024-10-16T01:46:30.186Z",
-    __v: 0,
-    boardingAt: "2024-10-16T01:46:30.185Z",
-    destination: "Some Small Island",
-    mainImage: "data:image/jpeg;base64",
-    capacity: 35,
-    boatName: "Bayani ng Dagat",
-    boatCode: "PB0023",
-    driverName: "Mark Santos",
-  };
-
+export default function BoardingInfo({
+  boatInfo,
+  elapsedTime,
+}: {
+  boatInfo: Queue;
+  elapsedTime: string;
+}) {
   const handleEditPassenger = (id: number) => {
     console.log(`Edit passenger with id: ${id}`);
     // Implement edit logic here
@@ -99,16 +78,22 @@ export default function BoatInfoDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">View Boat Information</Button>
+        <Button
+          variant="outline"
+          className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5"
+        >
+          Boat Info/List
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh]">
-        <DialogHeader>
+        <DialogHeader className="flex items-center justify-between flex-row pr-4">
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <Ship className="h-6 w-6" />
-            Boat Information: {boatInfo.boatName}
+            Boarding Info - {boatInfo?.boatName}
           </DialogTitle>
+          {elapsedTime}
         </DialogHeader>
-        <ScrollArea className="h-[calc(90vh-100px)]">
+        <ScrollArea className="h-[calc(90vh-100px)] pr-3">
           <Tabs defaultValue="details" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="details">Details</TabsTrigger>
@@ -132,35 +117,28 @@ export default function BoatInfoDialog() {
                         <Ship className="h-4 w-4" />
                         Boat Code:
                       </span>
-                      <span>{boatInfo.boatCode}</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium flex items-center gap-2">
-                        <Badge variant="outline" className="capitalize">
-                          {boatInfo.status}
-                        </Badge>
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium flex items-center gap-2">
-                        <MapPin className="h-4 w-4" />
-                        Destination:
-                      </span>
-                      <span>{boatInfo.destination}</span>
+                      <span>{boatInfo?.boatCode}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="font-medium flex items-center gap-2">
                         <UsersIcon className="h-4 w-4" />
                         Capacity:
                       </span>
-                      <span>{boatInfo.capacity}</span>
+                      <span>{boatInfo?.capacity}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="font-medium flex items-center gap-2">
                         <User className="h-4 w-4" />
                         Driver:
                       </span>
-                      <span>{boatInfo.driverName}</span>
+                      <span>{boatInfo?.driverName}</span>
+                    </div>
+                    <div className="flex justify-center flex-col">
+                      <span className="font-medium flex items-center gap-2">
+                        <MapPin className="h-4 w-4" />
+                        Destination:
+                      </span>
+                      <span>{boatInfo?.destination}</span>
                     </div>
                   </CardContent>
                 </Card>
@@ -175,33 +153,26 @@ export default function BoatInfoDialog() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Queued At:</span>
+                    <div className="flex justify-center flex-col">
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        {formatDate(boatInfo.queuedAt)}
+                        <span className="font-medium">Queued At:</span>
                       </span>
+                      {formatDateToReadable(boatInfo?.queuedAt as any)}
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Boarding At:</span>
+                    <div className="flex justify-center flex-col">
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        {formatDate(boatInfo.boardingAt)}
+                        <span className="font-medium">Boarding At:</span>
                       </span>
+                      {formatDateToReadable(boatInfo?.boardingAt)}
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Created At:</span>
+                    <div className="flex justify-center flex-col">
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        {formatDate(boatInfo.createdAt)}
+                        <span className="font-medium">Created At:</span>
                       </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">Updated At:</span>
-                      <span className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        {formatDate(boatInfo.updatedAt)}
-                      </span>
+                      {formatDateToReadable(boatInfo?.createdAt as any)}
                     </div>
                   </CardContent>
                 </Card>
@@ -229,7 +200,7 @@ export default function BoatInfoDialog() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {passengers.map((passenger) => (
+                      {passengers?.map((passenger) => (
                         <TableRow key={passenger.id}>
                           <TableCell>{passenger.name}</TableCell>
                           <TableCell>{passenger.age}</TableCell>
@@ -239,7 +210,7 @@ export default function BoatInfoDialog() {
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="h-8 w-8 p-0">
                                   <span className="sr-only">Open menu</span>
-                                  <Users className="h-4 w-4" />
+                                  <Ellipsis className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -268,6 +239,11 @@ export default function BoatInfoDialog() {
                       ))}
                     </TableBody>
                   </Table>
+                  {passengers?.length === 0 && (
+                    <div className="w-full text-center pt-4">
+                      No Passengers Boarded Yet.
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

@@ -5,6 +5,7 @@ import Boarding from "./Boarding";
 import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import Sailing from "./Sailing";
+import BoardingInfo from "./BoardingInfo";
 
 export const metadata = {
   title: "Queue",
