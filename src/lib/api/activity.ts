@@ -35,3 +35,23 @@ export const getAllActivities = async () => {
     return [];
   }
 };
+
+export const getActivitiesByDate = async (selectedDate: Date) => {
+  try {
+    await connectMongoDB();
+
+    const startOfDay = new Date(selectedDate).setHours(0, 0, 0, 0);
+    const endOfDay = new Date(selectedDate).setHours(23, 59, 59, 999);
+
+    const activities = await Activity.find({
+      createdAt: { $gte: new Date(startOfDay), $lte: new Date(endOfDay) }
+    })
+      .sort({ createdAt: -1 })
+      .exec();
+
+    return activities;
+  } catch (error) {
+    console.error("Error fetching activities:", error);
+    return [];
+  }
+};

@@ -10,7 +10,7 @@ const page = async () => {
 
   const activities = await getAllActivities();
 
-  return <ActivityTable data={activities} />;
+  return <ActivityTable initData={activities} />;
 };
 
 export default page;

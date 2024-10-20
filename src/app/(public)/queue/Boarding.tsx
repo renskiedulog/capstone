@@ -17,9 +17,13 @@ import BoardingInfo from "./BoardingInfo";
 import Alert from "@/components/utils/Alert";
 import { deleteBoarding, fetchBoarding } from "@/lib/api/queue";
 import socket from "@/socket";
+import { useSession } from "next-auth/react";
+import { addNewActivity } from "@/lib/api/activity";
 
 const Boarding = ({ initData }: { initData: Queue[] }) => {
   const [data, setData] = useState(initData);
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
 
   useEffect(() => {
     socket.on("queueRefresh", (data) => {
@@ -46,7 +50,9 @@ const Boarding = ({ initData }: { initData: Queue[] }) => {
       </CardHeader>
       <div className="px-2">
         {data?.length > 0 ? (
-          data?.map((boat, idx) => <BoardingBoat key={idx} boat={boat} />)
+          data?.map((boat, idx) => (
+            <BoardingBoat key={idx} boat={boat} username={username} />
+          ))
         ) : (
           <div className="text-center p-5">
             There are no boats currently on boarding.
@@ -59,7 +65,13 @@ const Boarding = ({ initData }: { initData: Queue[] }) => {
 
 export default Boarding;
 
-const BoardingBoat = ({ boat }: { boat: Queue }) => {
+const BoardingBoat = ({
+  boat,
+  username,
+}: {
+  boat: Queue;
+  username: string;
+}) => {
   const [elapsedTime, setElapsedTime] = useState<string>("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
@@ -77,9 +89,20 @@ const BoardingBoat = ({ boat }: { boat: Queue }) => {
     }
   }, [boat.boardingAt]);
 
+  const addActivity = async () => {
+    await addNewActivity({
+      type: "queue",
+      title: "Deleted Boarding Boat",
+      details: `Boat with the name '${boat?.boatName}' has been deleted from the boarding queue.`,
+      link: `/boat/${boat?.boatCode}`,
+      actionBy: username,
+    });
+    socket.emit("newActivity");
+  };
+
   const handleAlertConfirm = async () => {
-    console.log(boat._id)
     await deleteBoarding(boat._id);
+    addActivity();
     socket.emit("queueRefresh");
   };
 

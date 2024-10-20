@@ -3,13 +3,12 @@ import {
   DashboardIcon,
 } from "@radix-ui/react-icons";
 import {
-  Activity,
   Archive,
-  CalendarIcon,
   History,
   LineChart,
+  ListOrdered,
+  ListRestart,
   Plus,
-  PlusIcon,
   SailboatIcon,
   SaveAll,
   Ship,
@@ -27,12 +26,12 @@ export const navLinks = [
   {
     link: "/queue",
     name: "Boat Queue",
-    icon: <Ship />,
+    icon: <ListOrdered />,
   },
   {
     link: "/boats",
     name: "Boat List",
-    icon: <Table />,
+    icon: <Ship />,
   },
   {
     link: "/statistics",
@@ -42,12 +41,12 @@ export const navLinks = [
   {
     link: "/activity",
     name: "Activity",
-    icon: <SaveAll />,
+    icon: <History />,
   },
   {
     link: "/queue-history",
     name: "Queue History",
-    icon: <History />,
+    icon: <ListRestart />,
   },
 ];
 
@@ -65,22 +64,22 @@ export const adminLinks = [
   {
     link: "/admin/boats",
     name: "Boats",
-    icon: <Table />,
+    icon: <Ship />,
   },
   {
     link: "/queue",
     name: "Queue",
-    icon: <Ship />,
+    icon: <ListOrdered />,
   },
   {
     link: "/activity",
     name: "Activity",
-    icon: <SaveAll />,
+    icon: <History />,
   },
   {
     link: "/queue-history",
     name: "Queue History",
-    icon: <History />,
+    icon: <ListRestart />,
   },
 ];
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   CaretSortIcon,
   ChevronDownIcon,
@@ -47,6 +47,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ActivityTypes } from "@/lib/types";
+import socket from "@/socket";
+import { getActivitiesByDate, getAllActivities } from "@/lib/api/activity";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon, RotateCcw, TrashIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 export const columns: ColumnDef<ActivityTypes>[] = [
   {
@@ -141,14 +151,40 @@ export const columns: ColumnDef<ActivityTypes>[] = [
 ];
 
 export default function ActivityTable({
-  data = [],
+  initData = [],
 }: {
-  data: ActivityTypes[];
+  initData: ActivityTypes[];
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [data, setData] = useState(initData);
+
+  useEffect(() => {
+    socket.on("newActivity", (data) => {
+      fetchData();
+    });
+
+    return () => {
+      socket.off("newActivity");
+    };
+  }, []);
+
+  const fetchData = async () => {
+    if (selectedDate) {
+      const req = await getActivitiesByDate(selectedDate);
+      setData(req);
+    } else {
+      const req = await getAllActivities();
+      setData(req);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedDate]);
 
   const table = useReactTable({
     data,
@@ -171,7 +207,7 @@ export default function ActivityTable({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-4">
         <Input
           placeholder="Filter by action by..."
           value={
@@ -190,8 +226,9 @@ export default function ActivityTable({
             }
           }}
           defaultValue="all"
+          id="typeSelect"
         >
-          <SelectTrigger className="w-[180px] ml-4">
+          <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select type" />
           </SelectTrigger>
           <SelectContent>
@@ -202,6 +239,35 @@ export default function ActivityTable({
             <SelectItem value="queue">Queue</SelectItem>
           </SelectContent>
         </Select>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              <CalendarIcon className="h-5 w-5" />
+              {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              className="rounded-md border"
+            />
+          </PopoverContent>
+        </Popover>
+        <Button
+          variant="outline"
+          onClick={() => {
+            setSelectedDate(null);
+            const column = table.getColumn("type");
+            if (column) {
+              column.setFilterValue(undefined);
+            }
+            document?.querySelector("#typeSelect")?.value("all");
+          }}
+        >
+          <RotateCcw className="h-5 w-5" />
+        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -212,22 +278,26 @@ export default function ActivityTable({
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button
+          variant="destructive"
+          className="flex items-center gap-2"
+          onClick={() => console.log("Delete action triggered")}
+        >
+          <TrashIcon className="h-5 w-5" />
+          Delete
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
