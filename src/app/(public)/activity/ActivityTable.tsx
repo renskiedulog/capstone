@@ -158,7 +158,8 @@ export default function ActivityTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
-  const [data, setData] = useState(initData);
+  const [tempData, setTempData] = useState(initData);
+  const [data, setData] = useState(tempData);
 
   useEffect(() => {
     socket.on("newActivity", (data) => {
@@ -171,17 +172,21 @@ export default function ActivityTable({
   }, []);
 
   const fetchData = async () => {
-    if (selectedDate) {
-      const req = await getActivitiesByDate(selectedDate);
-      setData(req);
-    } else {
-      const req = await getAllActivities();
-      setData(req);
-    }
+    const req = await getAllActivities();
+    setTempData(req);
   };
 
   useEffect(() => {
-    fetchData();
+    setData(
+      tempData.filter((activity) => {
+        const date = new Date(activity.createdAt);
+        return selectedDate
+          ? date.getDate() === selectedDate.getDate() &&
+              date.getMonth() === selectedDate.getMonth() &&
+              date.getFullYear() === selectedDate.getFullYear()
+          : true;
+      })
+    );
   }, [selectedDate]);
 
   const table = useReactTable({
