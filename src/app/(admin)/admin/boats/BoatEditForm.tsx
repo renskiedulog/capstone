@@ -451,6 +451,7 @@ export default function BoatEditForm({
                       type="date"
                       value={formatInputDate(inputs.lastCheck ?? "")}
                       onChange={handleInputChange}
+                      className="!block"
                     />
                   </div>
                   <div className="flex-1">

@@ -466,6 +466,7 @@ export default function AddBoatModal({
                         required
                         type="date"
                         onChange={handleInputChange}
+                        className="!block"
                       />
                     </div>
                     <div className="flex-1">
