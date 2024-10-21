@@ -86,16 +86,14 @@ export const columns: ColumnDef<ActivityTypes>[] = [
     ),
   },
   {
-    accessorKey: "subtitle",
-    header: "Subtitle",
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("subtitle")}</div>
-    ),
+    accessorKey: "details",
+    header: "Details",
+    cell: ({ row }) => <div>{row.getValue("details")}</div>,
   },
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("type")}</div>,
+    cell: ({ row }) => <div className="uppercase">{row.getValue("type")}</div>,
   },
   {
     accessorKey: "createdAt",

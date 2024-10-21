@@ -44,7 +44,7 @@ export const navLinks = [
     icon: <History />,
   },
   {
-    link: "/queue-history",
+    link: "/sail-history",
     name: "Queue History",
     icon: <ListRestart />,
   },
@@ -77,7 +77,7 @@ export const adminLinks = [
     icon: <History />,
   },
   {
-    link: "/queue-history",
+    link: "/sail-history",
     name: "Queue History",
     icon: <ListRestart />,
   },
@@ -112,7 +112,7 @@ export const commandLinks = [
       {
         icon: <CounterClockwiseClockIcon className="mr-2 h-4 w-4" />,
         title: "Sail History Page",
-        link: "/queue-history",
+        link: "/sail-history",
       },
       {
         icon: <User className="mr-2 h-4 w-4" />,

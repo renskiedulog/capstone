@@ -93,7 +93,7 @@ export default function BoardingInfo({
           </DialogTitle>
           {elapsedTime}
         </DialogHeader>
-        <ScrollArea className="h-[calc(90vh-100px)] pr-3">
+        <ScrollArea className="max-h-[calc(90vh-100px)] pr-3">
           <Tabs defaultValue="details" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="details">Details</TabsTrigger>
