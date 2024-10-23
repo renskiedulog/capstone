@@ -48,7 +48,11 @@ import {
 } from "@/components/ui/select";
 import { ActivityTypes } from "@/lib/types";
 import socket from "@/socket";
-import { getActivitiesByDate, getAllActivities } from "@/lib/api/activity";
+import {
+  deleteActivities,
+  getActivitiesByDate,
+  getAllActivities,
+} from "@/lib/api/activity";
 import {
   Popover,
   PopoverContent,
@@ -57,6 +61,8 @@ import {
 import { CalendarIcon, RotateCcw, TrashIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import Alert from "@/components/utils/Alert";
+import { useToast } from "@/components/ui/use-toast";
 
 export const columns: ColumnDef<ActivityTypes>[] = [
   {
@@ -156,10 +162,24 @@ export default function ActivityTable({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
+  const [rowSelection, setRowSelection]: any = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [tempData, setTempData] = useState(initData);
   const [data, setData] = useState(tempData);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const { toast } = useToast();
+
+  const handleAlertConfirm = async () => {
+    const filterIds = data.filter((_, index) => rowSelection[index]);
+    const ids = filterIds.map((k) => k._id);
+    if (ids.length === 0) return;
+    await deleteActivities(ids);
+    socket.emit("newActivity");
+    setRowSelection({});
+    toast({
+      title: "Selected Activities Successfully Deleted.",
+    });
+  };
 
   useEffect(() => {
     socket.on("newActivity", (data) => {
@@ -173,20 +193,25 @@ export default function ActivityTable({
 
   const fetchData = async () => {
     const req = await getAllActivities();
-    setTempData(req);
+    setData(req);
   };
 
   useEffect(() => {
-    setData(
-      tempData.filter((activity) => {
-        const date = new Date(activity.createdAt);
-        return selectedDate
-          ? date.getDate() === selectedDate.getDate() &&
-              date.getMonth() === selectedDate.getMonth() &&
-              date.getFullYear() === selectedDate.getFullYear()
-          : true;
-      })
-    );
+    setRowSelection({});
+    if (selectedDate) {
+      setData(
+        tempData.filter((activity) => {
+          const date = new Date(activity.createdAt);
+          return selectedDate
+            ? date.getDate() === selectedDate.getDate() &&
+                date.getMonth() === selectedDate.getMonth() &&
+                date.getFullYear() === selectedDate.getFullYear()
+            : true;
+        })
+      );
+    } else {
+      setData(tempData);
+    }
   }, [selectedDate]);
 
   const table = useReactTable({
@@ -209,173 +234,186 @@ export default function ActivityTable({
   });
 
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4 gap-4">
-        <Input
-          placeholder="Filter by action by..."
-          value={
-            (table.getColumn("actionBy")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(event) =>
-            table.getColumn("actionBy")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <Select
-          onValueChange={(value) => {
-            const column = table.getColumn("type");
-            if (column) {
-              column.setFilterValue(value === "all" ? undefined : value);
+    <>
+      <Alert
+        title="Are you sure you want to delete the selected activities?"
+        description="This will permanently remove the selected activities from the system."
+        open={isAlertOpen}
+        openChange={setIsAlertOpen}
+        onConfirm={handleAlertConfirm}
+        primaryBtn="Delete"
+        primaryClassName="bg-red-500 hover:bg-red-700"
+      />
+      <div className="w-full">
+        <div className="flex items-center py-4 gap-4">
+          <Input
+            placeholder="Filter by action by..."
+            value={
+              (table.getColumn("actionBy")?.getFilterValue() as string) ?? ""
             }
-          }}
-          defaultValue="all"
-          id="typeSelect"
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All types</SelectItem>
-            <SelectItem value="teller">Teller</SelectItem>
-            <SelectItem value="boat">Boat</SelectItem>
-            <SelectItem value="passenger">Passenger</SelectItem>
-            <SelectItem value="queue">Queue</SelectItem>
-          </SelectContent>
-        </Select>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              <CalendarIcon className="h-5 w-5" />
-              {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent align="start" className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              className="rounded-md border"
-            />
-          </PopoverContent>
-        </Popover>
-        <Button
-          variant="outline"
-          onClick={() => {
-            setSelectedDate(null);
-            const column = table.getColumn("type");
-            if (column) {
-              column.setFilterValue(undefined);
+            onChange={(event) =>
+              table.getColumn("actionBy")?.setFilterValue(event.target.value)
             }
-            document?.querySelector("#typeSelect")?.value("all");
-          }}
-        >
-          <RotateCcw className="h-5 w-5" />
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Button
-          variant="destructive"
-          className="flex items-center gap-2"
-          onClick={() => console.log("Delete action triggered")}
-        >
-          <TrashIcon className="h-5 w-5" />
-          Delete
-        </Button>
-      </div>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+            className="max-w-sm"
+          />
+          <Select
+            onValueChange={(value) => {
+              const column = table.getColumn("type");
+              if (column) {
+                column.setFilterValue(value === "all" ? undefined : value);
+              }
+            }}
+            defaultValue="all"
+            id="typeSelect"
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All types</SelectItem>
+              <SelectItem value="teller">Teller</SelectItem>
+              <SelectItem value="boat">Boat</SelectItem>
+              <SelectItem value="passenger">Passenger</SelectItem>
+              <SelectItem value="queue">Queue</SelectItem>
+            </SelectContent>
+          </Select>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <CalendarIcon className="h-5 w-5" />
+                {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start" className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                className="rounded-md border"
+              />
+            </PopoverContent>
+          </Popover>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSelectedDate(null);
+              const column = table.getColumn("type");
+              if (column) {
+                column.setFilterValue(undefined);
+              }
+              document?.querySelector("#typeSelect")?.value("all");
+            }}
+          >
+            <RotateCcw className="h-5 w-5" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            variant="destructive"
+            className="flex items-center gap-2"
+            onClick={() => setIsAlertOpen(true)}
+          >
+            <TrashIcon className="h-5 w-5" />
+            Delete
+          </Button>
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

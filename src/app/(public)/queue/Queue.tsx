@@ -70,7 +70,7 @@ export default function Queue({
     }
   }, [dropped]);
 
-  const addActivity = async (boatName: string) => {
+  const addActivity = async () => {
     if (session?.data?.user?.isAdmin) return;
     await addNewActivity({
       type: "queue",
@@ -89,7 +89,7 @@ export default function Queue({
     });
 
     await updateQueuePositions(items);
-    await addActivity(grabbedQueue);
+    await addActivity();
     setGrabbedQueue("");
     setLoading(false);
   };
