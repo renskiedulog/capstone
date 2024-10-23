@@ -19,6 +19,7 @@ import { deleteBoarding, fetchBoarding } from "@/lib/api/queue";
 import socket from "@/socket";
 import { useSession } from "next-auth/react";
 import { addNewActivity } from "@/lib/api/activity";
+import AddPassenger from "./AddPassenger";
 
 const Boarding = ({ initData }: { initData: Queue[] }) => {
   const [data, setData] = useState(initData);
@@ -26,7 +27,7 @@ const Boarding = ({ initData }: { initData: Queue[] }) => {
   const username = session?.data?.user?.username;
 
   useEffect(() => {
-    socket.on("queueRefresh", (data) => {
+    socket.on("queueRefresh", () => {
       fetchData();
     });
 
@@ -72,22 +73,7 @@ const BoardingBoat = ({
   boat: Queue;
   username: string;
 }) => {
-  const [elapsedTime, setElapsedTime] = useState<string>("");
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-
-  useEffect(() => {
-    if (boat.boardingAt) {
-      const updateElapsedTime = () => {
-        setElapsedTime(getTimeElapsed(boat.boardingAt));
-      };
-
-      updateElapsedTime();
-
-      const interval = setInterval(updateElapsedTime, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [boat.boardingAt]);
 
   const addActivity = async () => {
     await addNewActivity({
@@ -106,8 +92,6 @@ const BoardingBoat = ({
     socket.emit("queueRefresh");
   };
 
-  const handleAlertCancel = () => {};
-
   return (
     <>
       {isAlertOpen && (
@@ -117,7 +101,6 @@ const BoardingBoat = ({
           open={isAlertOpen}
           openChange={setIsAlertOpen}
           onConfirm={handleAlertConfirm}
-          onCancel={handleAlertCancel}
           primaryBtn="Delete"
           primaryClassName="bg-red-600 hover:bg-red-400"
         />
@@ -142,9 +125,7 @@ const BoardingBoat = ({
                   {checkBoatCapacity(boat?.capacity as number)}
                 </Badge>
               </div>
-              <span className="ml-auto text-sm text-gray-500">
-                {elapsedTime}
-              </span>
+              <ElapsedTimeDisplay boardingAt={boat.boardingAt as string} />
             </div>
             <p className="text-sm flex items-center gap-1">
               <ShipWheel size={15} className="mb-0.5" />
@@ -162,10 +143,13 @@ const BoardingBoat = ({
             </p>
             {/* Actions */}
             <div className="flex items-center mt-1 gap-x-2">
-              <Button className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5">
-                Add Passenger
-              </Button>
-              <BoardingInfo boatInfo={boat} elapsedTime={elapsedTime} />
+              <AddPassenger queueId={boat._id} />
+              <BoardingInfo
+                boatInfo={boat}
+                elapsedTimerDisplay={
+                  <ElapsedTimeDisplay boardingAt={boat.boardingAt as string} />
+                }
+              />
               <Button
                 className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5 bg-red-600 hover:bg-red-400"
                 onClick={() => setIsAlertOpen(true)}
@@ -178,4 +162,21 @@ const BoardingBoat = ({
       </div>
     </>
   );
+};
+
+const ElapsedTimeDisplay = ({ boardingAt }: { boardingAt: string }) => {
+  const [elapsedTime, setElapsedTime] = useState("");
+
+  useEffect(() => {
+    const updateElapsedTime = () => {
+      setElapsedTime(getTimeElapsed(boardingAt));
+    };
+
+    updateElapsedTime();
+    const interval = setInterval(updateElapsedTime, 1000);
+
+    return () => clearInterval(interval);
+  }, [boardingAt]);
+
+  return <span className="ml-auto text-sm text-gray-500">{elapsedTime}</span>;
 };

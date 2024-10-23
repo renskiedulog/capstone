@@ -60,10 +60,10 @@ const passengers = [
 
 export default function BoardingInfo({
   boatInfo,
-  elapsedTime,
+  elapsedTimerDisplay,
 }: {
   boatInfo: Queue;
-  elapsedTime: string;
+  elapsedTimerDisplay?: React.ReactNode;
 }) {
   const handleEditPassenger = (id: number) => {
     console.log(`Edit passenger with id: ${id}`);
@@ -91,7 +91,7 @@ export default function BoardingInfo({
             <Ship className="h-6 w-6" />
             Boarding Info - {boatInfo?.boatName}
           </DialogTitle>
-          {elapsedTime}
+          {elapsedTimerDisplay}
         </DialogHeader>
         <ScrollArea className="max-h-[calc(90vh-100px)] pr-3">
           <Tabs defaultValue="details" className="w-full">
