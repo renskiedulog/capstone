@@ -98,3 +98,13 @@ export interface Queue {
   mainImage?: string;
   boardingAt: Date | string;
 }
+
+export interface Passenger {
+  firstName: string;
+  lastName: string;
+  age: number;
+  gender: "male" | "female" | "other";
+  phoneNumber: string;
+  queueId: string;
+  amountPaid: number;
+}
