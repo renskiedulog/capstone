@@ -1,6 +1,4 @@
 "use client";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -9,31 +7,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCallback, useEffect, useState } from "react";
-import { ImageIcon, XIcon } from "lucide-react";
+import { useCallback, useState } from "react";
+import { XIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Alert from "@/components/utils/Alert";
-import { generateRandomString } from "@/lib/utils";
-import { createTeller, isUsernameTaken } from "@/lib/api/tellerActions";
-import { useFormState, useFormStatus } from "react-dom";
 import { useToast } from "@/components/ui/use-toast";
-import socket from "@/socket";
-import { addNewActivity } from "@/lib/api/activity";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const initialInputs = {
   firstName: "",
   lastName: "",
-  username: "",
-  password: "",
-  address: "",
-  contact: "",
-  birthdate: "",
-  email: "",
+  age: "",
+  gender: "",
+  phoneNumber: "",
+  amountPaid: "",
 };
 
 export default function AddTellerModal() {
   const { toast } = useToast();
-  const [imagePreview, setImagePreview] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputs, setInputs] = useState(initialInputs);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -44,7 +44,7 @@ export default function AddTellerModal() {
     const hasValues = Object.values(inputs).some(
       (value) => value.trim() !== ""
     );
-    if (isModalOpen && (hasValues || imagePreview)) {
+    if (isModalOpen && hasValues) {
       setIsAlertOpen(true);
       setPendingModalClose(true);
     } else {
@@ -56,6 +56,7 @@ export default function AddTellerModal() {
     setError("");
     setIsAlertOpen(false);
     if (pendingModalClose) {
+      setInputs(initialInputs);
       setIsModalOpen(false);
       setPendingModalClose(false);
     }
@@ -122,7 +123,105 @@ export default function AddTellerModal() {
                 </CardDescription>
               )}
             </CardHeader>
-            <CardContent className="mx-auto"></CardContent>
+            <CardContent className="mx-auto">
+              <div className="w-full space-y-4 mx-auto">
+                {/* Name Section */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      id="firstName"
+                      name="firstName"
+                      required
+                      type="text"
+                      placeholder="Enter first name"
+                      value={inputs.firstName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      id="lastName"
+                      name="lastName"
+                      required
+                      type="text"
+                      placeholder="Enter last name"
+                      value={inputs.lastName}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+
+                {/* Age and Gender Section */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="age">Age</Label>
+                    <Input
+                      id="age"
+                      name="age"
+                      required
+                      type="number"
+                      placeholder="Enter age"
+                      value={inputs.age}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="gender">Gender</Label>
+                    <Select
+                      defaultValue="male"
+                      name="gender"
+                      onValueChange={(val) =>
+                        setInputs((prev) => ({
+                          ...prev,
+                          gender: val,
+                        }))
+                      }
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Phone and Payment Section */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      required
+                      type="text"
+                      placeholder="Enter phone number"
+                      value={inputs.phoneNumber}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="amountPaid">Amount Paid</Label>
+                    <Input
+                      id="amountPaid"
+                      name="amountPaid"
+                      required
+                      type="number"
+                      placeholder="Enter amount paid"
+                      value={inputs.amountPaid}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
             <CardFooter className="flex justify-end items-center">
               <Button type="submit" className="flex items-center gap-2">
                 Add
