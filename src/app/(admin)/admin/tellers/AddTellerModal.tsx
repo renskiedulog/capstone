@@ -164,7 +164,7 @@ export default function AddTellerModal() {
           onClick={handleModal}
         >
           <Card
-            className="border-none w-full max-w-3xl mx-5 relative max-h-[700px] overflow-y-auto scrollbar"
+            className="border-none w-full max-w-3xl mx-4 relative max-h-[90dvh] overflow-y-auto scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             <XIcon

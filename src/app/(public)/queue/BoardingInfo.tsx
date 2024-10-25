@@ -93,15 +93,15 @@ export default function BoardingInfo({
           Boat Info/List
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh]">
-        <DialogHeader className="flex items-center justify-between flex-row pr-4">
+      <DialogContent className="max-w-4xl max-h-[90dvh] sm:p-4 p-2">
+        <DialogHeader className="flex items-center justify-between flex-col-reverse sm:flex-row pr-4">
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <Ship className="h-6 w-6" />
             Boarding Info - {boatInfo?.boatName}
           </DialogTitle>
           {elapsedTimerDisplay}
         </DialogHeader>
-        <ScrollArea className="max-h-[calc(90vh-100px)] pr-3">
+        <ScrollArea className="max-h-[65dvh] pr-3 over">
           <Tabs defaultValue="details" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="details">Details</TabsTrigger>

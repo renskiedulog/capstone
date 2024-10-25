@@ -46,8 +46,11 @@ const Boarding = ({ initData }: { initData: Queue[] }) => {
 
   return (
     <Card className="flex-none sm:flex-1 lg:min-w-[500px] pb-2 h-max relative">
-      <CardHeader className="pb-2">
-        <CardTitle>Boarding</CardTitle>
+      <CardHeader className="pb-2 ">
+        <div className="flex justify-between items-center flex-wrap">
+          <CardTitle>Boarding</CardTitle>
+          <p className="font-bold text-2xl">{data?.length}</p>
+        </div>
         <CardDescription>
           All the current boats boarding passengers.
         </CardDescription>
@@ -103,9 +106,9 @@ const BoardingBoat = ({
   const [capacityIndicator, setCapacityIndicator] = useState("green");
 
   useEffect(() => {
-    const requiredPassengers = Math.floor(boat.capacity * 0.9);
+    const requiredPassengers = Math.floor(boat?.capacity * 0.9);
 
-    if (boat.passengerIds.length >= requiredPassengers) {
+    if (boat?.passengerIds?.length >= requiredPassengers) {
       setCapacityIndicator("red");
     } else {
       setCapacityIndicator("green");
@@ -143,19 +146,19 @@ const BoardingBoat = ({
         />
       )}
       <div className="bg-secondary mt-1.5 p-2 rounded-md border flex items-center justify-between mb-1 w-full">
-        <div className="flex w-full">
+        <div className="flex w-full flex-row-reverse sm:flex-row">
           <Image
             src={boat.mainImage || "/images/default-image.jpg"}
             width={130}
             height={130}
             alt={boat?.boatName}
-            className="aspect-square object-cover rounded md:w-[130px] w-[100px]"
+            className="aspect-square h-max object-cover rounded md:w-[130px] w-[80px]"
           />
           <div className="px-2 w-full">
-            <div className="flex items-center w-full justify-between">
-              <div className="flex items-center gap-2">
+            <div className="flex items-start sm:items-center w-full flex-col md:flex-row justify-center sm:justify-between">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-base md:text-xl font-medium flex items-center gap-1">
-                  <Ship size={18} />
+                  <Ship size={18} className="min-w-[15px]" />
                   {boat?.boatName}
                 </h1>
                 <Badge className="uppercase !text-[8px] tracking-wider font-bold py-0.5 px-2.5 items-center justify-center">
@@ -200,9 +203,17 @@ const BoardingBoat = ({
                 elapsedTimerDisplay={
                   <ElapsedTimeDisplay boardingAt={boat.boardingAt as string} />
                 }
+                deleteBtn={
+                  <Button
+                    className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5 bg-red-600 hover:bg-red-400"
+                    onClick={() => setIsAlertOpen(true)}
+                  >
+                    Delete
+                  </Button>
+                }
               />
               <Button
-                className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5 bg-red-600 hover:bg-red-400"
+                className="hidden sm:block text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5 bg-red-600 hover:bg-red-400"
                 onClick={() => setIsAlertOpen(true)}
               >
                 Delete
@@ -229,5 +240,7 @@ const ElapsedTimeDisplay = ({ boardingAt }: { boardingAt: string }) => {
     return () => clearInterval(interval);
   }, [boardingAt]);
 
-  return <span className="ml-auto text-sm text-gray-500">{elapsedTime}</span>;
+  return (
+    <span className="sm:ml-auto text-sm text-gray-500">{elapsedTime}</span>
+  );
 };

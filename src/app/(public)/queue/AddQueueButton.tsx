@@ -86,7 +86,7 @@ export default function AddQueueButton() {
             Add Queue
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="p-0 w-[430px]">
+        <PopoverContent className="p-0 sm:w-[400px]">
           <Command>
             <CommandList>
               <CommandEmpty>No boat found.</CommandEmpty>

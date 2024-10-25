@@ -203,7 +203,7 @@ export default function BoatEditForm({
         onClick={handleModalClose}
       >
         <Card
-          className="border-none w-full max-w-4xl mx-5 relative overflow-y-auto scrollbar max-h-[90vh]"
+          className="border-none w-full max-w-4xl mx-5 relative overflow-y-auto scrollbar max-h-[90dvh]"
           onClick={(e) => e.stopPropagation()}
         >
           <XIcon

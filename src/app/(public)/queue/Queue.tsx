@@ -53,7 +53,6 @@ export default function Queue({
   };
 
   const handleAlertConfirm = async () => {
-    // Set New Data
     await handleReorder();
     socket.emit("queueRefresh");
     setDropped(false);
@@ -99,6 +98,8 @@ export default function Queue({
       setShowInfo("");
     } else setShowInfo(id);
   };
+
+  console.log("asd")
 
   return (
     <>

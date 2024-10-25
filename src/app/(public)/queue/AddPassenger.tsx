@@ -94,6 +94,9 @@ export default function AddTellerModal({
       setError("Passenger age is required.");
       return;
     }
+    setInputs(initialInputs);
+    setIsModalOpen(false);
+    setPendingModalClose(false);
     try {
       const sanitizedInputs = {
         ...inputs,
@@ -103,15 +106,18 @@ export default function AddTellerModal({
       };
       const req = await addPassenger(sanitizedInputs, queueId);
       if (req) {
-        setInputs(initialInputs);
-        setIsModalOpen(false);
-        setPendingModalClose(false);
         toast({
           title: "Passenger Added Successfully.",
           description:
             "You can view the passengers by clicking on the Boat Info/List button.",
         });
         socket.emit("boardingRefresh");
+      } else {
+        toast({
+          title: "Something went wrong. Try again.",
+          description:
+            "Refreshing the page and retrying the action might help.",
+        });
       }
     } catch (error) {
       console.log(error);
@@ -140,7 +146,7 @@ export default function AddTellerModal({
           onClick={handleModal}
         >
           <Card
-            className="border-none w-full max-w-3xl mx-5 relative max-h-[700px] overflow-y-auto scrollbar"
+            className="border-none w-full max-w-3xl mx-5 relative max-h-[90dvh] overflow-y-auto scrollbar"
             onClick={(e) => e.stopPropagation()}
           >
             <XIcon

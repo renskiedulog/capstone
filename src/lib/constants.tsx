@@ -24,14 +24,14 @@ export const navLinks = [
     icon: <DashboardIcon />,
   },
   {
-    link: "/queue",
-    name: "Boat Queue",
-    icon: <ListOrdered />,
-  },
-  {
     link: "/boats",
     name: "Boat List",
     icon: <Ship />,
+  },
+  {
+    link: "/queue",
+    name: "Boat Queue",
+    icon: <ListOrdered />,
   },
   {
     link: "/statistics",
@@ -39,14 +39,14 @@ export const navLinks = [
     icon: <LineChart />,
   },
   {
-    link: "/activity",
-    name: "Activity",
-    icon: <History />,
-  },
-  {
     link: "/sail-history",
     name: "Queue History",
     icon: <ListRestart />,
+  },
+  {
+    link: "/activity",
+    name: "Activity",
+    icon: <History />,
   },
 ];
 
@@ -72,14 +72,14 @@ export const adminLinks = [
     icon: <ListOrdered />,
   },
   {
-    link: "/activity",
-    name: "Activity",
-    icon: <History />,
-  },
-  {
     link: "/sail-history",
     name: "Queue History",
     icon: <ListRestart />,
+  },
+  {
+    link: "/activity",
+    name: "Activity",
+    icon: <History />,
   },
 ];
 

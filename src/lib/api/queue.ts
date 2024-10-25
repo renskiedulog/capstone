@@ -91,7 +91,6 @@ export const addQueue = async (id: string, username: string) => {
       position: inQueueCount + 1,
       status: "in-queue",
     });
-    revalidatePath("/queue");
     return true;
   } catch (error) {
     console.log(error);
@@ -111,7 +110,6 @@ export const deleteQueueItem = async (queueId: string) => {
       { $inc: { position: -1 } }
     );
   }
-  revalidatePath("/queue");
   return true;
 };
 
@@ -122,8 +120,6 @@ export const updateQueuePositions = async (newItems: QueueTypes[]) => {
     );
 
     await Promise.all(updatePromises);
-
-    revalidatePath("/queue");
 
     return true;
   } catch (error) {
