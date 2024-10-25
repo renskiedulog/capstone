@@ -4,6 +4,7 @@ import { connectMongoDB } from "../db";
 import Queue from "@/models/Queue";
 import { revalidatePath } from "next/cache";
 import { Queue as QueueTypes } from "../types";
+import Passenger from "@/models/Passenger";
 
 export const fetchBoatIds = async () => {
   try {
@@ -207,7 +208,26 @@ export const fetchBoarding = async () => {
 
 export const deleteBoarding = async (id: string) => {
   await connectMongoDB();
-  const req = await Queue.deleteOne({ _id: id });
 
-  return true;
+  const session = await Queue.startSession();
+  session.startTransaction();
+
+  try {
+    const queueDeletion = await Queue.deleteOne({ _id: id }).session(session);
+    if (queueDeletion.deletedCount === 0) {
+      throw new Error("Queue not found or already deleted");
+    }
+
+    await Passenger.deleteMany({ queueId: id }).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return true;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Error deleting queue and passengers:", error);
+    throw error;
+  }
 };

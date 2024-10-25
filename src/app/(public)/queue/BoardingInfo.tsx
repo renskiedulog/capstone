@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -48,15 +48,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDateToReadable } from "@/lib/utils";
 import { Queue } from "@/lib/types";
-
-// Sample passenger data
-const passengers = [
-  // { id: 1, name: "John Doe", age: 35, ticketNumber: "T001" },
-  // { id: 2, name: "Jane Smith", age: 28, ticketNumber: "T002" },
-  // { id: 3, name: "Mike Johnson", age: 42, ticketNumber: "T003" },
-  // { id: 4, name: "Emily Brown", age: 31, ticketNumber: "T004" },
-  // { id: 5, name: "David Lee", age: 39, ticketNumber: "T005" },
-];
+import { fetchPassengers } from "@/lib/api/passenger";
 
 export default function BoardingInfo({
   boatInfo,
@@ -65,6 +57,8 @@ export default function BoardingInfo({
   boatInfo: Queue;
   elapsedTimerDisplay?: React.ReactNode;
 }) {
+  const [passengers, setPassengers] = useState([]);
+
   const handleEditPassenger = (id: number) => {
     console.log(`Edit passenger with id: ${id}`);
     // Implement edit logic here
@@ -74,6 +68,20 @@ export default function BoardingInfo({
     console.log(`Delete passenger with id: ${id}`);
     // Implement delete logic here
   };
+
+  const loadPassengers = async () => {
+    try {
+      const req = await fetchPassengers(boatInfo.passengerIds || []);
+      setPassengers(req);
+    } catch (error) {
+      setPassengers([]);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    loadPassengers();
+  }, [boatInfo.passengerIds]);
 
   return (
     <Dialog>
@@ -156,21 +164,21 @@ export default function BoardingInfo({
                     <div className="flex justify-center flex-col">
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        <span className="font-medium">Queued At:</span>
+                        <span className="font-bold">Queued At:</span>
                       </span>
                       {formatDateToReadable(boatInfo?.queuedAt as any)}
                     </div>
                     <div className="flex justify-center flex-col">
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        <span className="font-medium">Boarding At:</span>
+                        <span className="font-bold">Boarding At:</span>
                       </span>
                       {formatDateToReadable(boatInfo?.boardingAt)}
                     </div>
                     <div className="flex justify-center flex-col">
                       <span className="flex items-center gap-2">
                         <Calendar className="h-4 w-4" />
-                        <span className="font-medium">Created At:</span>
+                        <span className="font-bold">Created At:</span>
                       </span>
                       {formatDateToReadable(boatInfo?.createdAt as any)}
                     </div>
@@ -195,16 +203,20 @@ export default function BoardingInfo({
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Age</TableHead>
-                        <TableHead>Ticket Number</TableHead>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>Amount Paid</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {passengers?.map((passenger) => (
-                        <TableRow key={passenger.id}>
-                          <TableCell>{passenger.name}</TableCell>
+                        <TableRow key={passenger._id}>
+                          <TableCell>
+                            {`${passenger.firstName} ${passenger.lastName}`}
+                          </TableCell>
                           <TableCell>{passenger.age}</TableCell>
-                          <TableCell>{passenger.ticketNumber}</TableCell>
+                          <TableCell>{passenger.phoneNumber}</TableCell>
+                          <TableCell>{passenger.amountPaid}</TableCell>
                           <TableCell className="text-right">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -215,16 +227,9 @@ export default function BoardingInfo({
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleEditPassenger(passenger.id)
-                                  }
-                                >
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Edit
-                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
+                                  className="cursor-pointer"
                                   onClick={() =>
                                     handleDeletePassenger(passenger.id)
                                   }

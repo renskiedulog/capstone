@@ -88,10 +88,12 @@ export const Item = ({
   };
 
   const handleChangeToBoarding = async () => {
-    if (destination == "") return;
+    if (!destination || destination == "") return;
+    setToBoard(false);
     await changeToBoarding(item.id as string, destination);
     syncData();
     setDestination("");
+    socket.emit("boardingRefresh");
   };
 
   React.useEffect(() => {

@@ -22,17 +22,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { addPassenger } from "@/lib/api/passenger";
+import socket from "@/socket";
 
-const initialInputs = {
-  firstName: "",
-  lastName: "",
-  age: "",
-  gender: "",
-  phoneNumber: "",
-  amountPaid: "",
-};
+export default function AddTellerModal({
+  queueId,
+  capacityIndicator,
+}: {
+  queueId: string;
+  capacityIndicator?: string;
+}) {
+  const initialInputs = {
+    firstName: "",
+    lastName: "",
+    age: "",
+    gender: "male",
+    phoneNumber: "",
+    amountPaid: "",
+    queueId,
+  };
 
-export default function AddTellerModal() {
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputs, setInputs] = useState(initialInputs);
@@ -41,9 +50,10 @@ export default function AddTellerModal() {
   const [error, setError] = useState("");
 
   const handleModal = () => {
-    const hasValues = Object.values(inputs).some(
-      (value) => value.trim() !== ""
-    );
+    const excludedKeys = ["gender", "queueId"];
+    const hasValues = Object.entries(inputs)
+      .filter(([key]) => !excludedKeys.includes(key))
+      .some(([, value]) => value.trim() !== "");
     if (isModalOpen && hasValues) {
       setIsAlertOpen(true);
       setPendingModalClose(true);
@@ -75,16 +85,38 @@ export default function AddTellerModal() {
     }));
   }, []);
 
-  // const addActivity = async () => {
-  //   await addNewActivity({
-  //     type: "teller",
-  //     title: "Added Teller Account",
-  //     details: `Account with the username '${inputs.username}' has been added.`,
-  //     link: `/profile/${inputs?.username}`,
-  //     actionBy: "ADMIN",
-  //   });
-  //   socket.emit("newActivity");
-  // };
+  const handleSubmit = async () => {
+    if (!inputs.amountPaid) {
+      setError("Paid amount is required.");
+      return;
+    }
+    if (!inputs.age) {
+      setError("Passenger age is required.");
+      return;
+    }
+    try {
+      const sanitizedInputs = {
+        ...inputs,
+        firstName: inputs.firstName.trim() || "Anonymous",
+        lastName: inputs.lastName.trim() || "Anonymous",
+        phoneNumber: inputs.phoneNumber || "N/A",
+      };
+      const req = await addPassenger(sanitizedInputs, queueId);
+      if (req) {
+        setInputs(initialInputs);
+        setIsModalOpen(false);
+        setPendingModalClose(false);
+        toast({
+          title: "Passenger Added Successfully.",
+          description:
+            "You can view the passengers by clicking on the Boat Info/List button.",
+        });
+        socket.emit("boardingRefresh");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -96,7 +128,10 @@ export default function AddTellerModal() {
         onConfirm={handleAlertConfirm}
         onCancel={handleAlertCancel}
       />
-      <Button className="text-xs sm:text-base" onClick={handleModal}>
+      <Button
+        onClick={handleModal}
+        className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5"
+      >
         Add Passenger
       </Button>
       {isModalOpen && (
@@ -117,9 +152,14 @@ export default function AddTellerModal() {
               <CardDescription>
                 Provide the necessary details for the passenger.
               </CardDescription>
+              {capacityIndicator === "red" && (
+                <CardDescription className="text-red-500">
+                  Note: This boat is almost at its maximum capacity.
+                </CardDescription>
+              )}
               {error !== "" && (
                 <CardDescription className="text-red-500">
-                  {error}
+                  Error: {error}
                 </CardDescription>
               )}
             </CardHeader>
@@ -132,7 +172,6 @@ export default function AddTellerModal() {
                     <Input
                       id="firstName"
                       name="firstName"
-                      required
                       type="text"
                       placeholder="Enter first name"
                       value={inputs.firstName}
@@ -144,7 +183,6 @@ export default function AddTellerModal() {
                     <Input
                       id="lastName"
                       name="lastName"
-                      required
                       type="text"
                       placeholder="Enter last name"
                       value={inputs.lastName}
@@ -160,7 +198,6 @@ export default function AddTellerModal() {
                     <Input
                       id="age"
                       name="age"
-                      required
                       type="number"
                       placeholder="Enter age"
                       value={inputs.age}
@@ -200,7 +237,6 @@ export default function AddTellerModal() {
                     <Input
                       id="phoneNumber"
                       name="phoneNumber"
-                      required
                       type="text"
                       placeholder="Enter phone number"
                       value={inputs.phoneNumber}
@@ -223,7 +259,11 @@ export default function AddTellerModal() {
               </div>
             </CardContent>
             <CardFooter className="flex justify-end items-center">
-              <Button type="submit" className="flex items-center gap-2">
+              <Button
+                type="submit"
+                className="flex items-center gap-2"
+                onClick={handleSubmit}
+              >
                 Add
               </Button>
             </CardFooter>
