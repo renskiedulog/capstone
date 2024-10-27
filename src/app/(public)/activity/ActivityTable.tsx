@@ -1,11 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import {
-  CaretSortIcon,
-  ChevronDownIcon,
-  DotsHorizontalIcon,
-} from "@radix-ui/react-icons";
+import { useState, useEffect } from "react";
+import { CaretSortIcon, ChevronDownIcon } from "@radix-ui/react-icons";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -25,9 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -48,17 +41,13 @@ import {
 } from "@/components/ui/select";
 import { ActivityTypes } from "@/lib/types";
 import socket from "@/socket";
-import {
-  deleteActivities,
-  getActivitiesByDate,
-  getAllActivities,
-} from "@/lib/api/activity";
+import { deleteActivities, getAllActivities } from "@/lib/api/activity";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, RotateCcw, TrashIcon } from "lucide-react";
+import { CalendarIcon, TrashIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import Alert from "@/components/utils/Alert";
@@ -88,18 +77,31 @@ export const columns: ColumnDef<ActivityTypes>[] = [
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("title")}</div>
+      <div className="capitalize text-xs sm:text-[15px] text-center sm:text-left">
+        {row.getValue("title")}
+      </div>
     ),
   },
   {
     accessorKey: "details",
     header: "Details",
-    cell: ({ row }) => <div>{row.getValue("details")}</div>,
+    cell: ({ row }) => (
+      <div
+        className="text-xs sm:text-[15px] whitespace-normal"
+        style={{ minWidth: "200px", maxWidth: "400px" }}
+      >
+        {row.getValue("details")}
+      </div>
+    ),
   },
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => <div className="uppercase">{row.getValue("type")}</div>,
+    cell: ({ row }) => (
+      <div className="uppercase text-xs sm:text-[15px]">
+        {row.getValue("type")}
+      </div>
+    ),
   },
   {
     accessorKey: "createdAt",
@@ -107,6 +109,7 @@ export const columns: ColumnDef<ActivityTypes>[] = [
       return (
         <Button
           variant="ghost"
+          className="text-xs sm:text-[15px]"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Date
@@ -115,42 +118,17 @@ export const columns: ColumnDef<ActivityTypes>[] = [
       );
     },
     cell: ({ row }) => (
-      <div>{new Date(row.getValue("createdAt")).toLocaleString()}</div>
+      <div className="text-xs sm:text-[15px]">
+        {new Date(row.getValue("createdAt")).toLocaleString()}
+      </div>
     ),
   },
   {
     accessorKey: "actionBy",
     header: "Action By",
-    cell: ({ row }) => <div>{row.getValue("actionBy")}</div>,
-  },
-  {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const activity = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <DotsHorizontalIcon className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(activity._id)}
-            >
-              Copy activity ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>View activity</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => (
+      <div className="text-xs sm:text-[15px]">{row.getValue("actionBy")}</div>
+    ),
   },
 ];
 
@@ -165,7 +143,7 @@ export default function ActivityTable({
   const [rowSelection, setRowSelection]: any = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [tempData, setTempData] = useState(initData);
-  const [data, setData] = useState(tempData);
+  const [data, setData] = useState(initData);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const { toast } = useToast();
 
@@ -182,12 +160,12 @@ export default function ActivityTable({
   };
 
   useEffect(() => {
-    socket.on("newActivity", (data) => {
-      fetchData();
-    });
+    const handleNewActivity = async () => await fetchData();
+
+    socket.on("newActivity", handleNewActivity);
 
     return () => {
-      socket.off("newActivity");
+      socket.off("newActivity", handleNewActivity);
     };
   }, []);
 
@@ -245,99 +223,90 @@ export default function ActivityTable({
         primaryClassName="bg-red-500 hover:bg-red-700"
       />
       <div className="w-full">
-        <div className="flex items-center py-4 gap-4">
+        <div className="flex items-center py-4 gap-4 flex-wrap">
           <Input
-            placeholder="Filter by action by..."
+            placeholder="Search..."
             value={
               (table.getColumn("actionBy")?.getFilterValue() as string) ?? ""
             }
             onChange={(event) =>
               table.getColumn("actionBy")?.setFilterValue(event.target.value)
             }
-            className="max-w-sm"
+            className="max-w-none sm:max-w-sm"
           />
-          <Select
-            onValueChange={(value) => {
-              const column = table.getColumn("type");
-              if (column) {
-                column.setFilterValue(value === "all" ? undefined : value);
-              }
-            }}
-            defaultValue="all"
-            id="typeSelect"
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All types</SelectItem>
-              <SelectItem value="teller">Teller</SelectItem>
-              <SelectItem value="boat">Boat</SelectItem>
-              <SelectItem value="passenger">Passenger</SelectItem>
-              <SelectItem value="queue">Queue</SelectItem>
-            </SelectContent>
-          </Select>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5" />
-                {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="start" className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                className="rounded-md border"
-              />
-            </PopoverContent>
-          </Popover>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setSelectedDate(null);
-              const column = table.getColumn("type");
-              if (column) {
-                column.setFilterValue(undefined);
-              }
-              document?.querySelector("#typeSelect")?.value("all");
-            }}
-          >
-            <RotateCcw className="h-5 w-5" />
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button
-            variant="destructive"
-            className="flex items-center gap-2"
-            onClick={() => setIsAlertOpen(true)}
-          >
-            <TrashIcon className="h-5 w-5" />
-            Delete
-          </Button>
+          <div className="flex items-center justify-between sm:justify-start gap-x-2 flex-1">
+            <Select
+              onValueChange={(value) => {
+                const column = table.getColumn("type");
+                if (column) {
+                  column.setFilterValue(value === "all" ? undefined : value);
+                }
+              }}
+              defaultValue="all"
+              id="typeSelect"
+            >
+              <SelectTrigger className="flex-1 max-w-[150px]">
+                <SelectValue placeholder="Select type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                <SelectItem value="teller">Teller</SelectItem>
+                <SelectItem value="boat">Boat</SelectItem>
+                <SelectItem value="passenger">Passenger</SelectItem>
+                <SelectItem value="queue">Queue</SelectItem>
+              </SelectContent>
+            </Select>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  <p className="sm:block hidden">
+                    {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
+                  </p>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  className="rounded-md border"
+                />
+              </PopoverContent>
+            </Popover>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              variant="destructive"
+              className="flex items-center gap-2"
+              onClick={() => setIsAlertOpen(true)}
+            >
+              <TrashIcon className="h-5 w-5" />
+              <p className="hidden sm:block">Delete</p>
+            </Button>
+          </div>
         </div>
         <div className="rounded-md border">
           <Table>

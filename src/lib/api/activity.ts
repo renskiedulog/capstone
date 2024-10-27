@@ -27,14 +27,21 @@ export const addNewActivity = async (activityData: Activity) => {
 export const getAllActivities = async () => {
   try {
     await connectMongoDB();
-    const activities = await Activity.find().sort({ createdAt: -1 }).exec();
+    const activities = await Activity.find().sort({ createdAt: -1 }).lean();
 
-    return activities;
+    const sanitizedActivities = activities.map((activity) => ({
+      ...activity,
+      _id: activity._id.toString(),
+      createdAt: activity.createdAt.toISOString(),
+    }));
+
+    return sanitizedActivities;
   } catch (error) {
     console.error("Error fetching activities:", error);
     return [];
   }
 };
+
 
 export const getActivitiesByDate = async (selectedDate: Date) => {
   try {
