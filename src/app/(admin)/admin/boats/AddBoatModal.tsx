@@ -334,7 +334,7 @@ export default function AddBoatModal({
                     >
                       <PlusCircleIcon className="group-hover:opacity-70 opacity-50" />
                       <p className="group-hover:opacity-70 opacity-50 text-center text-[10px] sm:text-xs px-2">
-                        Upload An Image or Document
+                        Upload An Image
                       </p>
                       <Input
                         type="file"

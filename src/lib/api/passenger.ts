@@ -28,11 +28,19 @@ export const fetchPassengers = async (passengerIds: string[]) => {
   try {
     const passengers = await Passenger.find({
       _id: { $in: passengerIds },
-    }).lean();
+    })
+      .lean()
+      .exec();
 
-    return passengers;
+    const plainPassengers = passengers.map((passenger: any) => ({
+      ...passenger,
+      _id: passenger._id.toString(),
+    }));
+
+    return plainPassengers;
   } catch (error) {
     console.error("Error fetching passengers:", error);
     throw error;
   }
 };
+

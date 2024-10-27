@@ -47,7 +47,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatDateToReadable } from "@/lib/utils";
-import { Queue } from "@/lib/types";
+import { Passenger, Queue } from "@/lib/types";
 import { fetchPassengers } from "@/lib/api/passenger";
 
 export default function BoardingInfo({
@@ -59,12 +59,12 @@ export default function BoardingInfo({
 }) {
   const [passengers, setPassengers] = useState([]);
 
-  const handleEditPassenger = (id: number) => {
+  const handleEditPassenger = (id: string) => {
     console.log(`Edit passenger with id: ${id}`);
     // Implement edit logic here
   };
 
-  const handleDeletePassenger = (id: number) => {
+  const handleDeletePassenger = (id: string) => {
     console.log(`Delete passenger with id: ${id}`);
     // Implement delete logic here
   };
@@ -197,27 +197,43 @@ export default function BoardingInfo({
                     Manage passengers for this boat
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent  className="px-2 sm:px-6">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Age</TableHead>
-                        <TableHead>Contact</TableHead>
-                        <TableHead>Amount Paid</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className="text-xs sm:text-base">
+                          Name
+                        </TableHead>
+                        <TableHead className="text-xs sm:text-base">
+                          Age
+                        </TableHead>
+                        <TableHead className="text-xs sm:text-base">
+                          Contact
+                        </TableHead>
+                        <TableHead className="text-xs sm:text-base text-center sm:text-left">
+                          Amount Paid
+                        </TableHead>
+                        <TableHead className="text-right text-xs sm:text-base">
+                          Actions
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {passengers?.map((passenger) => (
+                      {passengers?.map((passenger: Passenger) => (
                         <TableRow key={passenger._id}>
-                          <TableCell>
+                          <TableCell className="text-xs sm:text-base">
                             {`${passenger.firstName} ${passenger.lastName}`}
                           </TableCell>
-                          <TableCell>{passenger.age}</TableCell>
-                          <TableCell>{passenger.phoneNumber}</TableCell>
-                          <TableCell>{passenger.amountPaid}</TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-xs sm:text-base">
+                            {passenger.age}
+                          </TableCell>
+                          <TableCell className="text-xs sm:text-base">
+                            {passenger.phoneNumber}
+                          </TableCell>
+                          <TableCell className="text-xs sm:text-base">
+                            {passenger.amountPaid}
+                          </TableCell>
+                          <TableCell className="text-right text-xs sm:text-base">
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="h-8 w-8 p-0">
@@ -231,7 +247,7 @@ export default function BoardingInfo({
                                 <DropdownMenuItem
                                   className="cursor-pointer"
                                   onClick={() =>
-                                    handleDeletePassenger(passenger.id)
+                                    handleDeletePassenger(passenger._id)
                                   }
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" />

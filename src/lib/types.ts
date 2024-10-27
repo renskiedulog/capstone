@@ -100,6 +100,7 @@ export interface Queue {
 }
 
 export interface Passenger {
+  _id: string;
   firstName: string;
   lastName: string;
   age: number;

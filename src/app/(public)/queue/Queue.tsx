@@ -99,8 +99,6 @@ export default function Queue({
     } else setShowInfo(id);
   };
 
-  console.log("asd")
-
   return (
     <>
       {isAlertOpen && (
