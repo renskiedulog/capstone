@@ -77,7 +77,7 @@ export const columns: ColumnDef<ActivityTypes>[] = [
     accessorKey: "title",
     header: "Title",
     cell: ({ row }) => (
-      <div className="capitalize text-xs sm:text-[15px] text-center sm:text-left">
+      <div className="capitalize text-center sm:text-left">
         {row.getValue("title")}
       </div>
     ),
@@ -87,7 +87,7 @@ export const columns: ColumnDef<ActivityTypes>[] = [
     header: "Details",
     cell: ({ row }) => (
       <div
-        className="text-xs sm:text-[15px] whitespace-normal"
+        className="whitespace-normal"
         style={{ minWidth: "200px", maxWidth: "400px" }}
       >
         {row.getValue("details")}
@@ -97,11 +97,7 @@ export const columns: ColumnDef<ActivityTypes>[] = [
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => (
-      <div className="uppercase text-xs sm:text-[15px]">
-        {row.getValue("type")}
-      </div>
-    ),
+    cell: ({ row }) => <div className="uppercase">{row.getValue("type")}</div>,
   },
   {
     accessorKey: "createdAt",
@@ -109,7 +105,7 @@ export const columns: ColumnDef<ActivityTypes>[] = [
       return (
         <Button
           variant="ghost"
-          className="text-xs sm:text-[15px]"
+          className=""
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Date
@@ -118,17 +114,13 @@ export const columns: ColumnDef<ActivityTypes>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="text-xs sm:text-[15px]">
-        {new Date(row.getValue("createdAt")).toLocaleString()}
-      </div>
+      <div>{new Date(row.getValue("createdAt")).toLocaleString()}</div>
     ),
   },
   {
     accessorKey: "actionBy",
     header: "Action By",
-    cell: ({ row }) => (
-      <div className="text-xs sm:text-[15px]">{row.getValue("actionBy")}</div>
-    ),
+    cell: ({ row }) => <div>{row.getValue("actionBy")}</div>,
   },
 ];
 
@@ -225,7 +217,7 @@ export default function ActivityTable({
       <div className="w-full">
         <div className="flex items-center py-4 gap-4 flex-wrap">
           <Input
-            placeholder="Search..."
+            placeholder="Filter by action by..."
             value={
               (table.getColumn("actionBy")?.getFilterValue() as string) ?? ""
             }

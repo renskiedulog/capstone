@@ -52,6 +52,7 @@ import { Passenger, Queue } from "@/lib/types";
 import { deletePassenger, fetchPassengers } from "@/lib/api/passenger";
 import { PassengerSheet } from "./PassengerSheet";
 import { useToast } from "@/components/ui/use-toast";
+import Alert from "@/components/utils/Alert";
 
 export default function BoardingInfo({
   boatInfo,
@@ -65,6 +66,7 @@ export default function BoardingInfo({
   const [passengers, setPassengers] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
   const [passengerDetails, setPassengerDetails] = useState({});
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const { toast } = useToast();
 
   const handleDeletePassenger = async (id: string, queueId: string) => {
@@ -86,12 +88,25 @@ export default function BoardingInfo({
     }
   };
 
+  const setToSailing = async () => {};
+
   useEffect(() => {
     loadPassengers();
   }, [boatInfo.passengerIds]);
 
   return (
     <>
+      {isAlertOpen && (
+        <Alert
+          title="Set This Boat To Sail?"
+          description="You might have not intended to click this."
+          open={isAlertOpen}
+          openChange={setIsAlertOpen}
+          onConfirm={setToSailing}
+          primaryBtn="Sail"
+          primaryClassName="bg-blue-600 hover:bg-blue-400 min-w-20"
+        />
+      )}
       <PassengerSheet
         open={openDetails}
         setOpenDetails={setOpenDetails}
@@ -205,7 +220,10 @@ export default function BoardingInfo({
                   >
                     Delete
                   </Button>
-                  <Button className="text-sm ml-auto p-0 h-max px-2 md:px-4 py-2 min-w-24  bg-blue-600 hover:bg-blue-400">
+                  <Button
+                    className="text-sm ml-auto p-0 h-max px-2 md:px-4 py-2 min-w-24  bg-blue-600 hover:bg-blue-400"
+                    onClick={() => setIsAlertOpen(true)}
+                  >
                     Sail
                   </Button>
                 </div>
