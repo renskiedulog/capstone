@@ -1,10 +1,8 @@
 import * as React from "react";
 import { useMotionValue, Reorder, AnimatePresence } from "framer-motion";
-import { useRaisedShadow } from "./use-raised-shadow";
 import {
   ArrowRightSquare,
   Clock,
-  CopyIcon,
   Info,
   Ship,
   ShipWheel,
@@ -29,7 +27,6 @@ import socket from "@/socket";
 import { motion } from "framer-motion";
 import { formatDateTime, getTimeElapsed } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
-import Alert from "@/components/utils/Alert";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -40,7 +37,7 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { capacityCategory, checkBoatCapacity } from "@/lib/constants";
+import { checkBoatCapacity } from "@/lib/constants";
 
 interface Props {
   item: Queue;
@@ -62,7 +59,6 @@ export const Item = ({
   syncData,
 }: Props) => {
   const y = useMotionValue(0);
-  const boxShadow = useRaisedShadow(y);
   const [elapsedTime, setElapsedTime] = React.useState("");
   const [toBoard, setToBoard] = React.useState(false);
   const [error, setError] = React.useState("");
@@ -165,14 +161,14 @@ export const Item = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        style={{ boxShadow, y }}
+        style={{ y }}
         dragConstraints={dragConstraints}
         onMouseDown={(e: any) => {
-          e.target.classList.add("cursor-grabbing");
+          e.target.classList.add("cursor-grabbing", "shadow-md");
           setGrabbedQueue(item.boatName);
         }}
         onDragEnd={(e: any) => {
-          e.target.classList.remove("cursor-grabbing");
+          e.target.classList.remove("cursor-grabbing", "shadow-md");
           setDropped(true);
         }}
         className="border p-2 rounded mb-1 cursor-grab bg-secondary flex items-center justify-between"

@@ -66,7 +66,7 @@ export default function BoardingInfo({
   const [passengers, setPassengers] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
   const [passengerDetails, setPassengerDetails] = useState({});
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [toSailModal, setToSailModal] = useState(false);
   const { toast } = useToast();
 
   const handleDeletePassenger = async (id: string, queueId: string) => {
@@ -96,12 +96,12 @@ export default function BoardingInfo({
 
   return (
     <>
-      {isAlertOpen && (
+      {toSailModal && (
         <Alert
           title="Set This Boat To Sail?"
           description="You might have not intended to click this."
-          open={isAlertOpen}
-          openChange={setIsAlertOpen}
+          open={toSailModal}
+          openChange={setToSailModal}
           onConfirm={setToSailing}
           primaryBtn="Sail"
           primaryClassName="bg-blue-600 hover:bg-blue-400 min-w-20"
@@ -129,7 +129,7 @@ export default function BoardingInfo({
             </DialogTitle>
             {elapsedTimerDisplay}
           </DialogHeader>
-          <ScrollArea className="max-h-[65dvh] pr-3 over">
+          <ScrollArea className="max-h-[65dvh]">
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Details</TabsTrigger>
@@ -222,7 +222,7 @@ export default function BoardingInfo({
                   </Button>
                   <Button
                     className="text-sm ml-auto p-0 h-max px-2 md:px-4 py-2 min-w-24  bg-blue-600 hover:bg-blue-400"
-                    onClick={() => setIsAlertOpen(true)}
+                    onClick={() => setToSailModal(true)}
                   >
                     Sail
                   </Button>
