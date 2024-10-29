@@ -51,6 +51,7 @@ import { formatDateToReadable } from "@/lib/utils";
 import { Passenger, Queue } from "@/lib/types";
 import { deletePassenger, fetchPassengers } from "@/lib/api/passenger";
 import { PassengerSheet } from "./PassengerSheet";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function BoardingInfo({
   boatInfo,
@@ -64,9 +65,14 @@ export default function BoardingInfo({
   const [passengers, setPassengers] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
   const [passengerDetails, setPassengerDetails] = useState({});
+  const { toast } = useToast();
 
   const handleDeletePassenger = async (id: string, queueId: string) => {
     await deletePassenger(id, queueId);
+    toast({
+      title: "Deleted Successfully.",
+      description: "If changes do not occur, refreshing the page might help.",
+    });
     loadPassengers();
   };
 
@@ -276,7 +282,7 @@ export default function BoardingInfo({
                                   </DropdownMenuItem>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    className="cursor-pointer hover:bg-accent"
+                                    className="cursor-pointer hover:bg-accent text-red-500"
                                     onClick={() =>
                                       handleDeletePassenger(
                                         passenger._id,

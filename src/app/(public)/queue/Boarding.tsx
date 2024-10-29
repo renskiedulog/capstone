@@ -20,6 +20,7 @@ import socket from "@/socket";
 import { useSession } from "next-auth/react";
 import { addNewActivity } from "@/lib/api/activity";
 import AddPassenger from "./AddPassenger";
+import { useToast } from "@/components/ui/use-toast";
 
 const Boarding = ({ initData }: { initData: Queue[] }) => {
   const [data, setData] = useState(initData);
@@ -104,6 +105,7 @@ const BoardingBoat = ({
 }) => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [capacityIndicator, setCapacityIndicator] = useState("green");
+  const { toast } = useToast();
 
   useEffect(() => {
     const requiredPassengers = Math.floor(boat?.capacity * 0.9);
@@ -124,6 +126,10 @@ const BoardingBoat = ({
       details: `Boat with the name '${boat?.boatName}' has been deleted from the boarding queue.`,
       link: `/boat/${boat?.boatCode}`,
       actionBy: username,
+    });
+    toast({
+      title: "Deleted Successfully.",
+      description: "If changes do not occur, refreshing the page might help.",
     });
     socket.emit("newActivity");
   };
