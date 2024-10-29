@@ -17,7 +17,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { ActivityTypes } from "@/lib/types";
-import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { formatDateToReadable } from "@/lib/utils";
 

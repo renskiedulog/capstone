@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { addPassenger } from "@/lib/api/passenger";
 import socket from "@/socket";
+import { useSession } from "next-auth/react";
 
 export default function AddTellerModal({
   queueId,
@@ -48,6 +49,8 @@ export default function AddTellerModal({
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [pendingModalClose, setPendingModalClose] = useState(false);
   const [error, setError] = useState("");
+  const session: any = useSession();
+  const username = session?.data?.user?.username;
 
   const handleModal = () => {
     const excludedKeys = ["gender", "queueId"];
@@ -98,11 +101,12 @@ export default function AddTellerModal({
     setIsModalOpen(false);
     setPendingModalClose(false);
     try {
-      const sanitizedInputs = {
+      const sanitizedInputs: any = {
         ...inputs,
         firstName: inputs.firstName.trim() || "Anonymous",
         lastName: inputs.lastName.trim() || "Anonymous",
         phoneNumber: inputs.phoneNumber || "N/A",
+        addedBy: username,
       };
       const req = await addPassenger(sanitizedInputs, queueId);
       if (req) {

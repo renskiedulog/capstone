@@ -29,6 +29,7 @@ export const fetchPassengers = async (passengerIds: string[]) => {
     const passengers = await Passenger.find({
       _id: { $in: passengerIds },
     })
+      .sort({ createdAt: -1 })
       .lean()
       .exec();
 
@@ -44,3 +45,19 @@ export const fetchPassengers = async (passengerIds: string[]) => {
   }
 };
 
+export const deletePassenger = async (passengerId: string, queueId: string) => {
+  try {
+    await Passenger.findByIdAndDelete(passengerId);
+
+    await Queue.findByIdAndUpdate(
+      queueId,
+      { $pull: { passengerIds: passengerId } },
+      { new: true }
+    );
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting passenger:", error);
+    throw new Error("Failed to delete passenger");
+  }
+};

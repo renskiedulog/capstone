@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node server.js --turbo",
     "build": "next build",
     "postbuild": "node seed.js",
     "start": "NODE_ENV=production node server.js",

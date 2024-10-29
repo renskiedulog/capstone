@@ -25,6 +25,10 @@ const passengerSchema = new Schema(
       type: String,
       required: true,
     },
+    addedBy: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

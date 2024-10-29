@@ -94,7 +94,7 @@ export interface Queue {
   departureTime?: Date;
   createdAt?: String | Date;
   driverName?: String;
-  capacity?: number;
+  capacity: number;
   mainImage?: string;
   boardingAt: Date | string;
 }
@@ -108,4 +108,6 @@ export interface Passenger {
   phoneNumber: string;
   queueId: string;
   amountPaid: number;
+  addedBy: string;
+  createdAt?: Date | string;
 }

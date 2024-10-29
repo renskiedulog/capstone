@@ -108,10 +108,12 @@ const BoardingBoat = ({
   useEffect(() => {
     const requiredPassengers = Math.floor(boat?.capacity * 0.9);
 
-    if (boat?.passengerIds?.length >= requiredPassengers) {
-      setCapacityIndicator("red");
-    } else {
-      setCapacityIndicator("green");
+    if (boat.passengerIds) {
+      if (boat?.passengerIds?.length >= requiredPassengers) {
+        setCapacityIndicator("red");
+      } else {
+        setCapacityIndicator("green");
+      }
     }
   }, [boat.passengerIds, boat.capacity]);
 
@@ -203,14 +205,7 @@ const BoardingBoat = ({
                 elapsedTimerDisplay={
                   <ElapsedTimeDisplay boardingAt={boat.boardingAt as string} />
                 }
-                deleteBtn={
-                  <Button
-                    className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5 bg-red-600 hover:bg-red-400"
-                    onClick={() => setIsAlertOpen(true)}
-                  >
-                    Delete
-                  </Button>
-                }
+                deleteFn={setIsAlertOpen}
               />
               <Button
                 className="hidden sm:block text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5 bg-red-600 hover:bg-red-400"

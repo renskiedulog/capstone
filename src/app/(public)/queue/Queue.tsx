@@ -36,7 +36,7 @@ export default function Queue({
   const [locked, setLocked] = useState(false);
 
   React.useEffect(() => {
-    socket.on("queueRefresh", (data) => {
+    socket.on("queueRefresh", () => {
       syncData();
     });
 

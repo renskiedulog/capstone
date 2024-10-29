@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { formatDateToReadable } from "@/lib/utils";
 import socket from "@/socket";
 import { getRecentActivities } from "@/lib/api/common";
-import { ActivitySheet } from "@/app/(public)/queue/ActivitySheet";
+import { ActivitySheet } from "./ActivitySheet";
 
 const activityIcons: Record<ActivityTypes["type"], LucideIcon> = {
   teller: User,
