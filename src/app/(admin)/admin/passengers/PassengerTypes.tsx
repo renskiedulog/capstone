@@ -124,7 +124,7 @@ export const columns: ColumnDef<ActivityTypes>[] = [
   },
 ];
 
-export default function ActivityTable({
+export default function PassengerTable({
   initData = [],
 }: {
   initData: ActivityTypes[];
@@ -244,6 +244,7 @@ export default function ActivityTable({
                 <SelectItem value="all">All types</SelectItem>
                 <SelectItem value="teller">Teller</SelectItem>
                 <SelectItem value="boat">Boat</SelectItem>
+                <SelectItem value="passenger">Passenger</SelectItem>
                 <SelectItem value="queue">Queue</SelectItem>
               </SelectContent>
             </Select>

@@ -4,7 +4,7 @@ const activitySchema = new Schema(
   {
     type: {
       type: String,
-      enum: ["teller", "boat", "passenger", "queue"],
+      enum: ["teller", "boat", "queue"],
       required: true,
     },
     title: {

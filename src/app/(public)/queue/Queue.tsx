@@ -74,7 +74,7 @@ export default function Queue({
     await addNewActivity({
       type: "queue",
       title: "Reordered Queue",
-      details: `The queue of the boat named '${grabbedQueue}' has been reordered.`,
+      details: `The queue for the boat named '${grabbedQueue}' has been reordered.`,
       actionBy: username,
     });
     socket.emit("newActivity");

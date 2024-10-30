@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import { useMotionValue, Reorder, AnimatePresence } from "framer-motion";
 import {
@@ -38,6 +39,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { checkBoatCapacity } from "@/lib/constants";
+import { useSession } from "next-auth/react";
+import { addNewActivity } from "@/lib/api/activity";
 
 interface Props {
   item: Queue;
@@ -63,6 +66,8 @@ export const Item = ({
   const [toBoard, setToBoard] = React.useState(false);
   const [error, setError] = React.useState("");
   const [destination, setDestination] = React.useState(item?.destination);
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
 
   const { toast } = useToast();
 
@@ -74,6 +79,7 @@ export const Item = ({
   const handleDeleteQueue = async (id: string) => {
     try {
       await deleteQueueItem(id);
+      await addActivity();
       socket.emit("queueRefresh");
       toast({
         title: "Queue Deleted Successfully.",
@@ -105,6 +111,17 @@ export const Item = ({
       setElapsedTime("");
     }
   }, [showInfo, item.id, item.createdAt]);
+
+  const addActivity = async () => {
+    if (session?.data?.user?.isAdmin) return;
+    await addNewActivity({
+      type: "queue",
+      title: "Deleted Queue",
+      details: `The queue for the boat named '${item.boatName}' has been deleted.`,
+      actionBy: username,
+    });
+    socket.emit("newActivity");
+  };
 
   return (
     <>

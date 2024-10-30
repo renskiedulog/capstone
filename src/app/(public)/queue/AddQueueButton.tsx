@@ -26,6 +26,7 @@ import socket from "@/socket";
 import { useToast } from "@/components/ui/use-toast";
 import { checkBoatCapacity } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
+import { addNewActivity } from "@/lib/api/activity";
 
 export default function AddQueueButton() {
   const session: any = useSession() || null;
@@ -39,6 +40,7 @@ export default function AddQueueButton() {
   const handleAlertConfirm = async () => {
     const insertQueue = boatIds?.find((boat) => boat.id === value);
     if (insertQueue) await addQueue(insertQueue?.id, username);
+    addActivity(insertQueue?.boatName as string);
     setValue("");
     socket.emit("queueRefresh");
     toast({
@@ -63,6 +65,17 @@ export default function AddQueueButton() {
   React.useEffect(() => {
     getBoatIds();
   }, []);
+
+  const addActivity = async (boatName: string) => {
+    if (session?.data?.user?.isAdmin) return;
+    await addNewActivity({
+      type: "queue",
+      title: "Added Queue",
+      details: `The boat named '${boatName}' has been added to the queue.`,
+      actionBy: username,
+    });
+    socket.emit("newActivity");
+  };
 
   return (
     <>

@@ -67,21 +67,25 @@ export function ActivitySheet({
           </SheetDescription>
         </SheetHeader>
         <div className="mt-6 space-y-6">
-          {details.map((detail, index) => (
-            <div key={index} className="flex items-center space-x-3">
-              <detail.icon className="mt-0.5 h-5 w-5 text-muted-foreground" />
-              <div className="space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {detail.label}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {typeof detail.value === "string"
-                    ? detail.value
-                    : detail.value}
-                </p>
-              </div>
-            </div>
-          ))}
+          {details.map((detail, index) => {
+            if (detail.value) {
+              return (
+                <div key={index} className="flex items-center space-x-3">
+                  <detail.icon className="mt-0.5 h-5 w-5 text-muted-foreground" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {detail.label}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {typeof detail.value === "string"
+                        ? detail.value
+                        : detail.value}
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+          })}
         </div>
       </SheetContent>
     </Sheet>

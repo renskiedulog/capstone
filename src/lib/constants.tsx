@@ -15,6 +15,7 @@ import {
   Table,
   User,
   User2Icon,
+  Users2,
 } from "lucide-react";
 
 export const navLinks = [
@@ -80,6 +81,11 @@ export const adminLinks = [
     link: "/activity",
     name: "Activity",
     icon: <History />,
+  },
+  {
+    link: "/admin/passengers",
+    name: "Passenger History",
+    icon: <Users2 />,
   },
 ];
 
