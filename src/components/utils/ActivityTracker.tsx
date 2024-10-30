@@ -121,7 +121,7 @@ export default function ActivityTracker({
             })
           ) : (
             <div className="text-center">
-              There are currently no activites so far.
+              There are currently no activities so far.
             </div>
           )}
         </div>

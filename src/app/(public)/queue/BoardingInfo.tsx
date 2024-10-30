@@ -53,6 +53,7 @@ import { deletePassenger, fetchPassengers } from "@/lib/api/passenger";
 import { PassengerSheet } from "./PassengerSheet";
 import { useToast } from "@/components/ui/use-toast";
 import Alert from "@/components/utils/Alert";
+import socket from "@/socket";
 
 export default function BoardingInfo({
   boatInfo,
@@ -76,6 +77,7 @@ export default function BoardingInfo({
       description: "If changes do not occur, refreshing the page might help.",
     });
     loadPassengers();
+    socket.emit("boardingRefresh");
   };
 
   const loadPassengers = async () => {
