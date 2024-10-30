@@ -61,3 +61,22 @@ export const deletePassenger = async (passengerId: string, queueId: string) => {
     throw new Error("Failed to delete passenger");
   }
 };
+
+export const fetchAllPassengers = async () => {
+  try {
+    const passengers = await Passenger.find()
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
+
+    const plainPassengers = passengers.map((passenger: any) => ({
+      ...passenger,
+      _id: passenger._id.toString(),
+    }));
+
+    return plainPassengers;
+  } catch (error) {
+    console.error("Error fetching passengers:", error);
+    throw error;
+  }
+};
