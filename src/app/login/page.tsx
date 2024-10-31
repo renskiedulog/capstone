@@ -155,9 +155,6 @@ export default function LoginPage() {
                   <p>Login</p>
                 )}
               </Button>
-              <a href="#" className="opacity-70 text-sm hover:opacity-100">
-                Forgot password?
-              </a>
             </div>
           </form>
         </CardContent>

@@ -111,7 +111,7 @@ const BoardingBoat = ({
     const requiredPassengers = Math.floor(boat?.capacity * 0.9);
 
     if (boat.passengerIds) {
-      if (boat?.passengerIds?.length >= requiredPassengers) {
+      if (boat?.passengerIds?.length === boat?.capacity) {
         setCapacityIndicator("red");
       } else {
         setCapacityIndicator("green");

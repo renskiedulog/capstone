@@ -89,19 +89,23 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       id: "mainImage",
       accessorKey: "mainImage",
       header: () => (
-        <p className="md:text-sm text-xs text-center md:text-left">
+        <p className="md:text-sm text-xs text-center md:text-left w-max">
           Main Image
         </p>
       ),
       cell: ({ row }) => {
         return (
-          <div className="size-12 cursor-pointer">
+          <div
+            className="size-12 cursor-pointer"
+            style={{ minWidth: "50px", maxWidth: "50px" }}
+          >
             <div
               onClick={() =>
                 setViewImage(
                   row.getValue("mainImage") || "/images/default-image.jpg"
                 )
               }
+              style={{ minWidth: "50px", maxWidth: "50px" }}
             >
               <img
                 width={40}
@@ -126,9 +130,19 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
         );
       },
       cell: ({ row }) => (
-        <div className="text-left max-w-[150px] text-ellipsis overflow-hidden">
-          {row.getValue("boatCode")}
-        </div>
+        <Link href={`/boat/${row.getValue("boatCode")}`}>
+          <p className="text-left max-w-[150px] text-ellipsis overflow-hidden hover:underline">
+            {row.getValue("boatCode")}
+          </p>
+        </Link>
+      ),
+    },
+    {
+      id: "boatName",
+      accessorKey: "boatName",
+      header: () => <p className="md:text-sm text-xs">Boat Name</p>,
+      cell: ({ row }) => (
+        <div className="text-left reverse">{row.getValue("boatName")}</div>
       ),
     },
     {
@@ -147,14 +161,6 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
       header: () => <p className="md:text-sm text-xs">Ship Captain</p>,
       cell: ({ row }) => (
         <div className="text-left">{row.getValue("driverName")}</div>
-      ),
-    },
-    {
-      id: "boatName",
-      accessorKey: "boatName",
-      header: () => <p className="md:text-sm text-xs">Boat Name</p>,
-      cell: ({ row }) => (
-        <div className="text-left reverse">{row.getValue("boatName")}</div>
       ),
     },
     {
@@ -388,7 +394,7 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
                     return (
                       <DropdownMenuCheckboxItem
                         key={column.id}
-                        className="capitalize"
+                        className="capitalize "
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) =>
                           column.toggleVisibility(!!value)
@@ -436,7 +442,8 @@ export default function BoatTable({ initData }: { initData: Boat[] }) {
                           <TableCell
                             key={cell.id}
                             className={`${
-                              cell?.column?.id === "actions" && "w-24"
+                              cell?.column?.id === "actions" ||
+                              (cell?.column?.id === "mainImage" && "w-24")
                             }`}
                           >
                             {flexRender(

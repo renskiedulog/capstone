@@ -79,7 +79,9 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     {
       id: "image",
       accessorKey: "image",
-      header: () => <p className="md:text-sm text-xs text-center md:text-left">Image</p>,
+      header: () => (
+        <p className="md:text-sm text-xs text-center md:text-left">Image</p>
+      ),
       cell: ({ row }) => {
         return (
           <div className="size-12 cursor-pointer">
@@ -103,6 +105,21 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
       },
     },
     {
+      id: "username",
+      accessorKey: "username",
+      header: () => (
+        <p className="md:text-sm text-xs text-center md:text-left">Username</p>
+      ),
+      cell: ({ row }) => (
+        <Link href={`/profile/${row.getValue("username")}`}>
+          {" "}
+          <div className="text-left lowercase hover:underline">
+            {row.getValue("username")}
+          </div>
+        </Link>
+      ),
+    },
+    {
       id: "name",
       accessorKey: "fullName",
       header: ({ column }) => {
@@ -122,11 +139,13 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
       ),
     },
     {
-      id: "username",
-      accessorKey: "username",
-      header: () => <p className="md:text-sm text-xs text-center md:text-left">Username</p>,
+      id: "email",
+      accessorKey: "email",
+      header: () => (
+        <p className="md:text-sm text-xs text-center md:text-left">Email</p>
+      ),
       cell: ({ row }) => (
-        <div className="text-left lowercase">{row.getValue("username")}</div>
+        <div className="text-left lowercase">{row.getValue("email")}</div>
       ),
     },
     {
@@ -158,7 +177,9 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
     },
     {
       id: "actions",
-      header: () => <p className="md:text-sm text-xs text-center md:text-left">Actions</p>,
+      header: () => (
+        <p className="md:text-sm text-xs text-center md:text-left">Actions</p>
+      ),
       enableHiding: false,
       cell: ({ row }) => {
         return (
@@ -279,7 +300,10 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
         />
       )}
       {editMode && (
-        <EditForm accountDetails={editDetails as AccountDetailsTypes} setIsOpen={setEditMode} />
+        <EditForm
+          accountDetails={editDetails as AccountDetailsTypes}
+          setIsOpen={setEditMode}
+        />
       )}
       {/* Table */}
       <div className="w-full">
@@ -330,7 +354,9 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
                           <TableCell
                             key={cell.id}
                             className={`${
-                              cell?.column?.id === "actions" && "w-24"
+                              (cell?.column?.id === "actions" ||
+                                cell?.column?.id === "image") &&
+                              "w-24"
                             }`}
                           >
                             {flexRender(

@@ -273,6 +273,7 @@ export default function AddTellerModal({
                 type="submit"
                 className="flex items-center gap-2"
                 onClick={handleSubmit}
+                disabled={capacityIndicator === "red"}
               >
                 Add
               </Button>

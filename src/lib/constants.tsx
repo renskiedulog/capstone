@@ -41,7 +41,7 @@ export const navLinks = [
   },
   {
     link: "/sail-history",
-    name: "Queue History",
+    name: "Sail History",
     icon: <ListRestart />,
   },
   {
@@ -74,7 +74,7 @@ export const adminLinks = [
   },
   {
     link: "/sail-history",
-    name: "Queue History",
+    name: "Sail History",
     icon: <ListRestart />,
   },
   {

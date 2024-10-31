@@ -52,77 +52,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import Alert from "@/components/utils/Alert";
 import { useToast } from "@/components/ui/use-toast";
-
-export const columns: ColumnDef<ActivityTypes>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "title",
-    header: "Title",
-    cell: ({ row }) => (
-      <div className="capitalize text-center sm:text-left">
-        {row.getValue("title")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "details",
-    header: "Details",
-    cell: ({ row }) => (
-      <div
-        className="whitespace-normal"
-        style={{ minWidth: "200px", maxWidth: "400px" }}
-      >
-        {row.getValue("details")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => <div className="uppercase">{row.getValue("type")}</div>,
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className=""
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div>{new Date(row.getValue("createdAt")).toLocaleString()}</div>
-    ),
-  },
-  {
-    accessorKey: "actionBy",
-    header: "Action By",
-    cell: ({ row }) => <div>{row.getValue("actionBy")}</div>,
-  },
-];
+import { useSession } from "next-auth/react";
 
 export default function ActivityTable({
   initData = [],
@@ -138,6 +68,87 @@ export default function ActivityTable({
   const [data, setData] = useState(initData);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const { toast } = useToast();
+  const session: any = useSession();
+  const isAdmin = session?.data?.user?.isAdmin;
+
+  const columns: ColumnDef<ActivityTypes>[] = [
+    ...(isAdmin
+      ? [
+          {
+            id: "select",
+            header: ({ table }) => (
+              <Checkbox
+                checked={table.getIsAllPageRowsSelected()}
+                onCheckedChange={(value) =>
+                  table.toggleAllPageRowsSelected(!!value)
+                }
+                aria-label="Select all"
+              />
+            ),
+            cell: ({ row }) => (
+              <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+              />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+          },
+        ]
+      : []),
+    {
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => (
+        <div className="capitalize text-center sm:text-left">
+          {row.getValue("title")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "details",
+      header: "Details",
+      cell: ({ row }) => (
+        <div
+          className="whitespace-normal"
+          style={{ minWidth: "200px", maxWidth: "400px" }}
+        >
+          {row.getValue("details")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "type",
+      header: "Type",
+      cell: ({ row }) => (
+        <div className="uppercase">{row.getValue("type")}</div>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            className=""
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Date
+            <CaretSortIcon className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => (
+        <div>{new Date(row.getValue("createdAt")).toLocaleString()}</div>
+      ),
+    },
+    {
+      accessorKey: "actionBy",
+      header: "Action By",
+      cell: ({ row }) => <div>{row.getValue("actionBy")}</div>,
+    },
+  ];
 
   const handleAlertConfirm = async () => {
     const filterIds = data.filter((_, index) => rowSelection[index]);
@@ -289,14 +300,16 @@ export default function ActivityTable({
                   ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              variant="destructive"
-              className="flex items-center gap-2"
-              onClick={() => setIsAlertOpen(true)}
-            >
-              <TrashIcon className="h-5 w-5" />
-              <p className="hidden sm:block">Delete</p>
-            </Button>
+            {isAdmin && (
+              <Button
+                variant="destructive"
+                className="flex items-center gap-2"
+                onClick={() => setIsAlertOpen(true)}
+              >
+                <TrashIcon className="h-5 w-5" />
+                <p className="hidden sm:block">Delete</p>
+              </Button>
+            )}
           </div>
         </div>
         <div className="rounded-md border">
