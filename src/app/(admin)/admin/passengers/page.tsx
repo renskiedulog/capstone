@@ -11,7 +11,7 @@ const page = async () => {
 
   const allPassengers = await fetchAllPassengers();
 
-  return <PassengerTable initData={allPassengers as Passenger[]} />;
+  return <></>;
 };
 
 export default page;
