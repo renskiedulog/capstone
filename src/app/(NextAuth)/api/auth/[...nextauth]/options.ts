@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import User from "@/models/User";
 import { RequestInternal, User as UserTypes } from "next-auth";
 import { JWT } from "next-auth/jwt";
@@ -21,6 +22,11 @@ export interface CustomSessionType {
 
 export const options: any = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID! as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET! as string,
+      name: process.env.APP_NAME! as string,
+    }),
     CredentialsProvider({
       type: "credentials",
       credentials: {},
@@ -81,10 +87,19 @@ export const options: any = {
     signIn: "/login",
   },
   callbacks: {
+    async signIn({ user, account }) {
+      if (account.provider === "google") {
+        await connectMongoDB();
+        const existingUser = await User.findOne({ email: user.email });
+        if (!existingUser) {
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user, account, profile }) {
-      // Check if the username has been changed (e.g., when updating the profile)
       if (user) {
-        token.name = user.username || token.name; // Update token's name with the new username
+        token.name = user.username || token.name;
       }
       return token;
     },
@@ -96,25 +111,36 @@ export const options: any = {
       token: JWT;
     }) {
       try {
-        if (session && token?.name) {
-          await connectMongoDB();
+        await connectMongoDB();
 
-          const userDocument: any = await User?.findOne({
-            username: token.name,
-          })
+        let userDocument: any | null = null;
+
+        if (token?.email) {
+          userDocument = await User.findOne({ email: token.email })
             .select("-password -_id")
             .lean();
 
-          if (userDocument) {
-            session.user = userDocument;
+          if (!userDocument) {
+            console.warn(`User with email ${token.email} not found.`);
           }
+        } else if (token?.name) {
+          userDocument = await User.findOne({ username: token.name })
+            .select("-password -_id")
+            .lean();
 
-          return session;
+          if (!userDocument) {
+            console.warn(`User with username ${token.name} not found.`);
+          }
+        }
+
+        if (userDocument) {
+          session.user = userDocument;
         }
       } catch (error) {
         console.error("Session callback error:", error);
-        return session;
       }
+
+      return session;
     },
   },
 };
