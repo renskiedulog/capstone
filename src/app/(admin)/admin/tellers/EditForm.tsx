@@ -293,7 +293,7 @@ export default function EditForm({
                       id="password"
                       name="password"
                       required
-                      type="text"
+                      type="password"
                       placeholder="Enter your password"
                       value={inputs.password}
                       onChange={handleInputChange}

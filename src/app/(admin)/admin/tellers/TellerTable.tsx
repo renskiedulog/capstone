@@ -61,11 +61,15 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
   const [viewImage, setViewImage] = React.useState("");
 
   React.useEffect(() => {
+    const fetchInterval = setInterval(() => {
+      fetchData();
+    }, 5000);
+
     socket.on("tellerRefresh", (data) => {
       fetchData();
     });
-
     return () => {
+      clearInterval(fetchInterval);
       socket.off("tellerRefresh");
     };
   }, []);

@@ -6,6 +6,7 @@ import { RequestInternal, User as UserTypes } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { connectMongoDB } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import socket from "@/socket";
 
 interface CustomUser extends UserTypes {
   isAdmin?: boolean;
@@ -116,7 +117,11 @@ export const options: any = {
         let userDocument: any | null = null;
 
         if (token?.email) {
-          userDocument = await User.findOne({ email: token.email })
+          userDocument = await User.findOneAndUpdate(
+            { email: token.email },
+            { status: "active" },
+            { new: true }
+          )
             .select("-password -_id")
             .lean();
 
@@ -124,7 +129,11 @@ export const options: any = {
             console.warn(`User with email ${token.email} not found.`);
           }
         } else if (token?.name) {
-          userDocument = await User.findOne({ username: token.name })
+          userDocument = await User.findOneAndUpdate(
+            { username: token.name },
+            { status: "active" },
+            { new: true }
+          )
             .select("-password -_id")
             .lean();
 
