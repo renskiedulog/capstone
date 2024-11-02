@@ -172,7 +172,7 @@ export const DestinationOptions: Option[] = [
   { label: "nextjs", value: "Nextjs" },
   { label: "Vite", value: "vite" },
   { label: "Nuxt", value: "nuxt" },
-  { label: "Vue", value: "vue, " },
+  { label: "Vue", value: "vue" },
   { label: "Remix", value: "remix" },
   { label: "Svelte", value: "svelte" },
   { label: "Angular", value: "angular" },

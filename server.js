@@ -37,6 +37,9 @@ app.prepare().then(() => {
     socket.on("boardingRefresh", (data) => {
       io.emit("boardingRefresh", data);
     });
+    socket.on("sailingRefresh", (data) => {
+      io.emit("sailingRefresh", data);
+    });
   });
 
   httpServer

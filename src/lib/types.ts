@@ -96,6 +96,8 @@ export interface Queue {
   capacity: number;
   mainImage?: string;
   boardingAt: Date | string;
+  currentLocation: string;
+  sailedAt: Date | string;
 }
 
 export interface Passenger {

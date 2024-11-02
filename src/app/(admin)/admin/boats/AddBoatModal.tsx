@@ -48,7 +48,6 @@ const initialInputs: Boat = {
   driverContactNumber: "",
   status: "standby",
   checkingStatus: "not-checked",
-  destination: "",
 };
 
 export default function AddBoatModal({

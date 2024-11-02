@@ -179,9 +179,16 @@ const BoardingBoat = ({
               <ShipWheel size={15} className="mb-0.5" />
               {boat?.driverName}
             </p>
-            <p className="text-sm flex items-center gap-1">
-              <MapPin size={15} className="mb-0.5" />
-              {boat?.destination}
+            <p className="text-sm flex items-center flex-wrap">
+              <MapPin size={15} className="mb-0.5 mr-1" />
+              {boat?.destination?.map((location: string, idx: number) => (
+                <span
+                  className={`text-nowrap font-medium ${idx > 0 ? 'before:content-["-"] before:mx-1' : ""}`}
+                  key={idx}
+                >
+                  {location}
+                </span>
+              ))}
             </p>
             <p className="text-sm flex items-center gap-1">
               <Users size={15} className="mb-0.5" />

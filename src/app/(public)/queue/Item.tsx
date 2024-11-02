@@ -50,6 +50,7 @@ interface Props {
   setShowInfo: (e: string) => void;
   setGrabbedQueue: (e: string) => void;
   syncData: () => void;
+  pos?: number;
 }
 
 export const Item = ({
@@ -60,6 +61,7 @@ export const Item = ({
   setShowInfo,
   setGrabbedQueue,
   syncData,
+  pos,
 }: Props) => {
   const y = useMotionValue(0);
   const [elapsedTime, setElapsedTime] = React.useState("");
@@ -223,13 +225,15 @@ export const Item = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                className="cursor-pointer gap-1.5 font-medium"
-                onClick={() => setToBoard(true)}
-              >
-                <ArrowRightSquare size={18} />
-                <span>Board</span>
-              </DropdownMenuItem>
+              {(item?.position === 1 || pos === 0) && (
+                <DropdownMenuItem
+                  className="cursor-pointer gap-1.5 font-medium"
+                  onClick={() => setToBoard(true)}
+                >
+                  <ArrowRightSquare size={18} />
+                  <span>Board</span>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 className="cursor-pointer gap-1.5 font-medium"
                 onClick={() => setShowInfo(item?.id)}

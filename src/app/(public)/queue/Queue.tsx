@@ -149,7 +149,7 @@ export default function Queue({
             dragConstraints={queueRef}
           >
             {items?.length > 0 ? (
-              items?.map((item) => (
+              items?.map((item, idx) => (
                 <Item
                   key={item.id}
                   item={item}
@@ -159,6 +159,7 @@ export default function Queue({
                   setShowInfo={handleShowInfoToggle}
                   setGrabbedQueue={setGrabbedQueue}
                   syncData={syncData}
+                  pos={idx}
                 />
               ))
             ) : (

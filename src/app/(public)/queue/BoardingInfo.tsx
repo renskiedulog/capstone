@@ -34,7 +34,6 @@ import {
   MapPin,
   Users as UsersIcon,
   User,
-  Edit,
   Trash2,
   Ellipsis,
   Info,
@@ -54,15 +53,18 @@ import { PassengerSheet } from "./PassengerSheet";
 import { useToast } from "@/components/ui/use-toast";
 import Alert from "@/components/utils/Alert";
 import socket from "@/socket";
+import { changeToSailing } from "@/lib/api/queue";
 
 export default function BoardingInfo({
   boatInfo,
   elapsedTimerDisplay,
   deleteFn,
+  isSailing = false,
 }: {
   boatInfo: Queue;
   elapsedTimerDisplay?: React.ReactNode;
   deleteFn: (b: boolean) => void;
+  isSailing?: boolean;
 }) {
   const [passengers, setPassengers] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
@@ -90,7 +92,15 @@ export default function BoardingInfo({
     }
   };
 
-  const setToSailing = async () => {};
+  const setToSailing = async () => {
+    try {
+      await changeToSailing(boatInfo._id as string);
+      socket.emit("sailingRefresh");
+      socket.emit("boardingRefresh");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     loadPassengers();
@@ -176,7 +186,18 @@ export default function BoardingInfo({
                           <MapPin className="h-4 w-4" />
                           Destination:
                         </span>
-                        <span>{boatInfo?.destination}</span>
+                        <p className="flex items-center flex-wrap">
+                          {boatInfo?.destination?.map(
+                            (location: string, idx: number) => (
+                              <span
+                                className={`text-nowrap font-medium ${idx > 0 ? 'before:content-["-"] before:mx-1' : ""}`}
+                                key={idx}
+                              >
+                                {location}
+                              </span>
+                            )
+                          )}
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
@@ -208,27 +229,38 @@ export default function BoardingInfo({
                       <div className="flex justify-center flex-col">
                         <span className="flex items-center gap-2">
                           <Calendar className="h-4 w-4" />
-                          <span className="font-bold">Created At:</span>
+                          <span className="font-bold">Queued At:</span>
                         </span>
                         {formatDateToReadable(boatInfo?.createdAt as any)}
                       </div>
+                      {isSailing && (
+                        <div className="flex justify-center flex-col">
+                          <span className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span className="font-bold">Sailed At:</span>
+                          </span>
+                          {formatDateToReadable(boatInfo?.sailedAt as any)}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
-                <div className="flex justify-between items-center mt-2">
-                  <Button
-                    className="block sm:hidden text-sm p-0 h-max px-2 md:px-4 py-2 min-w-24  bg-red-600 hover:bg-red-400"
-                    onClick={() => deleteFn(true)}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    className="text-sm ml-auto p-0 h-max px-2 md:px-4 py-2 min-w-24  bg-blue-600 hover:bg-blue-400"
-                    onClick={() => setToSailModal(true)}
-                  >
-                    Sail
-                  </Button>
-                </div>
+                {!isSailing && (
+                  <div className="flex justify-between items-center mt-2">
+                    <Button
+                      className="block sm:hidden text-sm p-0 h-max px-2 md:px-4 py-2 min-w-24  bg-red-600 hover:bg-red-400"
+                      onClick={() => deleteFn(true)}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      className="text-sm ml-auto p-0 h-max px-2 md:px-4 py-2 min-w-24  bg-blue-600 hover:bg-blue-400"
+                      onClick={() => setToSailModal(true)}
+                    >
+                      Sail
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
               <TabsContent value="passengers">
                 <Card>
@@ -300,19 +332,23 @@ export default function BoardingInfo({
                                     <Info className="mr-2 h-4 w-4" />
                                     Details
                                   </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem
-                                    className="cursor-pointer hover:bg-accent text-red-500"
-                                    onClick={() =>
-                                      handleDeletePassenger(
-                                        passenger._id,
-                                        passenger.queueId
-                                      )
-                                    }
-                                  >
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
-                                  </DropdownMenuItem>
+                                  {!isSailing && (
+                                    <>
+                                      <DropdownMenuSeparator />
+                                      <DropdownMenuItem
+                                        className="cursor-pointer hover:bg-accent text-red-500"
+                                        onClick={() =>
+                                          handleDeletePassenger(
+                                            passenger._id,
+                                            passenger.queueId
+                                          )
+                                        }
+                                      >
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Delete
+                                      </DropdownMenuItem>
+                                    </>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </TableCell>

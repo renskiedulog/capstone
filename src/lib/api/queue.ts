@@ -127,7 +127,7 @@ export const updateQueuePositions = async (newItems: QueueTypes[]) => {
 
 export const changeToBoarding = async (
   queueId: string,
-  destination?: string[]
+  destination: string[]
 ) => {
   try {
     await connectMongoDB();
@@ -140,6 +140,7 @@ export const changeToBoarding = async (
           boardingAt: new Date(),
           position: null,
           destination: destination ?? null,
+          currentLocation: destination[0] ?? null,
         },
       },
       { new: true }
@@ -222,5 +223,75 @@ export const deleteBoarding = async (id: string) => {
     session.endSession();
     console.error("Error deleting queue and passengers:", error);
     throw error;
+  }
+};
+
+export const changeToSailing = async (queueId: string) => {
+  try {
+    await connectMongoDB();
+
+    const result = await Queue.findByIdAndUpdate(
+      queueId,
+      {
+        $set: {
+          status: "sailing",
+          sailedAt: new Date(),
+        },
+      },
+      { new: true }
+    );
+
+    if (result) {
+      return { success: true, message: "Boat status updated to boarding." };
+    } else {
+      return { success: false, message: "Boat not found." };
+    }
+  } catch (error) {
+    console.error("Error changing boat status:", error);
+    return {
+      success: false,
+      message: "An error occurred while updating the boat status.",
+    };
+  }
+};
+
+export const fetchSailing = async () => {
+  try {
+    await connectMongoDB();
+
+    const sailingBoats = await Queue.find({ status: "sailing" })
+      .sort({ boardingAt: -1 })
+      .lean();
+    const boatIds = sailingBoats.map((boat) => boat.boatId);
+    const boats = await Boat.find({ _id: { $in: boatIds } }).lean();
+    const boatMap = boats.reduce((acc: any, boat: any) => {
+      acc[boat._id.toString()] = {
+        mainImage: boat.mainImage,
+        capacity: boat.capacity,
+        boatName: boat.boatName,
+        boatCode: boat.boatCode,
+        driverName: boat.driverName,
+        currentLocation: boat.currentLocation 
+      };
+      return acc;
+    }, {});
+
+    const sailingBoatsWithImages = sailingBoats.map((queueBoat) => {
+      const boatData = boatMap[queueBoat.boatId.toString()] || {};
+
+      return {
+        ...queueBoat,
+        mainImage: boatData.mainImage || null,
+        capacity: boatData.capacity || 0,
+        boatName: boatData.boatName || "",
+        boatCode: boatData.boatCode || "",
+        driverName: boatData.driverName || "",
+      };
+    });
+
+    return sailingBoatsWithImages;
+  } catch (error) {
+    console.log(error);
+    return [];
   }
 };
