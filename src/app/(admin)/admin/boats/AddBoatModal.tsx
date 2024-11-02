@@ -446,17 +446,6 @@ export default function AddBoatModal({
                       />
                     </div>
                   </div>
-                  <div className="flex-1">
-                    <Label htmlFor="destination">Default Destination</Label>
-                    <Input
-                      id="destination"
-                      name="destination"
-                      type="text"
-                      placeholder="Enter boat details"
-                      value={inputs.destination}
-                      onChange={handleInputChange}
-                    />
-                  </div>
                   <div className="w-full flex sm:flex-row flex-col gap-2">
                     <div className="flex-1">
                       <Label htmlFor="lastCheck">Last Check Date</Label>

@@ -65,7 +65,6 @@ export interface Boat {
   boatName?: string;
   lastCheck?: Date | string | null;
   checkingDetails?: string;
-  destination?: string;
 }
 
 export interface ActivityTypes {
@@ -90,7 +89,7 @@ export interface Queue {
   queuedAt?: Date;
   estimatedDepartureTime?: Date;
   createdBy?: string;
-  destination?: string;
+  destination?: string[];
   departureTime?: Date;
   createdAt?: String | Date;
   driverName?: String;

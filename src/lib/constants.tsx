@@ -1,3 +1,4 @@
+import { Option } from "@/components/ui/multiple-selector";
 import {
   CounterClockwiseClockIcon,
   DashboardIcon,
@@ -166,3 +167,17 @@ export function checkBoatCapacity(capacity: number) {
     return "extra";
   }
 }
+
+export const DestinationOptions: Option[] = [
+  { label: "nextjs", value: "Nextjs" },
+  { label: "Vite", value: "vite" },
+  { label: "Nuxt", value: "nuxt" },
+  { label: "Vue", value: "vue, " },
+  { label: "Remix", value: "remix" },
+  { label: "Svelte", value: "svelte" },
+  { label: "Angular", value: "angular" },
+  { label: "Ember", value: "ember" },
+  { label: "React", value: "react" },
+  { label: "Gatsby", value: "gatsby" },
+  { label: "Astro", value: "astro" },
+];

@@ -37,10 +37,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { checkBoatCapacity } from "@/lib/constants";
+import { checkBoatCapacity, DestinationOptions } from "@/lib/constants";
 import { useSession } from "next-auth/react";
 import { addNewActivity } from "@/lib/api/activity";
+import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 
 interface Props {
   item: Queue;
@@ -65,14 +65,14 @@ export const Item = ({
   const [elapsedTime, setElapsedTime] = React.useState("");
   const [toBoard, setToBoard] = React.useState(false);
   const [error, setError] = React.useState("");
-  const [destination, setDestination] = React.useState(item?.destination);
+  const [destination, setDestination] = React.useState<Option[]>([]);
   const session: any = useSession() || null;
   const username = session?.data?.user?.username;
 
   const { toast } = useToast();
 
   const handleCloseModal = () => {
-    setDestination(item?.destination);
+    // setDestination(item?.destination);
     setToBoard(false);
   };
 
@@ -90,11 +90,12 @@ export const Item = ({
   };
 
   const handleChangeToBoarding = async () => {
-    if (!destination || destination == "") return;
+    const destinationMap = destination?.map((v) => v.value);
+    if (!destinationMap || destinationMap?.length === 0) return;
     setToBoard(false);
-    await changeToBoarding(item.id as string, destination);
+    await changeToBoarding(item.id as string, destinationMap);
     syncData();
-    setDestination("");
+    setDestination([]);
     socket.emit("boardingRefresh");
   };
 
@@ -128,7 +129,7 @@ export const Item = ({
       {toBoard && (
         <div className="bg-black/50 w-full h-screen fixed top-0 left-0 z-[99] flex items-center justify-center">
           <Card
-            className="border-none w-full max-w-lg mx-5 relative max-h-[90vh] overflow-y-auto scrollbar"
+            className="border-none w-full max-w-lg mx-5 relative max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <XIcon
@@ -147,21 +148,37 @@ export const Item = ({
               )}
             </CardHeader>
             <CardContent className="mx-auto ">
-              <div className="flex items-center space-x-2">
-                <div className="grid flex-1 gap-2">
-                  <Label htmlFor="link" className="sr-only">
+              <div className="flex items-center space-x-2 flex-col md:flex-row gap-2">
+                <div className="grid flex-1 gap-2 w-full">
+                  <Label htmlFor="link" className="sr-only w-full">
                     Link
                   </Label>
-                  <Input
+                  {/* <Input
                     id="link"
                     placeholder="Provide a destination for the sail."
                     value={destination}
                     onChange={(e) => setDestination(e.target.value)}
+                  /> */}
+                  <MultipleSelector
+                    defaultOptions={DestinationOptions}
+                    placeholder={
+                      DestinationOptions?.length === destination?.length
+                        ? ""
+                        : "Select the destinations..."
+                    }
+                    emptyIndicator={
+                      <p className="text-center text-base leading-10 text-gray-600 dark:text-gray-400">
+                        No Results Found.
+                      </p>
+                    }
+                    value={destination}
+                    onChange={setDestination}
+                    className="w-full"
                   />
                 </div>
                 <Button
                   size="sm"
-                  className="px-3"
+                  className="px-0 md:px-3 w-full md:w-max ml-0"
                   onClick={() => handleChangeToBoarding()}
                 >
                   Board
@@ -187,6 +204,9 @@ export const Item = ({
         onDragEnd={(e: any) => {
           e.target.classList.remove("cursor-grabbing", "shadow-md");
           setDropped(true);
+        }}
+        onMouseUp={(e: any) => {
+          e.target.classList.remove("cursor-grabbing", "shadow-md");
         }}
         className="border p-2 rounded mb-1 cursor-grab bg-secondary flex items-center justify-between"
       >

@@ -166,11 +166,6 @@ const BoatDetails = ({ boatDetails }: { boatDetails: Boat }) => {
                   {boatInfo?.additionalInfo ||
                     "No additional info provided for this boat yet."}
                 </p>
-                <p>
-                  <span className="font-bold">Destination: </span>
-                  {boatInfo?.destination ||
-                    "No destination provided for this boat."}
-                </p>
               </CardContent>
             </Card>
             <Card className="p-2">

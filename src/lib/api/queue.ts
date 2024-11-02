@@ -2,7 +2,6 @@
 import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import Queue from "@/models/Queue";
-import { revalidatePath } from "next/cache";
 import { Queue as QueueTypes } from "../types";
 import Passenger from "@/models/Passenger";
 
@@ -41,7 +40,6 @@ export const fetchQueue = async () => {
         boatName: boat.boatName,
         driverName: boat.driverName,
         capacity: boat.capacity,
-        destination: boat.destination,
       };
       return acc;
     }, {});
@@ -57,7 +55,6 @@ export const fetchQueue = async () => {
           boatName: boatMap[boatId.toString()].boatName,
           driverName: boatMap[boatId.toString()].driverName,
           capacity: boatMap[boatId.toString()].capacity,
-          destination: boatMap[boatId.toString()].destination,
           ...rest,
         });
       } else {
@@ -130,7 +127,7 @@ export const updateQueuePositions = async (newItems: QueueTypes[]) => {
 
 export const changeToBoarding = async (
   queueId: string,
-  destination?: string
+  destination?: string[]
 ) => {
   try {
     await connectMongoDB();

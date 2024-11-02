@@ -33,7 +33,7 @@ const queueSchema = new Schema(
       type: String,
     },
     destination: {
-      type: String,
+      type: [String],
     },
     departureTime: {
       type: Date,
@@ -43,6 +43,9 @@ const queueSchema = new Schema(
     },
     sailedAt: {
       type: Date,
+    },
+    currentLocation: {
+      type: String,
     },
   },
   { timestamps: true }
