@@ -11,7 +11,7 @@ const queueSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["in-queue", "boarding"],
+      enum: ["in-queue", "boarding", "sailing", "completed"],
       default: "in-queue",
     },
     passengerCount: {
@@ -46,6 +46,9 @@ const queueSchema = new Schema(
     },
     currentLocation: {
       type: String,
+    },
+    completedAt: {
+      type: Date,
     },
   },
   { timestamps: true }

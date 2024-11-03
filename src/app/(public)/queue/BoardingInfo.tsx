@@ -181,6 +181,15 @@ export default function BoardingInfo({
                         </span>
                         <span>{boatInfo?.driverName}</span>
                       </div>
+                      {isSailing && (
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium flex items-center gap-2">
+                            <MapPin className="h-4 w-4" />
+                            Current Location:
+                          </span>
+                          <span>{boatInfo?.currentLocation}</span>
+                        </div>
+                      )}
                       <div className="flex justify-center flex-col">
                         <span className="font-medium flex items-center gap-2">
                           <MapPin className="h-4 w-4" />

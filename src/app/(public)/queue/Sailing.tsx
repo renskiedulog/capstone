@@ -15,10 +15,20 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import BoardingInfo from "./BoardingInfo";
 import Alert from "@/components/utils/Alert";
-import { fetchSailing } from "@/lib/api/queue";
+import {
+  completeSail,
+  fetchSailing,
+  updateCurrentLocation,
+} from "@/lib/api/queue";
 import socket from "@/socket";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 const Sailing = ({ initData }: { initData: Queue[] }) => {
   const [data, setData] = useState(initData);
@@ -113,7 +123,14 @@ const BoardingBoat = ({
     }
   }, [boat.passengerIds, boat.capacity]);
 
-  const handleAlertConfirm = async () => {};
+  const handleAlertConfirm = async () => {
+    try {
+      await completeSail(boat?._id);
+      socket.emit("sailingRefresh");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -135,12 +152,12 @@ const BoardingBoat = ({
             width={130}
             height={130}
             alt={boat?.boatName}
-            className="aspect-square h-max object-cover rounded md:w-[130px] w-[80px]"
+            className="aspect-square h-max object-cover rounded sm:w-[130px] w-[80px]"
           />
           <div className="px-2 w-full">
-            <div className="flex items-start sm:items-center w-full flex-col md:flex-row justify-center sm:justify-between">
+            <div className="flex items-start sm:items-center w-full flex-col sm:flex-row justify-center sm:justify-between">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-base md:text-xl font-medium flex items-center gap-1">
+                <h1 className="text-base md:text-xl font-medium flex items-center gap-1 w-max">
                   <Ship size={18} className="min-w-[15px]" />
                   {boat?.boatName}
                 </h1>
@@ -158,16 +175,12 @@ const BoardingBoat = ({
               <MapPin size={15} className="mb-0.5 mr-1" />
               {boat?.destination?.map((location: string, idx: number) => (
                 <span
-                  className={`text-nowrap font-medium ${idx > 0 ? 'before:content-["-"] before:mx-1' : ""}`}
+                  className={`text-nowrap ${location === boat.currentLocation ? "text-blue-800 !font-bold" : "font-medium"} ${idx > 0 ? 'before:content-["-"] before:text-black before:mx-1' : ""}`}
                   key={idx}
                 >
                   {location}
                 </span>
               ))}
-            </p>
-            <p className="text-sm flex items-center gap-1">
-              <ShipWheel size={15} className="mb-0.5" />
-              {boat?.currentLocation}
             </p>
             <p className="text-sm flex items-center gap-1">
               <Users size={15} className="mb-0.5" />
@@ -188,6 +201,11 @@ const BoardingBoat = ({
             </p>
             {/* Actions */}
             <div className="flex items-center mt-1 gap-x-2">
+              <LocationSelector
+                boatId={boat?._id}
+                destinations={boat?.destination}
+                initLocation={boat?.currentLocation}
+              />
               <BoardingInfo
                 boatInfo={boat}
                 elapsedTimerDisplay={
@@ -228,3 +246,44 @@ const ElapsedTimeDisplay = ({ sailedAt }: { sailedAt: string }) => {
     <span className="sm:ml-auto text-sm text-gray-500">{elapsedTime}</span>
   );
 };
+
+function LocationSelector({
+  destinations,
+  initLocation,
+  boatId,
+}: {
+  destinations: string[] | undefined;
+  initLocation: string;
+  boatId: string;
+}) {
+  const [currentLocation, setCurrentLocation] = useState<string>(initLocation);
+
+  if (!destinations) return;
+
+  const handleTagLocation = async (location: string) => {
+    try {
+      setCurrentLocation(location);
+      await updateCurrentLocation(boatId, location);
+      socket.emit("sailingRefresh");
+    } catch (error) {
+      console.log(error);
+      return;
+    }
+  };
+
+  return (
+    <Select value={currentLocation} onValueChange={handleTagLocation}>
+      <SelectTrigger className="w-max text-center text-xs md:text-sm p-0 h-max px-1.5 md:px-2 py-1.5 flex gap-1 items-center">
+        <MapPin className="w-4 h-4" />
+        {currentLocation || "Select a location"}
+      </SelectTrigger>
+      <SelectContent>
+        {destinations?.map((location: string, idx: number) => (
+          <SelectItem location key={idx} value={location}>
+            {location}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+}

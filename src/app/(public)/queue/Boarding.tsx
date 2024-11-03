@@ -160,10 +160,10 @@ const BoardingBoat = ({
             width={130}
             height={130}
             alt={boat?.boatName}
-            className="aspect-square h-max object-cover rounded md:w-[130px] w-[80px]"
+            className="aspect-square h-max object-cover rounded sm:w-[130px] w-[80px]"
           />
           <div className="px-2 w-full">
-            <div className="flex items-start sm:items-center w-full flex-col md:flex-row justify-center sm:justify-between">
+            <div className="flex items-start sm:items-center w-full flex-col sm:flex-row justify-center sm:justify-between">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-base md:text-xl font-medium flex items-center gap-1">
                   <Ship size={18} className="min-w-[15px]" />

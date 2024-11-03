@@ -242,7 +242,7 @@ export const changeToSailing = async (queueId: string) => {
     );
 
     if (result) {
-      return { success: true, message: "Boat status updated to boarding." };
+      return { success: true, message: "Boat status updated to sailing." };
     } else {
       return { success: false, message: "Boat not found." };
     }
@@ -271,7 +271,7 @@ export const fetchSailing = async () => {
         boatName: boat.boatName,
         boatCode: boat.boatCode,
         driverName: boat.driverName,
-        currentLocation: boat.currentLocation 
+        currentLocation: boat.currentLocation,
       };
       return acc;
     }, {});
@@ -293,5 +293,57 @@ export const fetchSailing = async () => {
   } catch (error) {
     console.log(error);
     return [];
+  }
+};
+
+export const updateCurrentLocation = async (id: string, location: string) => {
+  try {
+    await connectMongoDB();
+    const updateQueue = await Queue.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          currentLocation: location,
+        },
+      },
+      { new: true }
+    );
+    if (updateQueue) {
+      return { success: true, message: "Boat current location updated." };
+    } else {
+      return { success: false, message: "Boat not found." };
+    }
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+};
+
+export const completeSail = async (queueId: string) => {
+  try {
+    await connectMongoDB();
+
+    const result = await Queue.findByIdAndUpdate(
+      queueId,
+      {
+        $set: {
+          status: "completed",
+          completedAt: new Date(),
+        },
+      },
+      { new: true }
+    );
+
+    if (result) {
+      return { success: true, message: "Boat has completed its sails." };
+    } else {
+      return { success: false, message: "Boat not found." };
+    }
+  } catch (error) {
+    console.error("Error changing boat status:", error);
+    return {
+      success: false,
+      message: "An error occurred while updating the boat status.",
+    };
   }
 };
