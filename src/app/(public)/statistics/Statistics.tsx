@@ -31,7 +31,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -52,7 +51,7 @@ ChartJS.register(
   Legend
 );
 
-export default function AnalyticsDashboard() {
+export default function Statistics() {
   const [dateRange, setDateRange] = useState("This Month");
 
   // Mock data for charts
@@ -94,9 +93,9 @@ export default function AnalyticsDashboard() {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Boat Sail Analytics</h1>
+        <h1 className="text-3xl font-bold">Statistics</h1>
         <div className="flex items-center space-x-2">
           <CalendarIcon className="h-5 w-5 text-gray-500" />
           <Select value={dateRange} onValueChange={setDateRange}>

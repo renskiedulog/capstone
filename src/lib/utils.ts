@@ -88,3 +88,28 @@ export const getTimeElapsed = (startDate: any) => {
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 };
+
+export const getTodayRange = () => {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const end = new Date();
+  end.setHours(23, 59, 59, 999);
+  return { start, end };
+};
+
+export const getMonthRange = () => {
+  const start = new Date();
+  start.setDate(1);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date();
+  end.setMonth(start.getMonth() + 1);
+  end.setDate(0);
+  end.setHours(23, 59, 59, 999);
+  return { start, end };
+};
+
+export const getYearRange = () => {
+  const start = new Date(new Date().getFullYear(), 0, 1);
+  const end = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
+  return { start, end };
+};
