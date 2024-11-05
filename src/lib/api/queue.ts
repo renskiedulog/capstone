@@ -347,3 +347,26 @@ export const completeSail = async (queueId: string) => {
     };
   }
 };
+
+export const deletePassengers = async (ids: string[]) => {
+  try {
+    await connectMongoDB();
+
+    const existingQueues = await Queue.find({ passengerIds: { $in: ids } });
+    const passengerIdsInQueues = existingQueues.flatMap(
+      (queue) => queue.passengerIds
+    );
+    const deletableIds = ids.filter((id) => !passengerIdsInQueues.includes(id));
+    if (deletableIds.length === 0) {
+      return {
+        deletedCount: 0,
+        message: "No passengers were deleted as they are referenced in queues",
+      };
+    }
+    const result = await Passenger.deleteMany({ _id: { $in: deletableIds } });
+
+    return result;
+  } catch (error) {
+    return { deletedCount: 0, error };
+  }
+};

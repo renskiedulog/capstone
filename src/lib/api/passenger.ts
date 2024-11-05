@@ -3,6 +3,7 @@
 import Passenger from "@/models/Passenger";
 import Queue from "@/models/Queue";
 import { Passenger as PassengerTypes } from "../types";
+import { connectMongoDB } from "../db";
 
 export const addPassenger = async (
   passengerDetails: PassengerTypes,

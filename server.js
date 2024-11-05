@@ -23,11 +23,9 @@ app.prepare().then(() => {
     socket.on("tellerRefresh", (data) => {
       io.emit("tellerRefresh", data);
     });
-
     socket.on("newActivity", (data) => {
       io.emit("newActivity", data);
     });
-
     socket.on("boatRefresh", (data) => {
       io.emit("boatRefresh", data);
     });
