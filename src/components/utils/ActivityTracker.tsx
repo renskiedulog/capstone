@@ -98,7 +98,7 @@ export default function ActivityTracker({
                             href={activity.link}
                             className="flex items-center text-sm text-primary"
                           >
-                            View Account
+                            View Changes
                           </a>
                         </Button>
                       )}

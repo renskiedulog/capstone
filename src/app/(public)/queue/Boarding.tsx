@@ -124,7 +124,6 @@ const BoardingBoat = ({
       type: "queue",
       title: "Deleted Boarding Boat",
       details: `Boat with the name '${boat?.boatName}' has been deleted from the boarding queue.`,
-      link: `/boat/${boat?.boatCode}`,
       actionBy: username,
     });
     toast({

@@ -81,7 +81,7 @@ export const Item = ({
   const handleDeleteQueue = async (id: string) => {
     try {
       await deleteQueueItem(id);
-      await addActivity();
+      await addDeleteBoardingActivity();
       socket.emit("queueRefresh");
       toast({
         title: "Queue Deleted Successfully.",
@@ -91,14 +91,42 @@ export const Item = ({
     }
   };
 
+  const addDeleteBoardingActivity = async () => {
+    if (session?.data?.user?.isAdmin) return;
+    await addNewActivity({
+      type: "queue",
+      title: "Deleted Queue",
+      details: `The queue for the boat named '${item.boatName}' has been deleted.`,
+      actionBy: username,
+    });
+    socket.emit("newActivity");
+  };
+
   const handleChangeToBoarding = async () => {
     const destinationMap = destination?.map((v) => v.value);
     if (!destinationMap || destinationMap?.length === 0) return;
     setToBoard(false);
     await changeToBoarding(item.id as string, destinationMap);
+    await addBoardingActivity();
+    toast({
+      title: "Boat Boarded.",
+      description: "You can view the details on this boat on the Boarding Tab.",
+    });
     syncData();
     setDestination([]);
     socket.emit("boardingRefresh");
+  };
+
+  const addBoardingActivity = async () => {
+    if (session?.data?.user?.isAdmin) return;
+    await addNewActivity({
+      type: "queue",
+      title: "Boat Successfully Boarded.",
+      details: `The boat named '${item.boatName}' is now boarding passengers.`,
+      actionBy: username,
+      link: `/queue`,
+    });
+    socket.emit("newActivity");
   };
 
   React.useEffect(() => {
@@ -114,17 +142,6 @@ export const Item = ({
       setElapsedTime("");
     }
   }, [showInfo, item.id, item.createdAt]);
-
-  const addActivity = async () => {
-    if (session?.data?.user?.isAdmin) return;
-    await addNewActivity({
-      type: "queue",
-      title: "Deleted Queue",
-      details: `The queue for the boat named '${item.boatName}' has been deleted.`,
-      actionBy: username,
-    });
-    socket.emit("newActivity");
-  };
 
   return (
     <>

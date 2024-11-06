@@ -29,6 +29,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { addNewActivity } from "@/lib/api/activity";
 
 const Sailing = ({ initData }: { initData: Queue[] }) => {
   const [data, setData] = useState(initData);
@@ -65,7 +66,12 @@ const Sailing = ({ initData }: { initData: Queue[] }) => {
       <div className="px-2">
         {data?.length > 0 ? (
           data?.map((boat, idx) => (
-            <BoardingBoat key={idx} boat={boat} username={username} />
+            <BoardingBoat
+              key={idx}
+              boat={boat}
+              username={username}
+              session={session}
+            />
           ))
         ) : (
           <div className="text-center p-5">
@@ -74,7 +80,7 @@ const Sailing = ({ initData }: { initData: Queue[] }) => {
         )}
       </div>
       {loading && (
-        <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-2 bg-white/50">
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center gap-2 bg-white/50 z-50  ">
           <div role="status">
             <svg
               aria-hidden="true"
@@ -105,9 +111,11 @@ export default Sailing;
 const BoardingBoat = ({
   boat,
   username,
+  session,
 }: {
   boat: Queue;
   username: string;
+  session: any;
 }) => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [capacityIndicator, setCapacityIndicator] = useState("green");
@@ -123,13 +131,31 @@ const BoardingBoat = ({
     }
   }, [boat.passengerIds, boat.capacity]);
 
-  const handleAlertConfirm = async () => {
+  const handleCompleteSail = async () => {
     try {
       await completeSail(boat?._id);
+      await addActivity();
       socket.emit("sailingRefresh");
+      toast({
+        title: "Sail Concluded.",
+        description:
+          "You can see the details on this trip on the sail history page.",
+      });
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const addActivity = async () => {
+    if (session?.data?.user?.isAdmin) return;
+    await addNewActivity({
+      type: "queue",
+      title: "Sail Concluded",
+      details: `The boat named '${boat.boatName}''s sail has been concluded.`,
+      actionBy: username,
+      link: `/sail-history/${boat._id}`,
+    });
+    socket.emit("newActivity");
   };
 
   return (
@@ -140,7 +166,7 @@ const BoardingBoat = ({
           description="You might have not clicked this on purpose."
           open={isAlertOpen}
           openChange={setIsAlertOpen}
-          onConfirm={handleAlertConfirm}
+          onConfirm={handleCompleteSail}
           primaryBtn="Conclude"
           primaryClassName="bg-green-600 hover:bg-green-400"
         />
@@ -154,7 +180,7 @@ const BoardingBoat = ({
             alt={boat?.boatName}
             className="aspect-square h-max object-cover rounded sm:w-[130px] w-[80px]"
           />
-          <div className="px-2 w-full">
+          <div className="pl-2 w-full">
             <div className="flex items-start sm:items-center w-full flex-col sm:flex-row justify-center sm:justify-between">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-base md:text-xl font-medium flex items-center gap-1 w-max">
@@ -200,19 +226,22 @@ const BoardingBoat = ({
               </span>
             </p>
             {/* Actions */}
-            <div className="flex items-center mt-1 gap-x-2">
+            <div className="flex items-center mt-1 gap-2 flex-wrap">
               <LocationSelector
+                boatName={boat?.boatName}
                 boatId={boat?._id}
                 destinations={boat?.destination}
                 initLocation={boat?.currentLocation}
+                session={session}
+                username={username}
               />
               <BoardingInfo
                 boatInfo={boat}
                 elapsedTimerDisplay={
                   <ElapsedTimeDisplay sailedAt={boat.sailedAt as string} />
                 }
-                deleteFn={setIsAlertOpen}
                 isSailing
+                deleteFn={() => null}
               />
               <Button
                 className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5 bg-green-600 hover:bg-green-400"
@@ -251,10 +280,16 @@ function LocationSelector({
   destinations,
   initLocation,
   boatId,
+  session,
+  username,
+  boatName,
 }: {
   destinations: string[] | undefined;
   initLocation: string;
   boatId: string;
+  session: any;
+  username: string;
+  boatName: string;
 }) {
   const [currentLocation, setCurrentLocation] = useState<string>(initLocation);
 
@@ -273,7 +308,7 @@ function LocationSelector({
 
   return (
     <Select value={currentLocation} onValueChange={handleTagLocation}>
-      <SelectTrigger className="w-max text-center text-xs md:text-sm p-0 h-max px-1.5 md:px-2 py-1.5 flex gap-1 items-center">
+      <SelectTrigger className="w-max max-w-[100px] overflow-hidden text-ellipsis text-center text-xs md:text-sm p-0 h-max px-1.5 md:px-2 py-1.5 flex gap-1 items-center">
         <MapPin className="w-4 h-4" />
         {currentLocation || "Select a location"}
       </SelectTrigger>

@@ -53,7 +53,9 @@ import { PassengerSheet } from "./PassengerSheet";
 import { useToast } from "@/components/ui/use-toast";
 import Alert from "@/components/utils/Alert";
 import socket from "@/socket";
-import { changeToSailing } from "@/lib/api/queue";
+import { cancelSail, changeToSailing, completeSail } from "@/lib/api/queue";
+import { useSession } from "next-auth/react";
+import { addNewActivity } from "@/lib/api/activity";
 
 export default function BoardingInfo({
   boatInfo,
@@ -70,7 +72,11 @@ export default function BoardingInfo({
   const [openDetails, setOpenDetails] = useState(false);
   const [passengerDetails, setPassengerDetails] = useState({});
   const [toSailModal, setToSailModal] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [isCancelAlertOpen, setIsCancelAlertOpen] = useState(false);
   const { toast } = useToast();
+  const session: any = useSession() || null;
+  const username = session?.data?.user?.username;
 
   const handleDeletePassenger = async (id: string, queueId: string) => {
     await deletePassenger(id, queueId);
@@ -95,11 +101,29 @@ export default function BoardingInfo({
   const setToSailing = async () => {
     try {
       await changeToSailing(boatInfo._id as string);
+      await addActivity();
       socket.emit("sailingRefresh");
       socket.emit("boardingRefresh");
+      toast({
+        title: "Boat Sailed.",
+        description: "You can view the details on this sail on the Sails Tab.",
+      });
+      setInfoOpen(false);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const addActivity = async () => {
+    if (session?.data?.user?.isAdmin) return;
+    await addNewActivity({
+      type: "queue",
+      title: "Boat Successfully Sailed.",
+      details: `The boat named '${boatInfo.boatName}' has sailed the seas.`,
+      actionBy: username,
+      link: "/queue",
+    });
+    socket.emit("newActivity");
   };
 
   useEffect(() => {
@@ -124,7 +148,7 @@ export default function BoardingInfo({
         setOpenDetails={setOpenDetails}
         passengerDetails={passengerDetails as Passenger}
       />
-      <Dialog>
+      <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
         <DialogTrigger asChild>
           <Button
             variant="outline"

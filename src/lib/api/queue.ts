@@ -347,3 +347,32 @@ export const completeSail = async (queueId: string) => {
     };
   }
 };
+
+export const cancelSail = async (queueId: string) => {
+  try {
+    await connectMongoDB();
+
+    const result = await Queue.findByIdAndUpdate(
+      queueId,
+      {
+        $set: {
+          status: "canceled",
+          canceledAt: new Date(),
+        },
+      },
+      { new: true }
+    );
+
+    if (result) {
+      return { success: true, message: "Sail has been canceled." };
+    } else {
+      return { success: false, message: "Boat not found." };
+    }
+  } catch (error) {
+    console.error("Error changing boat status:", error);
+    return {
+      success: false,
+      message: "An error occurred while updating the boat status.",
+    };
+  }
+};
