@@ -44,6 +44,7 @@ import { CalendarIcon, TrashIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
+import Link from "next/link";
 
 export const columns: ColumnDef<Passenger>[] = [
   {
@@ -104,6 +105,18 @@ export const columns: ColumnDef<Passenger>[] = [
     header: "Added By",
     cell: ({ row }) => <div>{row.getValue("addedBy")}</div>,
   },
+  {
+    accessorKey: "queueId",
+    header: "Queue",
+    cell: ({ row }) => (
+      <Link
+        href={`/sail-history/${row.getValue("queueId")}`}
+        className="underline"
+      >
+        Details
+      </Link>
+    ),
+  },
 ];
 
 export default function PassengerTable({
@@ -116,10 +129,7 @@ export default function PassengerTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection]: any = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
-  const [tempData, setTempData] = useState(initData);
   const [data, setData] = useState(initData);
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     const handleRefresh = async () => await fetchData();
@@ -135,24 +145,6 @@ export default function PassengerTable({
     const req = await getAllActivities();
     setData(req);
   };
-
-  useEffect(() => {
-    setRowSelection({});
-    if (selectedDate) {
-      setData(
-        tempData.filter((activity: Passenger) => {
-          const date = new Date(activity.createdAt);
-          return selectedDate
-            ? date.getDate() === selectedDate.getDate() &&
-                date.getMonth() === selectedDate.getMonth() &&
-                date.getFullYear() === selectedDate.getFullYear()
-            : true;
-        })
-      );
-    } else {
-      setData(tempData);
-    }
-  }, [selectedDate]);
 
   const table = useReactTable({
     data,
@@ -187,24 +179,6 @@ export default function PassengerTable({
           className="max-w-none sm:max-w-sm"
         />
         <div className="flex items-center justify-between sm:justify-start gap-x-2 flex-1">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5" />
-                <p className="sm:block hidden">
-                  {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
-                </p>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent align="start" className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={setSelectedDate}
-                className="rounded-md border"
-              />
-            </PopoverContent>
-          </Popover>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
