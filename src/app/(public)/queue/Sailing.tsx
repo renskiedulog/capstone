@@ -153,7 +153,7 @@ const BoardingBoat = ({
       title: "Sail Concluded",
       details: `The boat named '${boat.boatName}''s sail has been concluded.`,
       actionBy: username,
-      link: `/sail-history/${boat._id}`,
+      link: `/sail-history?id=${boat._id}`,
     });
     socket.emit("newActivity");
   };

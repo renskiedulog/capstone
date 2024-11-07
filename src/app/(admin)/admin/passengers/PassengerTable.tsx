@@ -110,7 +110,7 @@ export const columns: ColumnDef<Passenger>[] = [
     header: "Queue",
     cell: ({ row }) => (
       <Link
-        href={`/sail-history/${row.getValue("queueId")}`}
+        href={`/sail-history?id=${row.getValue("queueId")}`}
         className="underline"
       >
         Details
