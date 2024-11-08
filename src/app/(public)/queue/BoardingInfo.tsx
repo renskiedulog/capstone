@@ -64,17 +64,19 @@ export default function BoardingInfo({
   elapsedTimerDisplay,
   deleteFn,
   isSailing = false,
+  open,
 }: {
   boatInfo: Queue;
   elapsedTimerDisplay?: React.ReactNode;
   deleteFn: (b: boolean) => void;
   isSailing?: boolean;
+  open?: boolean;
 }) {
   const [passengers, setPassengers] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
   const [passengerDetails, setPassengerDetails] = useState({});
   const [toSailModal, setToSailModal] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(open);
   const [isCancelAlertOpen, setIsCancelAlertOpen] = useState(false);
   const { toast } = useToast();
   const session: any = useSession() || null;
@@ -152,12 +154,14 @@ export default function BoardingInfo({
       />
       <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
         <DialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5"
-          >
-            Boat Info/List
-          </Button>
+          {!open && (
+            <Button
+              variant="outline"
+              className="text-xs md:text-sm p-0 h-max px-2 md:px-4 py-1.5"
+            >
+              Boat Info/List
+            </Button>
+          )}
         </DialogTrigger>
         <DialogContent className="max-w-4xl max-h-[90dvh] sm:p-4 p-2">
           <DialogHeader className="flex items-center justify-between flex-col-reverse sm:flex-row pr-5">

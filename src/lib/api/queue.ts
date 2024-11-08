@@ -385,3 +385,49 @@ export const cancelSail = async (queueId: string) => {
     };
   }
 };
+
+export const fetchByStatus = async (status: string) => {
+  try {
+    await connectMongoDB();
+
+    const completedSails = await Queue.find({ status })
+      .sort({ completedAt: -1 })
+      .lean();
+
+    return JSON.parse(JSON.stringify(completedSails));
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
+export const fetchSailDetails = async (id: string) => {
+  try {
+    await connectMongoDB();
+
+    const boardingBoat: any = await Queue.findOne({
+      boatId: id,
+      status: { $in: ["completed", "canceled"] },
+    })
+      .sort({ boardingAt: -1 })
+      .lean();
+
+    if (!boardingBoat) {
+      return null;
+    }
+
+    const boat: any = await Boat.findById(boardingBoat.boatId).lean();
+
+    return {
+      ...boardingBoat,
+      mainImage: boat?.mainImage || null,
+      capacity: boat?.capacity || 0,
+      boatName: boat?.boatName || "",
+      boatCode: boat?.boatCode || "",
+      driverName: boat?.driverName || "",
+    };
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
