@@ -270,7 +270,7 @@ export default function BoardingInfo({
                       </div>
                     </CardContent>
                   </Card>
-                  <Card>
+                  <Card className="h-max">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
                         <Calendar className="h-5 w-5" />
