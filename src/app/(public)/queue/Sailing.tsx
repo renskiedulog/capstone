@@ -201,7 +201,7 @@ const BoardingBoat = ({
               <MapPin size={15} className="mb-0.5 mr-1" />
               {boat?.destination?.map((location: string, idx: number) => (
                 <span
-                  className={`text-nowrap ${location === boat.currentLocation ? "text-blue-800 !font-bold" : "font-medium"} ${idx > 0 ? 'before:content-["-"] before:text-black before:mx-1' : ""}`}
+                  className={`text-nowrap ${location === boat.locationHistory?.currentLocation ? "text-blue-800 !font-bold" : "font-medium"} ${idx > 0 ? 'before:content-["-"] before:text-black before:mx-1' : ""}`}
                   key={idx}
                 >
                   {location}
@@ -229,9 +229,9 @@ const BoardingBoat = ({
             <div className="flex items-center mt-1 gap-2 flex-wrap">
               <LocationSelector
                 boatName={boat?.boatName}
+                initLocation={boat?.locationHistory?.currentLocation || ""}
                 boatId={boat?._id}
                 destinations={boat?.destination}
-                initLocation={boat?.currentLocation}
                 session={session}
                 username={username}
               />
@@ -278,15 +278,15 @@ const ElapsedTimeDisplay = ({ sailedAt }: { sailedAt: string }) => {
 
 function LocationSelector({
   destinations,
-  initLocation,
   boatId,
+  initLocation,
   session,
   username,
   boatName,
 }: {
   destinations: string[] | undefined;
-  initLocation: string;
   boatId: string;
+  initLocation: string;
   session: any;
   username: string;
   boatName: string;
@@ -310,7 +310,7 @@ function LocationSelector({
     <Select value={currentLocation} onValueChange={handleTagLocation}>
       <SelectTrigger className="w-max max-w-[100px] overflow-hidden text-ellipsis text-center text-xs md:text-sm p-0 h-max px-1.5 md:px-2 py-1.5 flex gap-1 items-center">
         <MapPin className="w-4 h-4" />
-        {currentLocation || "Select a location"}
+        {currentLocation || "Port"}
       </SelectTrigger>
       <SelectContent>
         {destinations?.map((location: string, idx: number) => (

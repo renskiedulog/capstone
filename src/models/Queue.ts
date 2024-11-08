@@ -44,8 +44,14 @@ const queueSchema = new Schema(
     sailedAt: {
       type: Date,
     },
-    currentLocation: {
-      type: String,
+    locationHistory: {
+      currentLocation: String,
+      timestamps: [
+        {
+          location: String,
+          timestamp: Date,
+        },
+      ],
     },
     completedAt: {
       type: Date,

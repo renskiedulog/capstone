@@ -299,23 +299,32 @@ export const fetchSailing = async () => {
 export const updateCurrentLocation = async (id: string, location: string) => {
   try {
     await connectMongoDB();
-    const updateQueue = await Queue.findByIdAndUpdate(
-      id,
-      {
-        $set: {
-          currentLocation: location,
-        },
-      },
-      { new: true }
-    );
-    if (updateQueue) {
-      return { success: true, message: "Boat current location updated." };
-    } else {
+
+    const queueItem = await Queue.findById(id);
+
+    if (!queueItem) {
       return { success: false, message: "Boat not found." };
     }
+
+    const updatedTimeStamps = [
+      { location, timestamp: new Date() },
+      ...(queueItem.locationHistory?.timestamps || []),
+    ];
+
+    queueItem.locationHistory = {
+      currentLocation: location,
+      timestamps: updatedTimeStamps,
+    };
+
+    await queueItem.save();
+
+    return { success: true, message: "Boat current location updated." };
   } catch (error) {
     console.log(error);
-    return false;
+    return {
+      success: false,
+      message: "An error occurred while updating location.",
+    };
   }
 };
 

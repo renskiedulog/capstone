@@ -37,6 +37,8 @@ import {
   Trash2,
   Ellipsis,
   Info,
+  Clock,
+  Pin,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -211,7 +213,41 @@ export default function BoardingInfo({
                             <MapPin className="h-4 w-4" />
                             Current Location:
                           </span>
-                          <span>{boatInfo?.currentLocation}</span>
+                          <span>
+                            {boatInfo?.locationHistory?.currentLocation ||
+                              "Port"}
+                          </span>
+                        </div>
+                      )}
+                      {isSailing && boatInfo?.locationHistory?.timestamps && (
+                        <div className="flex justify-between items-start flex-col">
+                          <span className="font-medium flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            Timestamps:
+                          </span>
+                          <div className="w-full mx-3">
+                            {boatInfo?.locationHistory?.timestamps
+                              ?.slice()
+                              .reverse()
+                              .map((stamp, idx) => {
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex gap-1 items-center"
+                                  >
+                                    <Pin size={18} />
+                                    <div className="w-full flex justify-start items-start flex-col">
+                                      <p className="font-bold">
+                                        {stamp?.location}
+                                      </p>
+                                      <p className="text-[11px]">
+                                        {formatDateToReadable(stamp?.timestamp)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
                         </div>
                       )}
                       <div className="flex justify-center flex-col">

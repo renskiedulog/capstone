@@ -96,7 +96,10 @@ export interface Queue {
   capacity: number;
   mainImage?: string;
   boardingAt: Date | string;
-  currentLocation: string;
+  locationHistory?: {
+    currentLocation?: string;
+    timestamps?: [{ location: string; timestamp: string }];
+  };
   sailedAt: Date | string;
 }
 
