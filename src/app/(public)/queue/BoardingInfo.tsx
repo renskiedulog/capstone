@@ -223,7 +223,7 @@ export default function BoardingInfo({
                           </span>
                         </div>
                       )}
-                      {isSailing && boatInfo?.locationHistory?.timestamps && (
+                      {isSailing && boatInfo?.locationHistory?.timestamps?.length > 0 && (
                         <div className="flex justify-between items-start flex-col">
                           <span className="font-medium flex items-center gap-2">
                             <Clock className="h-4 w-4" />

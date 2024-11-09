@@ -407,7 +407,7 @@ export const fetchSailDetails = async (id: string) => {
 
     const boardingBoat: any = await Queue.findOne({
       boatId: id,
-      status: { $in: ["completed", "canceled"] },
+      status: { $in: ["completed"] },
     })
       .sort({ boardingAt: -1 })
       .lean();
@@ -417,7 +417,7 @@ export const fetchSailDetails = async (id: string) => {
     }
 
     const boat: any = await Boat.findById(boardingBoat.boatId).lean();
-
+    
     return {
       ...boardingBoat,
       mainImage: boat?.mainImage || null,

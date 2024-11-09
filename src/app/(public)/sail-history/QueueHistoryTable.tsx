@@ -2,10 +2,10 @@
 import React from "react";
 import BoardingInfo from "../queue/BoardingInfo";
 
-const QueueHistoryTable = ({ initData, sailInfo }) => {
+const QueueHistoryTable = () => {
   return (
     <>
-      <BoardingInfo boatInfo={sailInfo} open isSailing deleteFn={() => null} />
+      {/* <BoardingInfo boatInfo={sailInfo} open isSailing deleteFn={() => null} /> */}
     </>
   );
 };

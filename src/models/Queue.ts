@@ -11,7 +11,7 @@ const queueSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["in-queue", "boarding", "sailing", "completed", "canceled"],
+      enum: ["in-queue", "boarding", "sailing", "completed"],
       default: "in-queue",
     },
     passengerCount: {
