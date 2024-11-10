@@ -53,9 +53,15 @@ import Alert from "@/components/utils/Alert";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { fetchRecentSails } from "@/lib/api/queue";
+import {
+  deleteSailHistories,
+  fetchRecentSails,
+  fetchSailDetails,
+} from "@/lib/api/queue";
+import { formatDateToReadable } from "@/lib/utils";
+import BoardingInfo from "../queue/BoardingInfo";
 
-export default function ActivityTable({
+export default function QueueHistoryTable({
   initData = [],
 }: {
   initData: Queue[];
@@ -71,8 +77,9 @@ export default function ActivityTable({
   const { toast } = useToast();
   const session: any = useSession();
   const isAdmin = session?.data?.user?.isAdmin;
+  const [boatDetails, setBoatDetails] = useState(null);
 
-  const columns: ColumnDef<ActivityTypes>[] = [
+  const columns: ColumnDef<Queue>[] = [
     ...(isAdmin
       ? [
           {
@@ -98,17 +105,81 @@ export default function ActivityTable({
           },
         ]
       : []),
+    {
+      accessorKey: "mainImage",
+      header: "Boat Image",
+      cell: ({ row }) => (
+        <div
+          className="size-12 cursor-pointer"
+          style={{ minWidth: "50px", maxWidth: "50px" }}
+        >
+          <div style={{ minWidth: "50px", maxWidth: "50px" }}>
+            <img
+              width={40}
+              height={40}
+              alt="user-image"
+              className="aspect-square w-max object-cover transition"
+              src={row.getValue("mainImage") || "/images/default-image.jpg"}
+            />
+          </div>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "boatCode",
+      header: "Boat Code",
+      cell: ({ row }) => row.original.boatCode,
+    },
+    {
+      accessorKey: "boatName",
+      header: "Boat Name",
+      cell: ({ row }) => row.original.boatName,
+    },
+    {
+      accessorKey: "passengers",
+      header: "Passengers",
+      cell: ({ row }) => row.original.passengerIds?.length,
+    },
+    {
+      accessorKey: "totalAmountPaid",
+      header: "Total Fare",
+      cell: ({ row }) => row.original.totalAmountPaid,
+    },
+    {
+      accessorKey: "completedAt",
+      header: "Completed On",
+      cell: ({ row }) => {
+        const completedAt = row.original.completedAt;
+        return completedAt ? formatDateToReadable(completedAt) : "N/A";
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => showInfo(row.original._id)}
+          aria-label="View Details"
+        >
+          Info
+        </Button>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
   ];
 
   const handleAlertConfirm = async () => {
     const filterIds = data.filter((_, index) => rowSelection[index]);
     const ids = filterIds.map((k) => k._id);
     if (ids.length === 0) return;
-    await deleteActivities(ids);
-    socket.emit("newActivity");
+    await deleteSailHistories(ids);
+    socket.emit("sailingRefresh");
     setRowSelection({});
     toast({
-      title: "Selected Activities Successfully Deleted.",
+      title: "Selected Sail History Successfully Deleted.",
     });
   };
 
@@ -131,8 +202,8 @@ export default function ActivityTable({
     setRowSelection({});
     if (selectedDate) {
       setData(
-        tempData.filter((activity) => {
-          const date = new Date(activity.createdAt);
+        tempData.filter((sail) => {
+          const date = new Date(sail.completedAt);
           return selectedDate
             ? date.getDate() === selectedDate.getDate() &&
                 date.getMonth() === selectedDate.getMonth() &&
@@ -164,11 +235,30 @@ export default function ActivityTable({
     },
   });
 
+  const showInfo = async (id: string) => {
+    setBoatDetails(null);
+    try {
+      const details = await fetchSailDetails(id);
+      setBoatDetails(() => details);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
+      {boatDetails && (
+        <BoardingInfo
+          boatInfo={boatDetails}
+          open
+          isSailing
+          completed
+          deleteFn={() => null}
+        />
+      )}
       <Alert
-        title="Are you sure you want to delete the selected activities?"
-        description="This will permanently remove the selected activities from the system."
+        title="Are you sure you want to delete the recent sail/s?"
+        description="This will permanently remove the recent sail/s from the system."
         open={isAlertOpen}
         openChange={setIsAlertOpen}
         onConfirm={handleAlertConfirm}
@@ -178,12 +268,12 @@ export default function ActivityTable({
       <div className="w-full">
         <div className="flex items-center py-4 gap-4 flex-wrap">
           <Input
-            placeholder="Filter by action by..."
+            placeholder="Search by boat name..."
             value={
-              (table.getColumn("actionBy")?.getFilterValue() as string) ?? ""
+              (table.getColumn("boatName")?.getFilterValue() as string) ?? ""
             }
             onChange={(event) =>
-              table.getColumn("actionBy")?.setFilterValue(event.target.value)
+              table.getColumn("boatName")?.setFilterValue(event.target.value)
             }
             className="max-w-none sm:max-w-sm"
           />
@@ -200,8 +290,8 @@ export default function ActivityTable({
               <PopoverContent align="start" className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={selectedDate}
-                  onSelect={setSelectedDate}
+                  selected={selectedDate as any}
+                  onSelect={setSelectedDate as any}
                   className="rounded-md border"
                 />
               </PopoverContent>

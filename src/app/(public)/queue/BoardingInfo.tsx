@@ -65,12 +65,14 @@ export default function BoardingInfo({
   deleteFn,
   isSailing = false,
   open,
+  completed,
 }: {
   boatInfo: Queue;
   elapsedTimerDisplay?: React.ReactNode;
   deleteFn: (b: boolean) => void;
   isSailing?: boolean;
   open?: boolean;
+  completed?: boolean;
 }) {
   const [passengers, setPassengers] = useState([]);
   const [openDetails, setOpenDetails] = useState(false);
@@ -167,7 +169,7 @@ export default function BoardingInfo({
           <DialogHeader className="flex items-center justify-between flex-col-reverse sm:flex-row pr-5">
             <DialogTitle className="flex items-center gap-2 text-2xl">
               <Ship className="h-6 w-6" />
-              Boarding Info - {boatInfo?.boatName}
+              Info - {boatInfo?.boatName}
             </DialogTitle>
             {elapsedTimerDisplay}
           </DialogHeader>
@@ -223,37 +225,40 @@ export default function BoardingInfo({
                           </span>
                         </div>
                       )}
-                      {isSailing && boatInfo?.locationHistory?.timestamps?.length > 0 && (
-                        <div className="flex justify-between items-start flex-col">
-                          <span className="font-medium flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
-                            Timestamps:
-                          </span>
-                          <div className="w-full mx-3">
-                            {boatInfo?.locationHistory?.timestamps
-                              ?.slice()
-                              .reverse()
-                              .map((stamp, idx) => {
-                                return (
-                                  <div
-                                    key={idx}
-                                    className="flex gap-1 items-center"
-                                  >
-                                    <Pin size={18} />
-                                    <div className="w-full flex justify-start items-start flex-col">
-                                      <p className="font-bold">
-                                        {stamp?.location}
-                                      </p>
-                                      <p className="text-[11px]">
-                                        {formatDateToReadable(stamp?.timestamp)}
-                                      </p>
+                      {isSailing &&
+                        boatInfo?.locationHistory?.timestamps?.length > 0 && (
+                          <div className="flex justify-between items-start flex-col">
+                            <span className="font-medium flex items-center gap-2">
+                              <Clock className="h-4 w-4" />
+                              Timestamps:
+                            </span>
+                            <div className="w-full mx-3">
+                              {boatInfo?.locationHistory?.timestamps
+                                ?.slice()
+                                .reverse()
+                                .map((stamp, idx) => {
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className="flex gap-1 items-center"
+                                    >
+                                      <Pin size={18} />
+                                      <div className="w-full flex justify-start items-start flex-col">
+                                        <p className="font-bold">
+                                          {stamp?.location}
+                                        </p>
+                                        <p className="text-[11px]">
+                                          {formatDateToReadable(
+                                            stamp?.timestamp
+                                          )}
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                );
-                              })}
+                                  );
+                                })}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                       <div className="flex justify-center flex-col">
                         <span className="font-medium flex items-center gap-2">
                           <MapPin className="h-4 w-4" />
@@ -315,6 +320,15 @@ export default function BoardingInfo({
                           {formatDateToReadable(boatInfo?.sailedAt as any)}
                         </div>
                       )}
+                      {completed && (
+                        <div className="flex justify-center flex-col">
+                          <span className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <span className="font-bold">Completed At:</span>
+                          </span>
+                          {formatDateToReadable(boatInfo?.completedAt as any)}
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </div>
@@ -343,7 +357,9 @@ export default function BoardingInfo({
                       Passenger List
                     </CardTitle>
                     <CardDescription>
-                      Manage passengers for this boat
+                      {isSailing || completed
+                        ? ""
+                        : "Manage passengers for this boat"}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="px-2 sm:px-6">

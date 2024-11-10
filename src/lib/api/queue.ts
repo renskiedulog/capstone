@@ -361,11 +361,50 @@ export const fetchRecentSails = async () => {
   try {
     await connectMongoDB();
 
-    const completedSails = await Queue.find({ status: "completed" })
-      .sort({ completedAt: -1 })
+    const recentSails = await Queue.find({ status: "completed" })
+      .sort({ boardingAt: -1 })
       .lean();
 
-    return JSON.parse(JSON.stringify(completedSails));
+    const boatIds = recentSails.map((boat) => boat.boatId);
+    const boats = await Boat.find({ _id: { $in: boatIds } }).lean();
+
+    const boatMap = boats.reduce((acc, boat) => {
+      acc[boat._id.toString()] = {
+        mainImage: boat.mainImage,
+        capacity: boat.capacity,
+        boatName: boat.boatName,
+        boatCode: boat.boatCode,
+        driverName: boat.driverName,
+        currentLocation: boat.currentLocation,
+      };
+      return acc;
+    }, {});
+
+    const sailingBoatsWithImages = await Promise.all(
+      recentSails.map(async (queueBoat) => {
+        const boatData = boatMap[queueBoat.boatId.toString()] || {};
+
+        const passengers = await Passenger.find({
+          _id: { $in: queueBoat.passengerIds },
+        }).lean();
+
+        const totalAmountPaid = passengers.reduce((sum, passenger) => {
+          return sum + (passenger.amountPaid || 0);
+        }, 0);
+
+        return {
+          ...queueBoat,
+          mainImage: boatData.mainImage || null,
+          capacity: boatData.capacity || 0,
+          boatName: boatData.boatName || "",
+          boatCode: boatData.boatCode || "",
+          driverName: boatData.driverName || "",
+          totalAmountPaid,
+        };
+      })
+    );
+
+    return sailingBoatsWithImages;
   } catch (error) {
     console.log(error);
     return [];
@@ -397,5 +436,17 @@ export const fetchSailDetails = async (id: string) => {
   } catch (error) {
     console.log(error);
     return null;
+  }
+};
+
+export const deleteSailHistories = async (ids: string[]) => {
+  try {
+    await connectMongoDB();
+
+    const result = await Queue.deleteMany({ _id: { $in: ids } });
+
+    return result;
+  } catch (error) {
+    return { deletedCount: 0, error };
   }
 };
