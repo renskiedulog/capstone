@@ -36,11 +36,6 @@ export const navLinks = [
     icon: <ListOrdered />,
   },
   {
-    link: "/statistics",
-    name: "Statistics",
-    icon: <LineChart />,
-  },
-  {
     link: "/sail-history",
     name: "Sail History",
     icon: <ListRestart />,
@@ -87,6 +82,11 @@ export const adminLinks = [
     link: "/admin/passengers",
     name: "Passenger History",
     icon: <Users2 />,
+  },
+  {
+    link: "/admin/statistics",
+    name: "Statistics",
+    icon: <LineChart />,
   },
 ];
 

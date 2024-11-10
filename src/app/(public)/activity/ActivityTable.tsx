@@ -53,6 +53,7 @@ import { format } from "date-fns";
 import Alert from "@/components/utils/Alert";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 export default function ActivityTable({
   initData = [],
@@ -146,7 +147,11 @@ export default function ActivityTable({
     {
       accessorKey: "actionBy",
       header: "Action By",
-      cell: ({ row }) => <div>{row.getValue("actionBy")}</div>,
+      cell: ({ row }) => (
+        <Link href={`/profile/${row.getValue("actionBy")}`} className="hover:underline">
+          {row.getValue("actionBy")}
+        </Link>
+      ),
     },
   ];
 

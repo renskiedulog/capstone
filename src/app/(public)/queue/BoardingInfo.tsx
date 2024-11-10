@@ -132,7 +132,7 @@ export default function BoardingInfo({
 
   useEffect(() => {
     loadPassengers();
-  }, [boatInfo.passengerIds]);
+  }, [boatInfo?.passengerIds]);
 
   return (
     <>

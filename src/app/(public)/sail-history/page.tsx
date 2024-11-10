@@ -1,19 +1,16 @@
-import NotFound from "@/app/not-found";
 import { checkSession } from "@/components/utils/Authenticator";
-import { fetchByStatus, fetchSailDetails } from "@/lib/api/queue";
 import { redirect } from "next/navigation";
 import QueueHistoryTable from "./QueueHistoryTable";
+import { fetchRecentSails, fetchSailDetails } from "@/lib/api/queue";
+import { Queue } from "@/lib/types";
 
-const page = async ({
-}: {
-}) => {
+const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
 
-  return (
-    <QueueHistoryTable
-    />
-  );
+  const recentSails = await fetchRecentSails();
+
+  return <QueueHistoryTable initData={recentSails as Queue[]} />;
 };
 
 export default page;

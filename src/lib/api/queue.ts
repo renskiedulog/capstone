@@ -357,40 +357,11 @@ export const completeSail = async (queueId: string) => {
   }
 };
 
-export const cancelSail = async (queueId: string) => {
+export const fetchRecentSails = async () => {
   try {
     await connectMongoDB();
 
-    const result = await Queue.findByIdAndUpdate(
-      queueId,
-      {
-        $set: {
-          status: "canceled",
-          canceledAt: new Date(),
-        },
-      },
-      { new: true }
-    );
-
-    if (result) {
-      return { success: true, message: "Sail has been canceled." };
-    } else {
-      return { success: false, message: "Boat not found." };
-    }
-  } catch (error) {
-    console.error("Error changing boat status:", error);
-    return {
-      success: false,
-      message: "An error occurred while updating the boat status.",
-    };
-  }
-};
-
-export const fetchByStatus = async (status: string) => {
-  try {
-    await connectMongoDB();
-
-    const completedSails = await Queue.find({ status })
+    const completedSails = await Queue.find({ status: "completed" })
       .sort({ completedAt: -1 })
       .lean();
 
@@ -405,10 +376,7 @@ export const fetchSailDetails = async (id: string) => {
   try {
     await connectMongoDB();
 
-    const boardingBoat: any = await Queue.findOne({
-      boatId: id,
-      status: { $in: ["completed"] },
-    })
+    const boardingBoat: any = await Queue.findById(id)
       .sort({ boardingAt: -1 })
       .lean();
 
@@ -417,7 +385,7 @@ export const fetchSailDetails = async (id: string) => {
     }
 
     const boat: any = await Boat.findById(boardingBoat.boatId).lean();
-    
+
     return {
       ...boardingBoat,
       mainImage: boat?.mainImage || null,

@@ -27,6 +27,7 @@ export const options: any = {
       clientId: process.env.GOOGLE_CLIENT_ID! as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET! as string,
       name: process.env.APP_NAME! as string,
+      options: { timeout: 10000 },
     }),
     CredentialsProvider({
       type: "credentials",

@@ -70,14 +70,34 @@ export const fetchAllPassengers = async () => {
       .lean()
       .exec();
 
-    const plainPassengers = passengers.map((passenger: any) => ({
-      ...passenger,
-      _id: passenger._id.toString(),
-    }));
+    const plainPassengers = await Promise.all(
+      passengers.map(async (passenger: any) => {
+        const queue = await Queue.findById(passenger.queueId).lean().exec();
+        const isBoarding = queue ? queue?.status !== 'completed' : false;
+
+        return {
+          ...passenger,
+          _id: passenger._id.toString(),
+          isBoarding,
+        };
+      })
+    );
 
     return plainPassengers;
   } catch (error) {
     console.error("Error fetching passengers:", error);
     throw error;
+  }
+};
+
+export const deletePassengers = async (ids: string[]) => {
+  try {
+    await connectMongoDB();
+
+    const result = await Passenger.deleteMany({ _id: { $in: ids } });
+
+    return result;
+  } catch (error) {
+    return { deletedCount: 0, error };
   }
 };
