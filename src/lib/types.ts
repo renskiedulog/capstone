@@ -101,6 +101,8 @@ export interface Queue {
     timestamps?: [{ location: string; timestamp: string }];
   };
   sailedAt: Date | string;
+  completedAt?: Date | string;
+  totalAmountPaid?: number;
 }
 
 export interface Passenger {
