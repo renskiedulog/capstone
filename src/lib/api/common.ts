@@ -3,6 +3,7 @@ import User from "@/models/User";
 import { connectMongoDB } from "../db";
 import Activity from "@/models/Activity";
 import Boat from "@/models/Boats";
+import Queue from "@/models/Queue";
 
 export const getRecentTellers = async () => {
   try {
@@ -139,4 +140,40 @@ export const getBoatCount = async () => {
   const currentMonthBoatsCount = results[0].currentMonthBoats[0]?.count || 0;
 
   return { totalBoatCount, currentMonthBoatsCount };
+};
+
+export const getTotalSails = async () => {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const results = await Queue.aggregate([
+    {
+      $match: {
+        status: "completed",
+      },
+    },
+    {
+      $facet: {
+        totalCompleted: [{ $count: "count" }],
+        completedToday: [
+          {
+            $match: {
+              completedAt: {
+                $gte: startOfDay,
+                $lte: endOfDay,
+              },
+            },
+          },
+          { $count: "count" },
+        ],
+      },
+    },
+  ]);
+
+  const totalCompletedCount = results[0].totalCompleted[0]?.count || 0;
+  const completedTodayCount = results[0].completedToday[0]?.count || 0;
+
+  return { totalCompletedCount, completedTodayCount };
 };

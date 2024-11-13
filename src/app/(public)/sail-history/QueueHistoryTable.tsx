@@ -70,9 +70,9 @@ export default function QueueHistoryTable({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection]: any = useState({});
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [tempData, setTempData] = useState(initData);
-  const [data, setData] = useState(initData);
+  const [data, setData] = useState(tempData);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const { toast } = useToast();
   const session: any = useSession();
@@ -195,7 +195,10 @@ export default function QueueHistoryTable({
 
   const fetchData = async () => {
     const req = await fetchRecentSails();
-    setData(req);
+    if (selectedDate === new Date()) {
+      setTempData(req);
+      setSelectedDate(new Date());
+    } else setData(req);
   };
 
   useEffect(() => {

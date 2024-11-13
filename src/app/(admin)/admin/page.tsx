@@ -8,6 +8,7 @@ import {
   getRecentActivities,
   getRecentTellers,
   getTellerCount,
+  getTotalSails,
 } from "@/lib/api/common";
 import Activity from "../../../components/utils/ActivityTracker";
 import { ActivityTypes } from "@/lib/types";
@@ -21,14 +22,14 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
 
-  const [tellerCount, recentTellers, activities, boatCount] = await Promise.all(
-    [
+  const [tellerCount, recentTellers, activities, boatCount, totalSails] =
+    await Promise.all([
       getTellerCount(),
       getRecentTellers(),
       getRecentActivities(),
       getBoatCount(),
-    ]
-  );
+      getTotalSails(),
+    ]);
 
   const cards = [
     {
@@ -50,13 +51,13 @@ const page = async () => {
           : "No new boats registered this month.",
     },
     {
-      cardTitle: "Total Teller Accounts",
-      icon: <UserIcon className="h-4 w-4 text-muted-foreground" />,
-      stats: tellerCount?.totalTellersCount,
+      cardTitle: "Total Sails",
+      icon: <Sailboat className="h-4 w-4 text-muted-foreground" />,
+      stats: totalSails?.totalCompletedCount,
       info:
-        tellerCount?.currentMonthTellersCount > 0
-          ? `${tellerCount?.currentMonthTellersCount} new tellers this month.`
-          : "No new tellers this month.",
+        totalSails?.completedTodayCount > 0
+          ? `${totalSails?.completedTodayCount} completed sail/s today.`
+          : "No sails today yet.",
     },
   ];
 
