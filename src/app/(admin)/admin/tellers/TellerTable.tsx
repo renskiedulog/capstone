@@ -63,7 +63,7 @@ export default function TellerTable({ initData }: { initData: UserTypes[] }) {
   React.useEffect(() => {
     const fetchInterval = setInterval(() => {
       fetchData();
-    }, 5000);
+    }, 10000);
 
     socket.on("tellerRefresh", (data) => {
       fetchData();

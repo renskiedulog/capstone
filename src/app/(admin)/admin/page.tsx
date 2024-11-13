@@ -12,6 +12,8 @@ import {
 } from "@/lib/api/common";
 import Activity from "../../../components/utils/ActivityTracker";
 import { ActivityTypes } from "@/lib/types";
+import HorizontalCardChart from "./HorizontalCardChart";
+import { getQueueSummary } from "@/lib/api/statistics";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -22,13 +24,14 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
 
-  const [tellerCount, recentTellers, activities, boatCount, totalSails] =
+  const [tellerCount, recentTellers, activities, boatCount, totalSails, queueSummary] =
     await Promise.all([
       getTellerCount(),
       getRecentTellers(),
       getRecentActivities(),
       getBoatCount(),
       getTotalSails(),
+      getQueueSummary()
     ]);
 
   const cards = [
@@ -65,9 +68,9 @@ const page = async () => {
     <div className="grid grid-cols-1 lg:grid-cols-[75%,25%] xl:grid-cols-[70%,30%] gap-2">
       <div className="space-y-2">
         <StatCards data={cards} />
+        <HorizontalCardChart data={queueSummary} />
         <RecentTellers data={recentTellers} />
       </div>
-
       <div className="space-y-2">
         <Activity initData={activities as ActivityTypes[]} />
       </div>

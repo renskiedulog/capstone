@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { checkBoatCapacity } from "@/lib/constants";
+import { checkBoatCapacity, DestinationOptions } from "@/lib/constants";
 import { Queue } from "@/lib/types";
 import { getTimeElapsed } from "@/lib/utils";
 import { MapPin, Ship, ShipWheel, Users } from "lucide-react";
@@ -204,7 +204,7 @@ const BoardingBoat = ({
                   className={`text-nowrap ${location === boat.locationHistory?.currentLocation ? "text-blue-800 !font-bold" : "font-medium"} ${idx > 0 ? 'before:content-["-"] before:text-black before:mx-1' : ""}`}
                   key={idx}
                 >
-                  {location}
+                  {DestinationOptions?.find((k) => k.value === location)?.label || "Port"}
                 </span>
               ))}
             </p>
@@ -280,9 +280,6 @@ function LocationSelector({
   destinations,
   boatId,
   initLocation,
-  session,
-  username,
-  boatName,
 }: {
   destinations: string[] | undefined;
   boatId: string;
@@ -308,14 +305,20 @@ function LocationSelector({
 
   return (
     <Select value={currentLocation} onValueChange={handleTagLocation}>
-      <SelectTrigger className="w-max max-w-[100px] overflow-hidden text-ellipsis text-center text-xs md:text-sm p-0 h-max px-1.5 md:px-2 py-1.5 flex gap-1 items-center">
+      <SelectTrigger className="w-max overflow-hidden text-ellipsis text-center text-xs md:text-sm p-0 h-max px-1.5 md:px-2 py-1.5 flex gap-1 items-center">
         <MapPin className="w-4 h-4" />
-        {currentLocation || "Port"}
+        {DestinationOptions?.find((k) => k.value === currentLocation)?.label ||
+          "Port"}
       </SelectTrigger>
       <SelectContent>
         {destinations?.map((location: string, idx: number) => (
-          <SelectItem location key={idx} value={location}>
-            {location}
+          <SelectItem
+            location
+            key={idx}
+            value={location}
+            className="whitespace-nowrap"
+          >
+            {DestinationOptions?.find((k) => k.value === location)?.label}
           </SelectItem>
         ))}
       </SelectContent>

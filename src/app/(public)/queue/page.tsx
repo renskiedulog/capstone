@@ -17,7 +17,7 @@ const page = async () => {
   const [queue, boarding, sailing] = await Promise.all([
     await fetchQueue(),
     await fetchBoarding(),
-    fetchSailing(),
+    await fetchSailing(),
   ]);
 
   return (

@@ -260,7 +260,7 @@ export const fetchSailing = async () => {
     await connectMongoDB();
 
     const sailingBoats = await Queue.find({ status: "sailing" })
-      .sort({ boardingAt: -1 })
+      .sort({ sailedAt: -1 })
       .lean();
     const boatIds = sailingBoats.map((boat) => boat.boatId);
     const boats = await Boat.find({ _id: { $in: boatIds } }).lean();

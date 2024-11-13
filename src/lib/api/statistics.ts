@@ -1,7 +1,7 @@
 import Boat from "@/models/Boats";
 import Queue from "@/models/Queue";
 import Passenger from "@/models/Passenger";
-import User from "@/models/User";
+import { connectMongoDB } from "../db";
 
 export const getTotalBoats = async () => {
   return await Boat.countDocuments();
@@ -105,8 +105,6 @@ export const getBoatsByStatusInRange = async (range) => {
   }, {});
 };
 
-import Queue from "./models/Queue";
-
 export const getQueueStatusInRange = async (range) => {
   const { start, end } = range;
   const statusCounts = await Queue.aggregate([
@@ -160,4 +158,68 @@ export const getPassengerCountByGenderInRange = async (range) => {
     acc[gender._id] = gender.count;
     return acc;
   }, {});
+};
+
+export const getQueueSummary = async () => {
+  try {
+    await connectMongoDB();
+
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0); 
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999); 
+
+    const queueSummary = await Queue.aggregate([
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+          totalPassengers: { $sum: { $size: "$passengerIds" } },
+        },
+      },
+      {
+        $project: {
+          status: "$_id",
+          count: 1,
+          totalPassengers: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    const totalFareEarnedData = await Passenger.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startOfDay, $lte: endOfDay },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalFareEarned: { $sum: "$amountPaid" },
+        },
+      },
+    ]);
+
+    const totalFareEarned = totalFareEarnedData.length > 0 ? totalFareEarnedData[0].totalFareEarned : 0;
+
+    const formattedData = queueSummary.map((item) => ({
+      status: item.status,
+      count: item.count,
+      totalPassengers: item.totalPassengers || 0,
+    }));
+
+    const totalQueued = formattedData.reduce((sum, item) => sum + item.count, 0);
+    const totalPassengers = formattedData.reduce((sum, item) => sum + item.totalPassengers, 0);
+
+    return {
+      formattedData,
+      totalQueued,
+      totalPassengers,
+      totalFareEarned,
+    };
+  } catch (error) {
+    console.error("Error fetching queue summary:", error);
+    throw new Error("Failed to fetch queue summary data");
+  }
 };

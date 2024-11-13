@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { checkBoatCapacity } from "@/lib/constants";
+import { checkBoatCapacity, DestinationOptions } from "@/lib/constants";
 import { Queue } from "@/lib/types";
 import { getTimeElapsed } from "@/lib/utils";
 import { Info, MapPin, Ship, ShipWheel, Users } from "lucide-react";
@@ -185,7 +185,7 @@ const BoardingBoat = ({
                   className={`text-nowrap font-medium ${idx > 0 ? 'before:content-["-"] before:mx-1' : ""}`}
                   key={idx}
                 >
-                  {location}
+                  {DestinationOptions?.find((k) => k.value === location)?.label || "Port"}
                 </span>
               ))}
             </p>

@@ -1,57 +1,101 @@
-"use client"
+"use client";
 
-import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { ChartContainer } from "@/components/ui/chart"
-import { Separator } from "@/components/ui/separator"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
+import { Separator } from "@/components/ui/separator";
 
-export default function HorizontalCardChart() {
+type QueueSummaryData = {
+  formattedData: {
+    status: string;
+    count: number;
+    totalPassengers: number;
+    latestDeparture: string;
+  }[];
+  totalQueued: number;
+  totalPassengers: number;
+  totalFareEarned: number;
+};
+
+export default function HorizontalCardChart({
+  data,
+}: {
+  data: QueueSummaryData;
+}) {
   return (
-    <Card className="max-w-xs">
-      <CardContent className="flex gap-4 p-4 pb-2">
+    <Card className="w-1/2">
+      <CardHeader className="pb-2">
+        <CardTitle>Queue Summary</CardTitle>
+        <CardDescription>
+          Overview of boat statuses in queue and passengers.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pb-2">
         <ChartContainer
           config={{
-            move: {
-              label: "Move",
-              color: "hsl(var(--chart-1))",
-            },
-            stand: {
-              label: "Stand",
-              color: "hsl(var(--chart-2))",
-            },
-            exercise: {
-              label: "Exercise",
-              color: "hsl(var(--chart-3))",
-            },
+            "in-queue": { label: "Queueing", color: "hsl(var(--chart-1))" },
+            boarding: { label: "Boarding", color: "hsl(var(--chart-2))" },
+            sailing: { label: "Sailing", color: "hsl(var(--chart-3))" },
+            completed: { label: "Completed", color: "hsl(var(--chart-4))" },
           }}
-          className="h-[140px] w-full"
+          className="h-[160px] w-full"
         >
           <BarChart
+            accessibilityLayer
             margin={{
-              left: 0,
+              left: 15,
               right: 0,
               top: 0,
-              bottom: 10,
+              bottom: 0,
             }}
             data={[
               {
-                activity: "stand",
-                value: (8 / 12) * 100,
-                label: "8/12 hr",
-                fill: "var(--color-stand)",
+                status: "in-queue",
+                value:
+                  ((data.formattedData.find((d) => d.status === "in-queue")
+                    ?.count || 0) /
+                    data.totalQueued) *
+                  100,
+                label: `${data.formattedData.find((d) => d.status === "in-queue")?.count || 0} boats`,
+                fill: "var(--color-in-queue)",
               },
               {
-                activity: "exercise",
-                value: (46 / 60) * 100,
-                label: "46/60 min",
-                fill: "var(--color-exercise)",
+                status: "boarding",
+                value:
+                  ((data.formattedData.find((d) => d.status === "boarding")
+                    ?.count || 0) /
+                    data.totalQueued) *
+                  100,
+                label: `${data.formattedData.find((d) => d.status === "boarding")?.count || 0} boats`,
+                fill: "var(--color-boarding)",
               },
               {
-                activity: "move",
-                value: (245 / 360) * 100,
-                label: "245/360 kcal",
-                fill: "var(--color-move)",
+                status: "sailing",
+                value:
+                  ((data.formattedData.find((d) => d.status === "sailing")
+                    ?.count || 0) /
+                    data.totalQueued) *
+                  100,
+                label: `${data.formattedData.find((d) => d.status === "sailing")?.count || 0} boats`,
+                fill: "var(--color-sailing)",
+              },
+              {
+                status: "completed",
+                value:
+                  ((data.formattedData.find((d) => d.status === "completed")
+                    ?.count || 0) /
+                    data.totalQueued) *
+                  100,
+                label: `${data.formattedData.find((d) => d.status === "completed")?.count || 0} boats`,
+                fill: "var(--color-completed)",
               },
             ]}
             layout="vertical"
@@ -60,7 +104,7 @@ export default function HorizontalCardChart() {
           >
             <XAxis type="number" dataKey="value" hide />
             <YAxis
-              dataKey="activity"
+              dataKey="status"
               type="category"
               tickLine={false}
               tickMargin={4}
@@ -82,36 +126,31 @@ export default function HorizontalCardChart() {
       <CardFooter className="flex flex-row border-t p-4">
         <div className="flex w-full items-center gap-2">
           <div className="grid flex-1 auto-rows-min gap-0.5">
-            <div className="text-xs text-muted-foreground">Move</div>
+            <div className="text-xs text-muted-foreground">Total Boats</div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              562
-              <span className="text-sm font-normal text-muted-foreground">
-                kcal
-              </span>
+              {data.totalQueued}
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
           <div className="grid flex-1 auto-rows-min gap-0.5">
-            <div className="text-xs text-muted-foreground">Exercise</div>
+            <div className="text-xs text-muted-foreground">
+              Total Passengers
+            </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              73
-              <span className="text-sm font-normal text-muted-foreground">
-                min
-              </span>
+              {data.totalPassengers}
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
           <div className="grid flex-1 auto-rows-min gap-0.5">
-            <div className="text-xs text-muted-foreground">Stand</div>
+            <div className="text-xs text-muted-foreground">
+              Total Fare Earned
+            </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              14
-              <span className="text-sm font-normal text-muted-foreground">
-                hr
-              </span>
+              {data.totalFareEarned}
             </div>
           </div>
         </div>
       </CardFooter>
     </Card>
-  )
+  );
 }
