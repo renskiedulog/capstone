@@ -221,3 +221,17 @@ export const fetchBoatDetails = async (boatCode: string) => {
     console.error(error);
   }
 };
+
+export const getRecentBoats = async () => {
+  try {
+    const recentBoats = await Boat.find({ isDeleted: false })
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean();
+
+    return recentBoats;
+  } catch (error) {
+    console.error("Failed to fetch recent boats:", error);
+    return [];
+  }
+};

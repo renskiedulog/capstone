@@ -157,7 +157,7 @@ export default function HorizontalCardChart({
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex flex-row border-t p-4">
-        <div className="flex w-full items-center gap-2">
+        <div className="flex w-full items-center gap-2 w-max">
           <div className="grid flex-1 auto-rows-min gap-0.5">
             <div className="text-xs text-muted-foreground">Total Boats</div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
@@ -166,7 +166,7 @@ export default function HorizontalCardChart({
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
           <div className="grid flex-1 auto-rows-min gap-0.5">
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-muted-foreground whitespace-nowrap">
               Total Passengers
             </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
@@ -174,8 +174,8 @@ export default function HorizontalCardChart({
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
-          <div className="grid flex-1 auto-rows-min gap-0.5">
-            <div className="text-xs text-muted-foreground">
+          <div className="grid flex-1 auto-rows-min gap-0.5 w-full">
+            <div className="text-xs text-muted-foreground whitespace-nowrap">
               Total Fare Earned
             </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">

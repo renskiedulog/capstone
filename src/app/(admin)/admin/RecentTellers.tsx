@@ -34,7 +34,7 @@ function RecentTellers({ data }: { data: UserTypes[] }) {
   };
 
   return (
-    <Card>
+    <Card className="w-full lg:w-1/2">
       <CardHeader className="flex-row justify-between items-center">
         <div>
           <CardTitle>Recent Tellers</CardTitle>

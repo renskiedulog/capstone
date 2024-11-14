@@ -15,6 +15,8 @@ import { ActivityTypes } from "@/lib/types";
 import HorizontalCardChart, { QueueSummaryData } from "./HorizontalCardChart";
 import { getQueueSummary } from "@/lib/api/statistics";
 import LineChartCard from "./LineChartCard";
+import RecentBoats from "./RecentBoats";
+import { getRecentBoats } from "@/lib/api/boatActions";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -32,6 +34,7 @@ const page = async () => {
     boatCount,
     totalSails,
     queueSummary,
+    recentBoats,
   ] = await Promise.all([
     getTellerCount(),
     getRecentTellers(),
@@ -39,6 +42,7 @@ const page = async () => {
     getBoatCount(),
     getTotalSails(),
     getQueueSummary(),
+    getRecentBoats(),
   ]);
 
   const cards = [
@@ -72,14 +76,17 @@ const page = async () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[75%,25%] xl:grid-cols-[70%,30%] gap-2">
+    <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[75%,25%] gap-2">
       <div className="space-y-2">
         <StatCards data={cards} />
-        <div className="flex lg:flex-row flex-col gap-2">
+        <div className="flex lg:flex-row flex-col gap-2 mr-0 md:mr-2 xl:mr-0">
           <HorizontalCardChart initData={queueSummary as QueueSummaryData} />
           <LineChartCard />
         </div>
-        <RecentTellers data={recentTellers} />
+        <div className="flex lg:flex-row flex-col gap-2">
+          <RecentTellers data={recentTellers} />
+          <RecentBoats data={recentBoats} />
+        </div>
       </div>
       <div className="space-y-2">
         <Activity initData={activities as ActivityTypes[]} />
