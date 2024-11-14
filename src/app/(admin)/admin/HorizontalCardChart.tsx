@@ -98,7 +98,7 @@ export default function HorizontalCardChart({
                     data.totalQueued) *
                   100,
                 label: `${data.formattedData.find((d) => d.status === "in-queue")?.count || 0} boats`,
-                fill: `"var(--color-in-queue)"`,
+                fill: "var(--color-in-queue)",
               },
               {
                 status: "boarding",
