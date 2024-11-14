@@ -1,39 +1,64 @@
-"use client"
+"use client";
 
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
-
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
+import { useEffect, useState } from "react";
+import { getPassengerDensity } from "@/lib/api/statistics";
 
 export default function LineChartCard() {
+  const [densityData, setDensityData] = useState<
+    { date: string; count: number }[] | null
+  >(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getPassengerDensity();
+      setDensityData(response);
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(densityData);
+
+  const totalPassengers =
+    densityData?.reduce((total, day) => total + day.count, 0) || 0;
+  const averagePassengers = totalPassengers / 5 || 0;
   return (
-    <Card className="flex flex-col lg:max-w-md">
+    <Card className="flex flex-col w-full lg:w-1/2">
       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2 [&>div]:flex-1">
         <div>
-          <CardDescription>Resting HR</CardDescription>
+          <CardDescription className="flex flex-col">
+            <span className="text-[10px] font-bold">5 day span</span>
+            Total Passengers
+          </CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
-            62
+            {totalPassengers}
             <span className="text-sm font-normal tracking-normal text-muted-foreground">
-              bpm
+              passengers
             </span>
           </CardTitle>
         </div>
         <div>
-          <CardDescription>Variability</CardDescription>
+          <CardDescription className="flex flex-col">
+            <span className="text-[10px] font-bold">5 day span</span>
+            Average Passengers
+          </CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
-            35
+            {averagePassengers}
             <span className="text-sm font-normal tracking-normal text-muted-foreground">
-              ms
+              passengers
             </span>
           </CardTitle>
         </div>
@@ -41,12 +66,12 @@ export default function LineChartCard() {
       <CardContent className="flex flex-1 items-center">
         <ChartContainer
           config={{
-            resting: {
-              label: "Resting",
+            count: {
+              label: "count",
               color: "hsl(var(--chart-1))",
             },
           }}
-          className="w-full"
+          className="w-full h-[160px]"
         >
           <LineChart
             accessibilityLayer
@@ -55,36 +80,7 @@ export default function LineChartCard() {
               right: 14,
               top: 10,
             }}
-            data={[
-              {
-                date: "2024-01-01",
-                resting: 62,
-              },
-              {
-                date: "2024-01-02",
-                resting: 72,
-              },
-              {
-                date: "2024-01-03",
-                resting: 35,
-              },
-              {
-                date: "2024-01-04",
-                resting: 62,
-              },
-              {
-                date: "2024-01-05",
-                resting: 52,
-              },
-              {
-                date: "2024-01-06",
-                resting: 62,
-              },
-              {
-                date: "2024-01-07",
-                resting: 70,
-              },
-            ]}
+            data={densityData}
           >
             <CartesianGrid
               strokeDasharray="4 4"
@@ -101,19 +97,19 @@ export default function LineChartCard() {
               tickFormatter={(value) => {
                 return new Date(value).toLocaleDateString("en-US", {
                   weekday: "short",
-                })
+                });
               }}
             />
             <Line
-              dataKey="resting"
+              dataKey="count"
               type="natural"
-              fill="var(--color-resting)"
-              stroke="var(--color-resting)"
+              fill="var(--color-count)"
+              stroke="var(--color-count)"
               strokeWidth={2}
               dot={false}
               activeDot={{
-                fill: "var(--color-resting)",
-                stroke: "var(--color-resting)",
+                fill: "var(--color-count)",
+                stroke: "var(--color-count)",
                 r: 4,
               }}
             />
@@ -126,7 +122,7 @@ export default function LineChartCard() {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
-                    })
+                    });
                   }}
                 />
               }
@@ -136,5 +132,5 @@ export default function LineChartCard() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -61,6 +61,6 @@ const boatSchema = new Schema(
   { timestamps: true }
 );
 
-const Boat = models.Boat || mongoose.model("Boat", boatSchema);
+const Boat = models?.Boat || mongoose.model("Boat", boatSchema);
 
 export default Boat;

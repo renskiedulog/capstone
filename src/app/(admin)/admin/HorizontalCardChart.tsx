@@ -12,8 +12,11 @@ import {
 } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
 import { Separator } from "@/components/ui/separator";
+import React, { useEffect, useState } from "react";
+import socket from "@/socket";
+import { getQueueSummary } from "@/lib/api/statistics";
 
-type QueueSummaryData = {
+export type QueueSummaryData = {
   formattedData: {
     status: string;
     count: number;
@@ -26,12 +29,42 @@ type QueueSummaryData = {
 };
 
 export default function HorizontalCardChart({
-  data,
+  initData,
 }: {
-  data: QueueSummaryData;
+  initData: QueueSummaryData;
 }) {
+  const [data, setData] = useState(initData);
+
+  useEffect(() => {
+    const fetchInterval = setInterval(() => {
+      fetchData();
+    }, 10000);
+
+    socket.on("boardingRefresh", () => {
+      fetchData();
+    });
+    socket.on("queueRefresh", () => {
+      fetchData();
+    });
+    socket.on("sailingRefresh", () => {
+      fetchData();
+    });
+
+    return () => {
+      clearInterval(fetchInterval);
+      socket.off("boardingRefresh");
+      socket.off("queueRefresh");
+      socket.off("sailingRefresh");
+    };
+  }, []);
+
+  const fetchData = async () => {
+    const req = await getQueueSummary();
+    setData(req as QueueSummaryData);
+  };
+
   return (
-    <Card className="w-1/2">
+    <Card className="w-full lg:w-1/2">
       <CardHeader className="pb-2">
         <CardTitle>Queue Summary</CardTitle>
         <CardDescription>
@@ -65,7 +98,7 @@ export default function HorizontalCardChart({
                     data.totalQueued) *
                   100,
                 label: `${data.formattedData.find((d) => d.status === "in-queue")?.count || 0} boats`,
-                fill: "var(--color-in-queue)",
+                fill: `"var(--color-in-queue)"`,
               },
               {
                 status: "boarding",

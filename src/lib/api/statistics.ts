@@ -1,7 +1,9 @@
+"use server";
 import Boat from "@/models/Boats";
 import Queue from "@/models/Queue";
 import Passenger from "@/models/Passenger";
 import { connectMongoDB } from "../db";
+import { addHours, startOfToday } from "date-fns";
 
 export const getTotalBoats = async () => {
   return await Boat.countDocuments();
@@ -88,7 +90,7 @@ export const preparePassengerGenderDataForChart = async () => {
   }));
 };
 
-export const getBoatsByStatusInRange = async (range) => {
+export const getBoatsByStatusInRange = async (range: any) => {
   const { start, end } = range;
   const statusCounts = await Boat.aggregate([
     {
@@ -105,7 +107,7 @@ export const getBoatsByStatusInRange = async (range) => {
   }, {});
 };
 
-export const getQueueStatusInRange = async (range) => {
+export const getQueueStatusInRange = async (range: any) => {
   const { start, end } = range;
   const statusCounts = await Queue.aggregate([
     {
@@ -122,7 +124,7 @@ export const getQueueStatusInRange = async (range) => {
   }, {});
 };
 
-export const getAverageWaitTimeInRange = async (range) => {
+export const getAverageWaitTimeInRange = async (range: any) => {
   const { start, end } = range;
   const queues = await Queue.find({
     completedAt: { $gte: start, $lte: end },
@@ -136,14 +138,14 @@ export const getAverageWaitTimeInRange = async (range) => {
   return queues.length ? totalWaitTime / queues.length : 0;
 };
 
-export const getTotalPassengersInRange = async (range) => {
+export const getTotalPassengersInRange = async (range: any) => {
   const { start, end } = range;
   return await Passenger.countDocuments({
     createdAt: { $gte: start, $lte: end },
   });
 };
 
-export const getPassengerCountByGenderInRange = async (range) => {
+export const getPassengerCountByGenderInRange = async (range: any) => {
   const { start, end } = range;
   const genderCounts = await Passenger.aggregate([
     {
@@ -165,11 +167,22 @@ export const getQueueSummary = async () => {
     await connectMongoDB();
 
     const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0); 
+    startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999); 
+    endOfDay.setHours(23, 59, 59, 999);
 
     const queueSummary = await Queue.aggregate([
+      {
+        $match: {
+          $or: [
+            { status: { $ne: "completed" } },
+            {
+              status: "completed",
+              updatedAt: { $gte: startOfDay, $lte: endOfDay },
+            },
+          ],
+        },
+      },
       {
         $group: {
           _id: "$status",
@@ -201,7 +214,10 @@ export const getQueueSummary = async () => {
       },
     ]);
 
-    const totalFareEarned = totalFareEarnedData.length > 0 ? totalFareEarnedData[0].totalFareEarned : 0;
+    const totalFareEarned =
+      totalFareEarnedData.length > 0
+        ? totalFareEarnedData[0].totalFareEarned
+        : 0;
 
     const formattedData = queueSummary.map((item) => ({
       status: item.status,
@@ -209,8 +225,14 @@ export const getQueueSummary = async () => {
       totalPassengers: item.totalPassengers || 0,
     }));
 
-    const totalQueued = formattedData.reduce((sum, item) => sum + item.count, 0);
-    const totalPassengers = formattedData.reduce((sum, item) => sum + item.totalPassengers, 0);
+    const totalQueued = formattedData.reduce(
+      (sum, item) => sum + item.count,
+      0
+    );
+    const totalPassengers = formattedData.reduce(
+      (sum, item) => sum + item.totalPassengers,
+      0
+    );
 
     return {
       formattedData,
@@ -223,3 +245,52 @@ export const getQueueSummary = async () => {
     throw new Error("Failed to fetch queue summary data");
   }
 };
+
+export async function getPassengerDensity() {
+  const endDate = new Date();
+  endDate.setUTCHours(23, 59, 59, 999);
+
+  const dates = [];
+  for (let i = 0; i < 5; i++) {
+    const date = new Date(endDate);
+    date.setDate(endDate.getDate() - i);
+    dates.push(date.toISOString().split("T")[0]);
+  }
+
+  const data = await Passenger.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: new Date(dates[4]),
+          $lte: endDate,
+        },
+      },
+    },
+    {
+      $project: {
+        date: {
+          $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$date",
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  const formattedData = dates.reverse().map((date) => {
+    const found = data.find((item) => item._id === date);
+    return {
+      date,
+      count: found ? found.count : 0,
+    };
+  });
+
+  return formattedData;
+}
