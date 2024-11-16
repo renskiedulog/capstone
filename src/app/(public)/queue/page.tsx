@@ -15,9 +15,9 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
 
   const [queue, boarding, sailing] = await Promise.all([
-    await fetchQueue(),
-    await fetchBoarding(),
-    await fetchSailing(),
+    fetchQueue(),
+    fetchBoarding(),
+    fetchSailing(),
   ]);
 
   return (

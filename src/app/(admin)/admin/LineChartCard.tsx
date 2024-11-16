@@ -16,21 +16,10 @@ import {
 import { useEffect, useState } from "react";
 import { getPassengerDensity } from "@/lib/api/statistics";
 
-export default function LineChartCard() {
+export default function LineChartCard({ initData }) {
   const [densityData, setDensityData] = useState<
     { date: string; count: number }[] | null
-  >(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await getPassengerDensity();
-      setDensityData(response);
-    };
-
-    fetchData();
-  }, []);
-
-  console.log(densityData);
+  >(initData);
 
   const totalPassengers =
     densityData?.reduce((total, day) => total + day.count, 0) || 0;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar, Line, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -14,13 +14,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import {
-  CalendarIcon,
-  Ship,
-  Users,
-  DollarSign,
-  Clock,
-} from "lucide-react";
+import { CalendarIcon, Ship, Users, DollarSign, Clock } from "lucide-react";
 
 import {
   Card,
@@ -37,6 +31,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  getPassengerCountWithPercentage,
+  getSailsCountWithPercentage,
+} from "@/lib/api/statistics";
 
 ChartJS.register(
   CategoryScale,
@@ -51,7 +49,29 @@ ChartJS.register(
 );
 
 export default function Statistics() {
-  const [dateRange, setDateRange] = useState("This Month");
+  const [dateRange, setDateRange] = useState("today");
+  const [statistics, setStatistics] = useState({
+    sails: { currentCount: 0, percentageDifference: 0 },
+    passengers: { currentCount: 0, percentageDifference: 0 },
+  });
+
+  useEffect(() => {
+    fetchData();
+  }, [dateRange]);
+
+  const fetchData = async () => {
+    try {
+      const [sails, passengers] = await Promise.all([
+        getSailsCountWithPercentage(dateRange),
+        getPassengerCountWithPercentage(dateRange),
+      ]);
+      setStatistics({ sails, passengers });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(statistics);
 
   // Mock data for charts
   const sailsData = {
@@ -91,6 +111,19 @@ export default function Statistics() {
     ],
   };
 
+  const getPercentageColor = (percentage: number) => {
+    if (percentage > 0) return "text-green-500";
+    if (percentage < 0) return "text-red-500";
+    return "text-yellow-500";
+  };
+
+  const rangeMapping: { [key: string]: string } = {
+    today: "yesterday",
+    "this-week": "last week",
+    "this-month": "last month",
+    "this-year": "last year",
+  };
+
   return (
     <div className="mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
@@ -102,10 +135,10 @@ export default function Statistics() {
               <SelectValue placeholder="Select date range" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Today">Today</SelectItem>
-              <SelectItem value="This Week">This Week</SelectItem>
-              <SelectItem value="This Month">This Month</SelectItem>
-              <SelectItem value="This Year">This Year</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="this-week">This Week</SelectItem>
+              <SelectItem value="this-month">This Month</SelectItem>
+              <SelectItem value="this-year">This Year</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -118,23 +151,35 @@ export default function Statistics() {
             <Ship className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+            <div className="text-2xl font-bold">
+              {statistics.sails.currentCount.toLocaleString()}
+            </div>
+            <p
+              className={`text-xs ${getPercentageColor(statistics.sails.percentageDifference)}`}
+            >
+              {(statistics.sails.percentageDifference >= 0 ? "+" : "") +
+                statistics.sails.percentageDifference.toFixed(2)}
+              % from {rangeMapping[dateRange] || ""}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Customers
+              Total Passengers
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Ship className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3,456</div>
-            <p className="text-xs text-muted-foreground">
-              +10.5% from last month
+            <div className="text-2xl font-bold">
+              {statistics.passengers.currentCount.toLocaleString()}
+            </div>
+            <p
+              className={`text-xs ${getPercentageColor(statistics.passengers.percentageDifference)}`}
+            >
+              {(statistics.passengers.percentageDifference >= 0 ? "+" : "") +
+                statistics.passengers.percentageDifference.toFixed(2)}
+              % from {rangeMapping[dateRange] || ""}
             </p>
           </CardContent>
         </Card>

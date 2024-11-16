@@ -13,7 +13,7 @@ import {
 import Activity from "../../../components/utils/ActivityTracker";
 import { ActivityTypes } from "@/lib/types";
 import HorizontalCardChart, { QueueSummaryData } from "./HorizontalCardChart";
-import { getQueueSummary } from "@/lib/api/statistics";
+import { getPassengerDensity, getQueueSummary } from "@/lib/api/statistics";
 import LineChartCard from "./LineChartCard";
 import RecentBoats from "./RecentBoats";
 import { getRecentBoats } from "@/lib/api/boatActions";
@@ -35,6 +35,7 @@ const page = async () => {
     totalSails,
     queueSummary,
     recentBoats,
+    passengerDensity,
   ] = await Promise.all([
     getTellerCount(),
     getRecentTellers(),
@@ -43,6 +44,7 @@ const page = async () => {
     getTotalSails(),
     getQueueSummary(),
     getRecentBoats(),
+    getPassengerDensity(),
   ]);
 
   const cards = [
@@ -70,18 +72,18 @@ const page = async () => {
       stats: totalSails?.totalCompletedCount,
       info:
         totalSails?.completedTodayCount > 0
-          ? `${totalSails?.completedTodayCount} completed sail/s today.`
+          ? `${totalSails?.completedTodayCount} completed sail${totalSails?.completedTodayCount > 1 ? "s" : ""} today.`
           : "No sails today yet.",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[75%,25%] gap-2">
+    <div className="grid grid-cols-1 lg:grid-cols-[70%,30%] xl:grid-cols-[70%,30%] gap-2">
       <div className="space-y-2">
         <StatCards data={cards} />
         <div className="flex lg:flex-row flex-col gap-2 mr-0 md:mr-2 xl:mr-0">
           <HorizontalCardChart initData={queueSummary as QueueSummaryData} />
-          <LineChartCard />
+          <LineChartCard initData={passengerDensity} />
         </div>
         <div className="flex lg:flex-row flex-col gap-2">
           <RecentTellers data={recentTellers} />

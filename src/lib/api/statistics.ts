@@ -3,163 +3,10 @@ import Boat from "@/models/Boats";
 import Queue from "@/models/Queue";
 import Passenger from "@/models/Passenger";
 import { connectMongoDB } from "../db";
-import { addHours, startOfToday } from "date-fns";
-
-export const getTotalBoats = async () => {
-  return await Boat.countDocuments();
-};
-
-export const getBoatsByStatus = async () => {
-  const statusCounts = await Boat.aggregate([
-    { $group: { _id: "$checkingStatus", count: { $sum: 1 } } },
-  ]);
-  return statusCounts.reduce((acc, status) => {
-    acc[status._id] = status.count;
-    return acc;
-  }, {});
-};
-
-export const getQueuesByStatus = async () => {
-  const statusCounts = await Queue.aggregate([
-    { $group: { _id: "$status", count: { $sum: 1 } } },
-  ]);
-  return statusCounts.reduce((acc, status) => {
-    acc[status._id] = status.count;
-    return acc;
-  }, {});
-};
-
-export const getAveragePassengersPerQueue = async () => {
-  const queues = await Queue.aggregate([
-    { $group: { _id: null, avgPassengers: { $avg: "$passengerCount" } } },
-  ]);
-  return queues[0]?.avgPassengers || 0;
-};
-
-export const getAverageWaitTime = async () => {
-  const queues = await Queue.find({ status: "completed" });
-  const totalWaitTime = queues.reduce((acc, queue) => {
-    const waitTime = (queue.completedAt - queue.queuedAt) / (1000 * 60);
-    return acc + waitTime;
-  }, 0);
-  return queues.length ? totalWaitTime / queues.length : 0;
-};
+import { getDateRange, getPreviousRange } from "../utils";
 
 export const getTotalPassengers = async () => {
   return await Passenger.countDocuments();
-};
-
-export const getPassengerCountByGender = async () => {
-  const genderCounts = await Passenger.aggregate([
-    { $group: { _id: "$gender", count: { $sum: 1 } } },
-  ]);
-  return genderCounts.reduce((acc, gender) => {
-    acc[gender._id] = gender.count;
-    return acc;
-  }, {});
-};
-
-export const getAveragePayment = async () => {
-  const payments = await Passenger.aggregate([
-    { $group: { _id: null, avgPayment: { $avg: "$amountPaid" } } },
-  ]);
-  return payments[0]?.avgPayment || 0;
-};
-
-export const prepareBoatStatusDataForChart = async () => {
-  const boatsByStatus = await getBoatsByStatus();
-  return Object.keys(boatsByStatus).map((status) => ({
-    name: status,
-    value: boatsByStatus[status],
-  }));
-};
-
-export const prepareQueueStatusDataForChart = async () => {
-  const queuesByStatus = await getQueuesByStatus();
-  return Object.keys(queuesByStatus).map((status) => ({
-    name: status,
-    value: queuesByStatus[status],
-  }));
-};
-
-export const preparePassengerGenderDataForChart = async () => {
-  const passengersByGender = await getPassengerCountByGender();
-  return Object.keys(passengersByGender).map((gender) => ({
-    name: gender,
-    value: passengersByGender[gender],
-  }));
-};
-
-export const getBoatsByStatusInRange = async (range: any) => {
-  const { start, end } = range;
-  const statusCounts = await Boat.aggregate([
-    {
-      $match: {
-        createdAt: { $gte: start, $lte: end },
-      },
-    },
-    { $group: { _id: "$checkingStatus", count: { $sum: 1 } } },
-  ]);
-
-  return statusCounts.reduce((acc, status) => {
-    acc[status._id] = status.count;
-    return acc;
-  }, {});
-};
-
-export const getQueueStatusInRange = async (range: any) => {
-  const { start, end } = range;
-  const statusCounts = await Queue.aggregate([
-    {
-      $match: {
-        createdAt: { $gte: start, $lte: end },
-      },
-    },
-    { $group: { _id: "$status", count: { $sum: 1 } } },
-  ]);
-
-  return statusCounts.reduce((acc, status) => {
-    acc[status._id] = status.count;
-    return acc;
-  }, {});
-};
-
-export const getAverageWaitTimeInRange = async (range: any) => {
-  const { start, end } = range;
-  const queues = await Queue.find({
-    completedAt: { $gte: start, $lte: end },
-  });
-
-  const totalWaitTime = queues.reduce((acc, queue) => {
-    const waitTime = (queue.completedAt - queue.queuedAt) / (1000 * 60);
-    return acc + waitTime;
-  }, 0);
-
-  return queues.length ? totalWaitTime / queues.length : 0;
-};
-
-export const getTotalPassengersInRange = async (range: any) => {
-  const { start, end } = range;
-  return await Passenger.countDocuments({
-    createdAt: { $gte: start, $lte: end },
-  });
-};
-
-export const getPassengerCountByGenderInRange = async (range: any) => {
-  const { start, end } = range;
-  const genderCounts = await Passenger.aggregate([
-    {
-      $match: {
-        createdAt: { $gte: start, $lte: end },
-      },
-    },
-    { $group: { _id: "$gender", count: { $sum: 1 } } },
-  ]);
-
-  return genderCounts.reduce((acc, gender) => {
-    acc[gender._id] = gender.count;
-    return acc;
-  }, {});
 };
 
 export const getQueueSummary = async () => {
@@ -294,3 +141,73 @@ export async function getPassengerDensity() {
 
   return formattedData;
 }
+
+export const getSailsCountWithPercentage = async (range: string) => {
+  try {
+    const { start, end } = getDateRange(range);
+    const { start: prevStart, end: prevEnd } = getPreviousRange(range);
+
+    const currentCount = await Queue.countDocuments({
+      status: "completed",
+      completedAt: { $gte: start, $lte: end },
+    });
+
+    const previousCount = await Queue.countDocuments({
+      status: "completed",
+      completedAt: { $gte: prevStart, $lte: prevEnd },
+    });
+
+    const percentageDifference =
+      previousCount === 0
+        ? currentCount > 0
+          ? 100
+          : 0
+        : ((currentCount - previousCount) / previousCount) * 100;
+
+    return {
+      currentCount,
+      previousCount,
+      percentageDifference,
+    };
+  } catch (error) {
+    console.error(
+      "Error fetching sails count and percentage difference:",
+      error
+    );
+    throw new Error("Unable to fetch sails count and percentage difference");
+  }
+};
+
+export const getPassengerCountWithPercentage = async (range: string) => {
+  try {
+    const { start, end } = getDateRange(range);
+    const { start: prevStart, end: prevEnd } = getPreviousRange(range);
+
+    const currentCount = await Passenger.countDocuments({
+      createdAt: { $gte: start, $lte: end },
+    });
+
+    const previousCount = await Passenger.countDocuments({
+      createdAt: { $gte: prevStart, $lte: prevEnd },
+    });
+
+    const percentageDifference =
+      previousCount === 0
+        ? currentCount > 0
+          ? 100
+          : 0
+        : ((currentCount - previousCount) / previousCount) * 100;
+
+    return {
+      currentCount,
+      previousCount,
+      percentageDifference,
+    };
+  } catch (error) {
+    console.error(
+      "Error fetching sails count and percentage difference:",
+      error
+    );
+    throw new Error("Unable to fetch sails count and percentage difference");
+  }
+};

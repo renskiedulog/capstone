@@ -97,6 +97,20 @@ export const getTodayRange = () => {
   return { start, end };
 };
 
+export const getWeekRange = () => {
+  const start = new Date();
+  const day = start.getDay(); 
+  const diffToMonday = day === 0 ? -6 : 1 - day; 
+  start.setDate(start.getDate() + diffToMonday);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+
+  return { start, end };
+};
+
 export const getMonthRange = () => {
   const start = new Date();
   start.setDate(1);
@@ -112,4 +126,48 @@ export const getYearRange = () => {
   const start = new Date(new Date().getFullYear(), 0, 1);
   const end = new Date(new Date().getFullYear(), 11, 31, 23, 59, 59, 999);
   return { start, end };
+};
+
+export const getDateRange = (range: string) => {
+  switch (range) {
+    case "today":
+      return getTodayRange();
+    case "this-week":
+      return getWeekRange();
+    case "this-month":
+      return getMonthRange();
+    case "this-year":
+      return getYearRange();
+    default:
+      throw new Error("Invalid range. Use 'today', 'this-week', 'this-month', or 'this-year'.");
+  }
+};
+
+export const getPreviousRange = (range: string) => {
+  const { start, end } = getDateRange(range);
+  const previousStart = new Date(start);
+  const previousEnd = new Date(end);
+
+  switch (range) {
+    case "today":
+      previousStart.setDate(previousStart.getDate() - 1);
+      previousEnd.setDate(previousEnd.getDate() - 1);
+      break;
+    case "this-week":
+      previousStart.setDate(previousStart.getDate() - 7);
+      previousEnd.setDate(previousEnd.getDate() - 7);
+      break;
+    case "this-month":
+      previousStart.setMonth(previousStart.getMonth() - 1);
+      previousEnd.setMonth(previousEnd.getMonth() - 1);
+      break;
+    case "this-year":
+      previousStart.setFullYear(previousStart.getFullYear() - 1);
+      previousEnd.setFullYear(previousEnd.getFullYear() - 1);
+      break;
+    default:
+      throw new Error("Invalid range. Cannot calculate previous range.");
+  }
+
+  return { start: previousStart, end: previousEnd };
 };
