@@ -52,7 +52,6 @@ import { format } from "date-fns";
 import Alert from "@/components/utils/Alert";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import {
   deleteSailHistories,
   fetchRecentSails,

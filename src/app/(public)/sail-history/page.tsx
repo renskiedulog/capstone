@@ -1,7 +1,7 @@
 import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import QueueHistoryTable from "./QueueHistoryTable";
-import { fetchRecentSails, fetchSailDetails } from "@/lib/api/queue";
+import { fetchRecentSails } from "@/lib/api/queue";
 import { Queue } from "@/lib/types";
 
 const page = async () => {

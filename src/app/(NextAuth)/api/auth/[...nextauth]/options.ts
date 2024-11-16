@@ -6,7 +6,6 @@ import { RequestInternal, User as UserTypes } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { connectMongoDB } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import socket from "@/socket";
 
 interface CustomUser extends UserTypes {
   isAdmin?: boolean;

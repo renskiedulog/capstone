@@ -15,16 +15,7 @@ import { checkBoatCapacity } from "@/lib/constants";
 import { Boat } from "@/lib/types";
 import { formatDateToReadable } from "@/lib/utils";
 import socket from "@/socket";
-import {
-  Anchor,
-  Badge,
-  CheckCircle,
-  Contact,
-  Contact2,
-  Info,
-  Ship,
-  User,
-} from "lucide-react";
+import { CheckCircle, Contact2, Info } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
 

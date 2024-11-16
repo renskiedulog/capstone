@@ -2,7 +2,6 @@ import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import PassengerTable from "./PassengerTable";
 import { fetchAllPassengers } from "@/lib/api/passenger";
-import { Passenger } from "@/lib/types";
 
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session

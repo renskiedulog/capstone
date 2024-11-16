@@ -6,13 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getRecentBoats } from "@/lib/api/common";
 import Avatar from "@/components/utils/Avatar";
 import { Boat } from "@/lib/types";
 import { formatDateToReadable } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import socket from "@/socket";
 import Link from "next/link";
+import { getRecentBoats } from "@/lib/api/boatActions";
 
 function RecentBoats({ data }: { data: Boat[] }) {
   const [recentBoats, setRecentBoats] = useState(data);

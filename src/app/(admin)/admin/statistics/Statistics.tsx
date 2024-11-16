@@ -19,7 +19,6 @@ import {
   Ship,
   Users,
   DollarSign,
-  TrendingUp,
   Clock,
 } from "lucide-react";
 

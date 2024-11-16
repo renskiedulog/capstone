@@ -34,7 +34,6 @@ import {
 import { Passenger } from "@/lib/types";
 import socket from "@/socket";
 import { TrashIcon } from "lucide-react";
-import Link from "next/link";
 import { useSession } from "next-auth/react";
 import Alert from "@/components/utils/Alert";
 import { Checkbox } from "@/components/ui/checkbox";

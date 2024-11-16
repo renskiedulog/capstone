@@ -55,7 +55,7 @@ import { PassengerSheet } from "./PassengerSheet";
 import { useToast } from "@/components/ui/use-toast";
 import Alert from "@/components/utils/Alert";
 import socket from "@/socket";
-import { cancelSail, changeToSailing, completeSail } from "@/lib/api/queue";
+import { changeToSailing } from "@/lib/api/queue";
 import { useSession } from "next-auth/react";
 import { addNewActivity } from "@/lib/api/activity";
 

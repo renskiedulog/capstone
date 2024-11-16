@@ -1,7 +1,6 @@
 import { checkSession } from "@/components/utils/Authenticator";
 import BoatTable from "./BoatTable";
 import { redirect } from "next/navigation";
-import { Boat } from "@/lib/types";
 import { fetchBoats } from "@/lib/api/boatActions";
 
 export const metadata = {

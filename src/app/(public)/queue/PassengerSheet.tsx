@@ -18,8 +18,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { ActivityTypes, Passenger } from "@/lib/types";
-import Link from "next/link";
+import {  Passenger } from "@/lib/types";
 import { formatDateToReadable } from "@/lib/utils";
 
 interface SheetTypes {

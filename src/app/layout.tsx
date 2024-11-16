@@ -6,7 +6,6 @@ import NavigationBar from "@/components/utils/NavigationBar";
 import TopNav from "@/components/utils/TopNav";
 import SessionProvider from "@/components/utils/SessionProvider";
 import { options } from "./(NextAuth)/api/auth/[...nextauth]/options";
-import { redirect } from "next/navigation";
 import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -30,13 +29,12 @@ export default async function RootLayout({
   try {
     session = await getServerSession(options);
   } catch (error) {
-    //! If Anything goes wrong, go back to login - hasSession ? fetch Session redir to dashboard : Login Page;
     console.log(error);
   }
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} max-w-[2000px]`}>
         <SessionProvider session={session}>
           <TooltipProvider>
             <NavigationBar />
