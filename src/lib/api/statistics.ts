@@ -211,3 +211,136 @@ export const getPassengerCountWithPercentage = async (range: string) => {
     throw new Error("Unable to fetch sails count and percentage difference");
   }
 };
+
+export const getTotalFareEarnedByRange = async (range: string) => {
+  try {
+    const { start, end } = getDateRange(range);
+    const { start: prevStart, end: prevEnd } = getPreviousRange(range);
+
+    const currentTotalFare = await Passenger.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amountPaid" },
+        },
+      },
+    ]);
+
+    const previousTotalFare = await Passenger.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: prevStart, $lte: prevEnd },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$amountPaid" },
+        },
+      },
+    ]);
+
+    const currentTotal = currentTotalFare[0]?.total || 0;
+    const previousTotal = previousTotalFare[0]?.total || 0;
+
+    const percentageDifference =
+      previousTotal === 0
+        ? currentTotal > 0
+          ? 100
+          : 0
+        : ((currentTotal - previousTotal) / previousTotal) * 100;
+
+    return {
+      currentTotal,
+      previousTotal,
+      percentageDifference,
+    };
+  } catch (error) {
+    console.error(
+      "Error fetching total fare and percentage difference:",
+      error
+    );
+    throw new Error("Unable to fetch total fare and percentage difference");
+  }
+};
+
+export const getAverageQueueTimeByRange = async (range: string) => {
+  try {
+    const { start, end } = getDateRange(range);
+    const { start: prevStart, end: prevEnd } = getPreviousRange(range);
+
+    const calculateAverageTime = async (startDate: Date, endDate: Date) => {
+      const result = await Queue.aggregate([
+        {
+          $match: {
+            completedAt: { $exists: true },
+            queuedAt: { $gte: startDate, $lte: endDate },
+          },
+        },
+        {
+          $project: {
+            timeInQueue: {
+              $subtract: ["$completedAt", "$queuedAt"],
+            },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            averageTime: { $avg: "$timeInQueue" },
+          },
+        },
+      ]);
+
+      return result[0]?.averageTime || 0;
+    };
+
+    const currentAverageTimeInMillis = await calculateAverageTime(start, end);
+    const previousAverageTimeInMillis = await calculateAverageTime(
+      prevStart,
+      prevEnd
+    );
+
+    const convertToHoursAndMinutes = (timeInMillis: number) => {
+      const totalMinutes = timeInMillis / (1000 * 60);
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = Math.round(totalMinutes % 60);
+      return { hours, minutes };
+    };
+
+    const currentTime = convertToHoursAndMinutes(currentAverageTimeInMillis);
+    const previousTime = convertToHoursAndMinutes(previousAverageTimeInMillis);
+
+    const percentageDifference =
+      previousAverageTimeInMillis === 0
+        ? currentAverageTimeInMillis > 0
+          ? 100
+          : 0
+        : ((currentAverageTimeInMillis - previousAverageTimeInMillis) /
+            previousAverageTimeInMillis) *
+          100;
+
+    return {
+      current: {
+        hours: currentTime.hours,
+        minutes: currentTime.minutes,
+      },
+      previous: {
+        hours: previousTime.hours,
+        minutes: previousTime.minutes,
+      },
+      percentageDifference,
+    };
+  } catch (error) {
+    console.error(
+      "Error calculating average queue time with comparison:",
+      error
+    );
+    throw new Error("Unable to calculate average queue time with comparison");
+  }
+};

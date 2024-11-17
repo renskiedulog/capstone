@@ -117,3 +117,28 @@ export interface Passenger {
   addedBy: string;
   createdAt?: Date | string;
 }
+
+export interface StatisticsType {
+  sails: {
+    currentCount: number;
+    previousCount: number;
+    percentageDifference: number;
+  };
+  passengers: {
+    currentCount: number;
+    previousCount: number;
+    percentageDifference: number;
+  };
+  fare: {
+    currentTotal: number;
+    percentageDifference: number;
+    previousTotal: number;
+  };
+  queue: {
+    current: {
+      hours: number;
+      minutes: number;
+    };
+    percentageDifference: number;
+  };
+}
