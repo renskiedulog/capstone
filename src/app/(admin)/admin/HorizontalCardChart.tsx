@@ -30,8 +30,10 @@ export type QueueSummaryData = {
 
 export default function HorizontalCardChart({
   initData,
+  className
 }: {
   initData: QueueSummaryData;
+  className?: string;
 }) {
   const [data, setData] = useState(initData);
 
@@ -64,7 +66,7 @@ export default function HorizontalCardChart({
   };
 
   return (
-    <Card className="w-full lg:w-1/2">
+    <Card className={`w-full lg:w-1/2 ${className}`}>
       <CardHeader className="pb-2">
         <CardTitle>Queue Summary</CardTitle>
         <CardDescription>

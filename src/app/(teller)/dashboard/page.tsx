@@ -1,7 +1,16 @@
 import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import StatCards from "./StatCards";
-import { DollarSign, Sailboat } from "lucide-react";
+import {
+  DollarSign,
+  History,
+  ListOrdered,
+  ListRestart,
+  Plus,
+  Sailboat,
+  Ship,
+  ShipIcon,
+} from "lucide-react";
 import QueuedTable from "./QueuedTable";
 import LineChart from "./LineChart";
 import {
@@ -14,6 +23,10 @@ import {
 import ActivityTracker from "@/components/utils/ActivityTracker";
 import { getBoatCount, getRecentActivities } from "@/lib/api/common";
 import { ActivityTypes } from "@/lib/types";
+import HorizontalCardChart, { QueueSummaryData } from "@/app/(admin)/admin/HorizontalCardChart";
+import { getQueueSummary } from "@/lib/api/statistics";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "Dashboard",
@@ -24,7 +37,11 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
-  const boatCount = await getBoatCount();
+  const [boatCount, recentActivities, queueSummary] = await Promise.all([
+    getBoatCount(),
+    getRecentActivities(),
+    getQueueSummary(),
+  ]);
 
   const cards = [
     {
@@ -37,27 +54,76 @@ const page = async () => {
           : "No new boats registered this month.",
     },
     {
-      cardTitle: "Total",
-      icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      stats: "123,123,123.12",
-      info: "+40% since last month.",
-    },
-    {
-      cardTitle: "Total",
-      icon: <DollarSign className="h-4 w-4 text-muted-foreground" />,
-      stats: "123,123,123.12",
-      info: "+40% since last month.",
+      cardTitle: "Total Registered Boat",
+      icon: <Sailboat className="h-4 w-4 text-muted-foreground" />,
+      stats: boatCount?.totalBoatCount,
+      info:
+        boatCount?.currentMonthBoatsCount > 0
+          ? `${boatCount?.currentMonthBoatsCount} new boat${boatCount?.currentMonthBoatsCount > 1 ? "s" : ""} this month.`
+          : "No new boats registered this month.",
     },
   ];
-
-  const recentActivities = await getRecentActivities();
 
   return (
     session && (
       <div className="grid grid-cols-1 xl:grid-cols-[70%,30%] gap-2">
         <div className="flex flex-col gap-2 z-10">
-          <StatCards data={cards} />
-          <Card>
+          <div className="flex flex-col md:flex-row w-full gap-2">
+            <StatCards data={cards} />
+            <Card className="p-2 flex-col flex gap-2 min-h-[130px] md:min-h-0">
+              <Button
+                variant="outline"
+                className="w-full h-1/2 p-0 overflow-hidden"
+              >
+                <Link
+                  href="/boats"
+                  className="w-full h-full flex items-center justify-center gap-1 hover:underline hover:text-white hover:bg-blue-400"
+                >
+                  <ListOrdered size={18} className="mb-0.5" />
+                  Queue
+                </Link>
+              </Button>
+              <div className="flex items-center h-1/2 gap-2">
+                <Button
+                  variant="outline"
+                  className="w-full h-full p-0 overflow-hidden min-w-[80px] text-xs"
+                >
+                  <Link
+                    href="/sail-history"
+                    className="w-full h-full flex items-center justify-center gap-1 hover:text-white hover:bg-blue-400"
+                  >
+                    <ListRestart size={15} className="mb-1" />
+                    Sails
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full h-full p-0 overflow-hidden min-w-[80px] text-xs"
+                >
+                  <Link
+                    href="/boats"
+                    className="w-full h-full flex items-center justify-center gap-1 hover:text-white hover:bg-blue-400"
+                  >
+                    <ShipIcon size={15} className="mb-1" />
+                    Boats
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full h-full p-0 overflow-hidden min-w-[80px] text-xs"
+                >
+                  <Link
+                    href="/activity"
+                    className="w-full h-full flex items-center justify-center gap-1 hover:text-white hover:bg-blue-400"
+                  >
+                    <History size={15} className="mb-1" />
+                    Activity
+                  </Link>
+                </Button>
+              </div>
+            </Card>
+          </div>
+          <Card className="w-full">
             <CardHeader>
               <CardTitle>Total Users</CardTitle>
               <CardDescription>
@@ -65,43 +131,14 @@ const page = async () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="px-2">
-              <LineChart className="aspect-[1/0.4]" />
+              <LineChart />
             </CardContent>
           </Card>
           <QueuedTable />
         </div>
         <div className="sm:space-y-0 space-y-2 lg:space-y-2 sm:space-x-2 lg:space-x-0 relative sm:flex lg:block items-start">
+          <HorizontalCardChart initData={queueSummary as QueueSummaryData} className="lg:w-full" />
           <ActivityTracker initData={recentActivities as ActivityTypes[]} />
-          <Card className="flex-1 w-full lg:sticky lg:top-1 mt-0">
-            <CardHeader>
-              <CardTitle>Current Queue</CardTitle>
-              <CardDescription className="text-lg">SS Majestic</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Concurrent Time:</div>
-                <div>45 minutes</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Passengers:</div>
-                <div>342 / 500</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Departure:</div>
-                <div>4:30 PM</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Destination:</div>
-                <div>New York City</div>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="text-muted-foreground">Status:</div>
-                <div className="bg-green-500 px-2 py-1 text-white rounded-md text-foreground">
-                  Boarding
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     )

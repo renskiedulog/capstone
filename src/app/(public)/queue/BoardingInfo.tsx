@@ -445,6 +445,16 @@ export default function BoardingInfo({
                         ))}
                       </TableBody>
                     </Table>
+                    {completed && passengers.length > 0 && (
+                      <div className="text-right w-full">
+                        <span className="font-bold">Total: </span>₱
+                        {passengers.reduce(
+                          (total, passenger: any) =>
+                            total + passenger.amountPaid,
+                          0
+                        )}
+                      </div>
+                    )}
                     {passengers?.length === 0 && (
                       <div className="w-full text-center pt-4">
                         No Passengers Boarded Yet.
