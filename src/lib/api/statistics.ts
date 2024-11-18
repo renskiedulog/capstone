@@ -344,3 +344,42 @@ export const getAverageQueueTimeByRange = async (range: string) => {
     throw new Error("Unable to calculate average queue time with comparison");
   }
 };
+
+export const getBoatSailCountsByRange = async (range: string) => {
+  try {
+    const { start, end } = getDateRange(range);
+
+    const sailCounts = await Queue.aggregate([
+      {
+        $match: {
+          completedAt: { $gte: start, $lte: end },
+        },
+      },
+      {
+        $group: {
+          _id: "$boatId",
+          sailCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const boatIds = sailCounts.map((item) => item._id);
+    const boats = await Boat.find({ _id: { $in: boatIds } });
+
+    const result = sailCounts.map((item) => {
+      const boat = boats.find(
+        (boat) => boat._id.toString() === item._id.toString()
+      );
+      return {
+        boatId: item._id,
+        boatName: boat ? boat.boatName : "Unknown",
+        sailCount: item.sailCount,
+      };
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching sail counts:", error);
+    return [];
+  }
+};

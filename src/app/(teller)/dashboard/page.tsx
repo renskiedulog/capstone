@@ -12,7 +12,6 @@ import {
   ShipIcon,
 } from "lucide-react";
 import QueuedTable from "./QueuedTable";
-import LineChart from "./LineChart";
 import {
   Card,
   CardContent,
@@ -23,25 +22,35 @@ import {
 import ActivityTracker from "@/components/utils/ActivityTracker";
 import { getBoatCount, getRecentActivities } from "@/lib/api/common";
 import { ActivityTypes } from "@/lib/types";
-import HorizontalCardChart, { QueueSummaryData } from "@/app/(admin)/admin/HorizontalCardChart";
-import { getQueueSummary } from "@/lib/api/statistics";
+import HorizontalCardChart, {
+  QueueSummaryData,
+} from "@/app/(admin)/admin/HorizontalCardChart";
+import {
+  getBoatSailCountsByRange,
+  getQueueSummary,
+} from "@/lib/api/statistics";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import SailsPie from "./SailsPie";
 
 export const metadata = {
   title: "Dashboard",
 };
+
+export const revalidate = 60;
 
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
-  const [boatCount, recentActivities, queueSummary] = await Promise.all([
-    getBoatCount(),
-    getRecentActivities(),
-    getQueueSummary(),
-  ]);
+  const [boatCount, recentActivities, queueSummary, sailsPie] =
+    await Promise.all([
+      getBoatCount(),
+      getRecentActivities(),
+      getQueueSummary(),
+      getBoatSailCountsByRange("today"),
+    ]);
 
   const cards = [
     {
@@ -77,7 +86,7 @@ const page = async () => {
               >
                 <Link
                   href="/boats"
-                  className="w-full h-full flex items-center justify-center gap-1 hover:underline hover:text-white hover:bg-blue-400"
+                  className="w-full h-full flex items-center justify-center gap-1 hover:text-white hover:bg-blue-400"
                 >
                   <ListOrdered size={18} className="mb-0.5" />
                   Queue
@@ -123,21 +132,13 @@ const page = async () => {
               </div>
             </Card>
           </div>
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle>Total Users</CardTitle>
-              <CardDescription>
-                The total number of registered users on the platform.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-2">
-              <LineChart />
-            </CardContent>
-          </Card>
+          <div className="flex gap-2 flex-col md:flex-row">
+            <HorizontalCardChart initData={queueSummary as QueueSummaryData} />
+            <SailsPie initData={sailsPie} />
+          </div>
           <QueuedTable />
         </div>
         <div className="sm:space-y-0 space-y-2 lg:space-y-2 sm:space-x-2 lg:space-x-0 relative sm:flex lg:block items-start">
-          <HorizontalCardChart initData={queueSummary as QueueSummaryData} className="lg:w-full" />
           <ActivityTracker initData={recentActivities as ActivityTypes[]} />
         </div>
       </div>

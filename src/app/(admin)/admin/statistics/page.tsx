@@ -12,7 +12,7 @@ export const metadata = {
   title: "Statistics",
 };
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
