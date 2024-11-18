@@ -32,6 +32,9 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import SailsPie from "./SailsPie";
+import ActiveSection from "./ActiveSection";
+import LastChecked from "./LastChecked";
+import { getAccounts } from "@/lib/api/tellerActions";
 
 export const metadata = {
   title: "Dashboard",
@@ -44,12 +47,13 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
-  const [boatCount, recentActivities, queueSummary, sailsPie] =
+  const [boatCount, recentActivities, queueSummary, sailsPie, accounts] =
     await Promise.all([
       getBoatCount(),
       getRecentActivities(),
       getQueueSummary(),
       getBoatSailCountsByRange("today"),
+      getAccounts(),
     ]);
 
   const cards = [
@@ -133,12 +137,16 @@ const page = async () => {
             </Card>
           </div>
           <div className="flex gap-2 flex-col md:flex-row">
-            <HorizontalCardChart initData={queueSummary as QueueSummaryData} />
+            <HorizontalCardChart
+              initData={queueSummary as QueueSummaryData}
+              className="lg:w-[60%]"
+            />
             <SailsPie initData={sailsPie} />
           </div>
-          <QueuedTable />
+          <LastChecked />
         </div>
-        <div className="sm:space-y-0 space-y-2 lg:space-y-2 sm:space-x-2 lg:space-x-0 relative sm:flex lg:block items-start">
+        <div className="md:space-y-0 space-y-2 xl:space-y-2 md:space-x-2 xl:space-x-0 relative md:flex xl:block items-start">
+          <ActiveSection accounts={accounts} />
           <ActivityTracker initData={recentActivities as ActivityTypes[]} />
         </div>
       </div>

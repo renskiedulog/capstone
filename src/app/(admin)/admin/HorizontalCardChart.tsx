@@ -40,7 +40,7 @@ export default function HorizontalCardChart({
   useEffect(() => {
     const fetchInterval = setInterval(() => {
       fetchData();
-    }, 10000);
+    }, 60000);
 
     socket.on("boardingRefresh", () => {
       fetchData();

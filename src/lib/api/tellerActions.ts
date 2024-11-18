@@ -203,3 +203,26 @@ export const getTellerInfo = async (username: string) => {
     return info.toObject();
   } catch (error) {}
 };
+
+export const getAccounts = async () => {
+  try {
+    const users = await User.find({ isDeleted: false, isAdmin: false }).lean();
+
+    const accounts = users
+      .map((user) => ({
+        fullName: user.fullName || `${user.firstName} ${user.lastName}`,
+        email: user.email || "",
+        image: user.image || "/avatars/default.png",
+        status: user.status || "inactive",
+        username: user.username,
+      }))
+      .sort((a, b) =>
+        a.status === "active" && b.status !== "active" ? -1 : 1
+      );
+
+    return accounts;
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+    throw new Error("Unable to fetch accounts");
+  }
+};
