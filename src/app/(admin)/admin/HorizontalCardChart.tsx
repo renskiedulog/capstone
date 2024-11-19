@@ -30,7 +30,7 @@ export type QueueSummaryData = {
 
 export default function HorizontalCardChart({
   initData,
-  className
+  className,
 }: {
   initData: QueueSummaryData;
   className?: string;
@@ -95,41 +95,41 @@ export default function HorizontalCardChart({
               {
                 status: "in-queue",
                 value:
-                  ((data.formattedData.find((d) => d.status === "in-queue")
+                  ((data?.formattedData?.find((d) => d.status === "in-queue")
                     ?.count || 0) /
-                    data.totalQueued) *
+                    data?.totalQueued) *
                   100,
-                label: `${data.formattedData.find((d) => d.status === "in-queue")?.count || 0} boats`,
+                label: `${data?.formattedData?.find((d) => d.status === "in-queue")?.count || 0} boats`,
                 fill: "var(--color-in-queue)",
               },
               {
                 status: "boarding",
                 value:
-                  ((data.formattedData.find((d) => d.status === "boarding")
+                  ((data?.formattedData?.find((d) => d.status === "boarding")
                     ?.count || 0) /
-                    data.totalQueued) *
+                    data?.totalQueued) *
                   100,
-                label: `${data.formattedData.find((d) => d.status === "boarding")?.count || 0} boats`,
+                label: `${data?.formattedData?.find((d) => d.status === "boarding")?.count || 0} boats`,
                 fill: "var(--color-boarding)",
               },
               {
                 status: "sailing",
                 value:
-                  ((data.formattedData.find((d) => d.status === "sailing")
+                  ((data?.formattedData?.find((d) => d.status === "sailing")
                     ?.count || 0) /
-                    data.totalQueued) *
+                    data?.totalQueued) *
                   100,
-                label: `${data.formattedData.find((d) => d.status === "sailing")?.count || 0} boats`,
+                label: `${data?.formattedData?.find((d) => d.status === "sailing")?.count || 0} boats`,
                 fill: "var(--color-sailing)",
               },
               {
                 status: "completed",
                 value:
-                  ((data.formattedData.find((d) => d.status === "completed")
+                  ((data?.formattedData?.find((d) => d.status === "completed")
                     ?.count || 0) /
-                    data.totalQueued) *
+                    data?.totalQueued) *
                   100,
-                label: `${data.formattedData.find((d) => d.status === "completed")?.count || 0} boats`,
+                label: `${data?.formattedData?.find((d) => d.status === "completed")?.count || 0} boats`,
                 fill: "var(--color-completed)",
               },
             ]}
@@ -159,11 +159,11 @@ export default function HorizontalCardChart({
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex flex-row border-t p-4">
-        <div className="flex w-full items-center gap-2 w-max">
+        <div className="flex items-center gap-2 w-full">
           <div className="grid flex-1 auto-rows-min gap-0.5">
             <div className="text-xs text-muted-foreground">Total Boats</div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              {data.totalQueued}
+              {data?.totalQueued || 0}
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
@@ -172,7 +172,7 @@ export default function HorizontalCardChart({
               Total Passengers
             </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              {data.totalPassengers}
+              {data?.totalPassengers || 0}
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
@@ -181,7 +181,7 @@ export default function HorizontalCardChart({
               Total Fare Earned
             </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              {data.totalFareEarned}
+              {data?.totalFareEarned || 0}
             </div>
           </div>
         </div>

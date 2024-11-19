@@ -83,6 +83,7 @@ export default function ActiveSection({
               </div>
             </div>
           ))}
+          {filteredAccounts.length === 0 && <div className="w-full h-full flex items-center justify-center">No Accounts Found.</div>}
         </ScrollArea>
       </CardContent>
     </Card>

@@ -3,6 +3,7 @@ import Boat from "@/models/Boats";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
 import Queue from "@/models/Queue";
+import { differenceInDays, isValid, parseISO } from "date-fns";
 
 export const createBoat = async (prevState: any, formData: FormData) => {
   try {
@@ -235,3 +236,64 @@ export const getRecentBoats = async () => {
     return [];
   }
 };
+
+export async function getBoatsApproachingInspection() {
+  try {
+    const boats = await Boat.find({ isDeleted: false })
+      .select("boatName lastCheck checkingStatus")
+      .lean();
+
+    const currentDate = new Date();
+    const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000;
+
+    // Augment boats with `due soon` status
+    const augmentedBoats = boats.map((boat) => {
+      const { lastCheck, checkingStatus } = boat;
+
+      if (checkingStatus === "checked" && lastCheck) {
+        const lastCheckDate = new Date(lastCheck);
+        const timeSinceLastCheck = currentDate - lastCheckDate;
+        const daysSinceLastCheck = timeSinceLastCheck / (1000 * 60 * 60 * 24);
+
+        if (daysSinceLastCheck >= 335 && daysSinceLastCheck < 365) {
+          return { ...boat, augmentedStatus: "due soon" };
+        }
+      }
+      return { ...boat, augmentedStatus: checkingStatus };
+    });
+
+    // Sort boats by augmented status first, then by `lastChecked`
+    const sortedBoats = augmentedBoats
+      .sort((a, b) => {
+        // Custom status priority
+        const statusPriority = {
+          "not-checked": 1,
+          pending: 2,
+          "requires-repair": 3,
+          "not-sailable": 4,
+          "under-inspection": 5,
+          "due soon": 6,
+          checked: 7,
+        };
+
+        const priorityDiff =
+          statusPriority[a.augmentedStatus] - statusPriority[b.augmentedStatus];
+
+        if (priorityDiff !== 0) return priorityDiff;
+
+        // If status priority is the same, sort by lastCheck (oldest first)
+        const dateA = new Date(a.lastCheck);
+        const dateB = new Date(b.lastCheck);
+        return dateA - dateB;
+      })
+      .map(({ augmentedStatus, ...rest }) => ({
+        ...rest,
+        status: augmentedStatus, // Use augmented status as the final status
+      }));
+
+    return sortedBoats;
+  } catch (error) {
+    console.error("Error fetching boats:", error);
+    throw new Error("Failed to fetch boats.");
+  }
+}

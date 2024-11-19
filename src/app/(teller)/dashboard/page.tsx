@@ -35,6 +35,7 @@ import SailsPie from "./SailsPie";
 import ActiveSection from "./ActiveSection";
 import LastChecked from "./LastChecked";
 import { getAccounts } from "@/lib/api/tellerActions";
+import { getBoatsApproachingInspection } from "@/lib/api/boatActions";
 
 export const metadata = {
   title: "Dashboard",
@@ -47,14 +48,21 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (session?.user?.isAdmin as boolean) redirect("/admin"); //! 3. Avoid Admin From Accessing Teller Page
 
-  const [boatCount, recentActivities, queueSummary, sailsPie, accounts] =
-    await Promise.all([
-      getBoatCount(),
-      getRecentActivities(),
-      getQueueSummary(),
-      getBoatSailCountsByRange("today"),
-      getAccounts(),
-    ]);
+  const [
+    boatCount,
+    recentActivities,
+    queueSummary,
+    sailsPie,
+    accounts,
+    lastCheckedBoats,
+  ] = await Promise.all([
+    getBoatCount(),
+    getRecentActivities(),
+    getQueueSummary(),
+    getBoatSailCountsByRange("today"),
+    getAccounts(),
+    getBoatsApproachingInspection(),
+  ]);
 
   const cards = [
     {
@@ -143,7 +151,7 @@ const page = async () => {
             />
             <SailsPie initData={sailsPie} />
           </div>
-          <LastChecked />
+          <LastChecked boats={lastCheckedBoats} />
         </div>
         <div className="md:space-y-0 space-y-2 xl:space-y-2 md:space-x-2 xl:space-x-0 relative md:flex xl:block items-start">
           <ActiveSection accounts={accounts} />

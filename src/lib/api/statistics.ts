@@ -89,7 +89,7 @@ export const getQueueSummary = async () => {
     };
   } catch (error) {
     console.error("Error fetching queue summary:", error);
-    throw new Error("Failed to fetch queue summary data");
+    return {};
   }
 };
 

@@ -17,6 +17,8 @@ import { getPassengerDensity, getQueueSummary } from "@/lib/api/statistics";
 import LineChartCard from "./LineChartCard";
 import RecentBoats from "./RecentBoats";
 import { getRecentBoats } from "@/lib/api/boatActions";
+import ActiveSection from "@/app/(teller)/dashboard/ActiveSection";
+import { getAccounts } from "@/lib/api/tellerActions";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -36,6 +38,7 @@ const page = async () => {
     queueSummary,
     recentBoats,
     passengerDensity,
+    accounts,
   ] = await Promise.all([
     getTellerCount(),
     getRecentTellers(),
@@ -45,6 +48,7 @@ const page = async () => {
     getQueueSummary(),
     getRecentBoats(),
     getPassengerDensity(),
+    getAccounts(),
   ]);
 
   const cards = [
@@ -91,6 +95,7 @@ const page = async () => {
         </div>
       </div>
       <div className="space-y-2">
+        <ActiveSection accounts={accounts} />
         <Activity initData={activities as ActivityTypes[]} />
       </div>
     </div>
