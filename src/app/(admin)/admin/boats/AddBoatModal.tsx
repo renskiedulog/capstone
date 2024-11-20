@@ -451,7 +451,6 @@ export default function AddBoatModal({
                       <Input
                         id="lastCheck"
                         name="lastCheck"
-                        required
                         type="date"
                         onChange={handleInputChange}
                         className="!block"

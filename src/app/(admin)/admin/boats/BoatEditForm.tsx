@@ -435,7 +435,6 @@ export default function BoatEditForm({
                     <Input
                       id="lastCheck"
                       name="lastCheck"
-                      required
                       type="date"
                       value={formatInputDate(inputs.lastCheck ?? "")}
                       onChange={handleInputChange}

@@ -31,14 +31,13 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
 
   useEffect(() => {
     const sorted = [...boats].sort((a, b) => {
-      // Status priority (with "checked" at the bottom)
       const statusPriority = {
         "not-checked": 1,
         pending: 2,
         "under-inspection": 3,
         "requires-repair": 4,
         "not-sailable": 5,
-        checked: 6, // checked status comes last
+        checked: 6,
       };
 
       const statusComparison =
@@ -47,7 +46,6 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
         return statusComparison;
       }
 
-      // If the statuses are the same, sort by lastCheck date
       const dateA = new Date(a.lastCheck);
       const dateB = new Date(b.lastCheck);
       return dateA.getTime() - dateB.getTime();
@@ -67,7 +65,6 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
   };
 
   const getStatusBadge = (daysUntilInspection: number, status: string) => {
-    // Define status-to-color mapping based on your `bgColors` object
     const statusToColor: Record<string, string> = {
       "requires-repair": "bg-red-500",
       "not-sailable": "bg-gray-700",
@@ -77,7 +74,6 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
       pending: "bg-gray-500",
     };
 
-    // Determine badge variant based on status and days until inspection
     const badgeColor = statusToColor[status] || "bg-gray-500"; // Fallback to gray if status is not found
 
     switch (status) {
@@ -102,7 +98,6 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
           </Badge>
         );
       case "checked":
-        // Use daysUntilInspection to determine whether it's overdue, due soon, or on track
         if (daysUntilInspection <= 0) {
           return (
             <Badge className="uppercase text-[10px] bg-red-500">Overdue</Badge>
@@ -128,7 +123,7 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Boats Inspection Status</CardTitle>
         <CardDescription>
@@ -155,7 +150,9 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
                 <TableRow key={boat._id}>
                   <TableCell className="font-medium">{boat.boatName}</TableCell>
                   <TableCell>
-                    {new Date(boat.lastCheck).toLocaleDateString()}
+                    {boat?.lastCheck
+                      ? new Date(boat.lastCheck).toLocaleDateString()
+                      : "Not Yet Inspected."}
                   </TableCell>
                   <TableCell>{daysUntilInspection}</TableCell>
                   <TableCell>
