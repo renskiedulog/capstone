@@ -80,44 +80,56 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
       case "requires-repair":
       case "not-sailable":
         return (
-          <Badge className={`uppercase text-[10px] ${badgeColor}`}>
+          <Badge
+            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+          >
             {status.replace("-", " ")}
           </Badge>
         );
       case "under-inspection":
       case "not-checked":
         return (
-          <Badge className={`uppercase text-[10px] ${badgeColor}`}>
+          <Badge
+            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+          >
             {status.replace("-", " ")}
           </Badge>
         );
       case "pending":
         return (
-          <Badge className={`uppercase text-[10px] ${badgeColor}`}>
+          <Badge
+            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+          >
             {status.replace("-", " ")}
           </Badge>
         );
       case "checked":
         if (daysUntilInspection <= 0) {
           return (
-            <Badge className="uppercase text-[10px] bg-red-500">Overdue</Badge>
+            <Badge className="uppercase whitespace-nowrap text-center text-[10px] bg-red-500">
+              Overdue
+            </Badge>
           );
         }
         if (daysUntilInspection <= 30) {
           return (
-            <Badge className="uppercase text-[10px] bg-yellow-500">
+            <Badge className="uppercase whitespace-nowrap text-center text-[10px] bg-yellow-500">
               Due Soon
             </Badge>
           );
         }
         return (
-          <Badge className={`uppercase text-[10px] ${badgeColor}`}>
+          <Badge
+            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+          >
             On Track
           </Badge>
         );
       default:
         return (
-          <Badge className="uppercase text-[10px] bg-gray-500">Unknown</Badge>
+          <Badge className="uppercase whitespace-nowrap text-center text-[10px] bg-gray-500">
+            Unknown
+          </Badge>
         );
     }
   };
@@ -130,7 +142,7 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
           View the inspection status and details of all boats.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-0 sm:px-5">
         <Table>
           <TableHeader>
             <TableRow>
@@ -155,7 +167,7 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
                       : "Not Yet Inspected."}
                   </TableCell>
                   <TableCell>{daysUntilInspection}</TableCell>
-                  <TableCell>
+                  <TableCell className="flex items-center justify-center sm:justify-start">
                     {getStatusBadge(daysUntilInspection, boat.status)}
                   </TableCell>
                 </TableRow>

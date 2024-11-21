@@ -59,7 +59,7 @@ const page = async () => {
     getBoatCount(),
     getRecentActivities(),
     getQueueSummary(),
-    getBoatSailCountsByRange("today"),
+    getBoatSailCountsByRange("this-month"),
     getAccounts(),
     getBoatsApproachingInspection(),
   ]);
@@ -97,7 +97,7 @@ const page = async () => {
                 className="w-full h-1/2 p-0 overflow-hidden"
               >
                 <Link
-                  href="/boats"
+                  href="/queue"
                   className="w-full h-full flex items-center justify-center gap-1 hover:text-white hover:bg-blue-400"
                 >
                   <ListOrdered size={18} className="mb-0.5" />

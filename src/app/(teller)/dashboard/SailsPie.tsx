@@ -86,8 +86,8 @@ export default function SailsPie({ initData }: any) {
               />
               <Pie
                 data={chartData}
-                dataKey="sailCount" // Matches the key for the count of sails
-                nameKey="boatName" // Matches the key for the boat name
+                dataKey="sailCount"
+                nameKey="boatName"
                 innerRadius={60}
                 strokeWidth={5}
               >
@@ -106,14 +106,14 @@ export default function SailsPie({ initData }: any) {
                             y={viewBox.cy}
                             className="fill-foreground text-3xl font-bold"
                           >
-                            {totalSails.toLocaleString()} {/* Total sails */}
+                            {totalSails.toLocaleString()}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
                             y={(viewBox.cy || 0) + 24}
                             className="fill-muted-foreground"
                           >
-                            Sails {/* Update the label to "Sails" */}
+                            Completed Sails
                           </tspan>
                         </text>
                       );
