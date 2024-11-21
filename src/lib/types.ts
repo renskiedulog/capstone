@@ -141,4 +141,9 @@ export interface StatisticsType {
     };
     percentageDifference: number;
   };
+  sailsForPie: {
+    boatId: string;
+    boatName: string;
+    sailCount: number;
+  }[];
 }

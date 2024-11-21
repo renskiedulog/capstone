@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Statistics from "./Statistics";
 import {
   getAverageQueueTimeByRange,
+  getBoatSailCountsByRange,
   getPassengerCountWithPercentage,
   getSailsCountWithPercentage,
   getTotalFareEarnedByRange,
@@ -19,14 +20,15 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
 
-  const [sails, passengers, fare, queue] = await Promise.all([
+  const [sails, passengers, fare, queue, sailsForPie] = await Promise.all([
     getSailsCountWithPercentage("today"),
     getPassengerCountWithPercentage("today"),
     getTotalFareEarnedByRange("today"),
     getAverageQueueTimeByRange("today"),
+    getBoatSailCountsByRange("today"),
   ]);
 
-  const initStatistics = { sails, passengers, fare, queue };
+  const initStatistics = { sails, passengers, fare, queue, sailsForPie };
 
   return session && <Statistics initData={initStatistics} />;
 };

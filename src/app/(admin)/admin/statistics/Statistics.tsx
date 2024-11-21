@@ -33,11 +33,15 @@ import {
 } from "@/components/ui/select";
 import {
   getAverageQueueTimeByRange,
+  getBoatSailCountsByRange,
   getPassengerCountWithPercentage,
+  getPassengerDensityByRange,
   getSailsCountWithPercentage,
   getTotalFareEarnedByRange,
 } from "@/lib/api/statistics";
 import { StatisticsType } from "@/lib/types";
+import SailsPie from "@/app/(teller)/dashboard/SailsPie";
+import { PassengerTrend } from "./PassengerTrend";
 
 ChartJS.register(
   CategoryScale,
@@ -61,21 +65,28 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
 
   const fetchData = async () => {
     try {
-      const [sails, passengers, fare, queue] = await Promise.all([
-        getSailsCountWithPercentage(dateRange),
-        getPassengerCountWithPercentage(dateRange),
-        getTotalFareEarnedByRange(dateRange),
-        getAverageQueueTimeByRange(dateRange),
-      ]);
-      setStatistics({ sails, passengers, fare, queue });
+      const [sails, passengers, fare, queue, sailsForPie, passengerTrend] =
+        await Promise.all([
+          getSailsCountWithPercentage(dateRange),
+          getPassengerCountWithPercentage(dateRange),
+          getTotalFareEarnedByRange(dateRange),
+          getAverageQueueTimeByRange(dateRange),
+          getBoatSailCountsByRange(dateRange),
+          getPassengerDensityByRange(dateRange),
+        ]);
+      setStatistics({
+        sails,
+        passengers,
+        fare,
+        queue,
+        sailsForPie,
+        passengerTrend,
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(statistics);
-
-  // Mock data for charts
   const sailsData = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [
@@ -83,18 +94,6 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
         label: "Number of Sails",
         data: [12, 19, 3, 5, 2, 3, 9],
         backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
-
-  const revenueData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        label: "Revenue",
-        data: [1000, 1500, 2000, 1800, 2200, 2500],
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
       },
     ],
   };
@@ -205,7 +204,9 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Queue Time</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Queue Time
+            </CardTitle>
             <Ship className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -231,9 +232,17 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
           <TabsTrigger value="sails">Sails</TabsTrigger>
           <TabsTrigger value="customers">Customers</TabsTrigger>
           <TabsTrigger value="revenue">Revenue</TabsTrigger>
+          <TabsTrigger value="insights">Insights</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <PassengerTrend
+              chartData={statistics.passengerTrend as any}
+              trend={statistics.passengers}
+              rangeMapping={rangeMapping}
+              dateRange={dateRange}
+              getPercentageColor={getPercentageColor}
+            />
             <Card>
               <CardHeader>
                 <CardTitle>Sails Overview</CardTitle>
@@ -243,17 +252,6 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
               </CardHeader>
               <CardContent className="pt-2">
                 <Bar data={sailsData} />
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue Trend</CardTitle>
-                <CardDescription>
-                  Monthly revenue for the past 6 months
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <Line data={revenueData} />
               </CardContent>
             </Card>
           </div>
@@ -267,28 +265,8 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
-                <Pie
-                  data={{
-                    labels: [
-                      "Day Sails",
-                      "Sunset Cruises",
-                      "Private Charters",
-                      "Fishing Trips",
-                    ],
-                    datasets: [
-                      {
-                        data: [300, 150, 100, 200],
-                        backgroundColor: [
-                          "rgba(255, 99, 132, 0.6)",
-                          "rgba(54, 162, 235, 0.6)",
-                          "rgba(255, 206, 86, 0.6)",
-                          "rgba(75, 192, 192, 0.6)",
-                        ],
-                      },
-                    ],
-                  }}
-                />
+              <div>
+                <SailsPie initData={statistics?.sailsForPie} />
               </div>
             </CardContent>
           </Card>
@@ -335,6 +313,7 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
             </CardContent>
           </Card>
         </TabsContent>
+        <TabsContent value="insights" className="space-y-4"></TabsContent>
       </Tabs>
     </div>
   );

@@ -383,3 +383,96 @@ export const getBoatSailCountsByRange = async (range: string) => {
     return [];
   }
 };
+
+export async function getPassengerDensityByRange(range: string) {
+  const now = new Date();
+  let startDate, groupBy, dates;
+
+  switch (range) {
+    case "today":
+      startDate = new Date(now);
+      startDate.setUTCHours(0, 0, 0, 0);
+      groupBy = { $hour: "$createdAt" };
+      dates = Array.from({ length: 24 }, (_, i) => `${i}:00`);
+      break;
+
+    case "this-week":
+      const startOfWeek = new Date(now);
+      startOfWeek.setUTCDate(now.getUTCDate() - now.getUTCDay() + 1); // Monday
+      startOfWeek.setUTCHours(0, 0, 0, 0);
+      startDate = startOfWeek;
+      groupBy = { $dayOfWeek: "$createdAt" };
+      dates = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      break;
+
+    case "this-month":
+      const startOfMonth = new Date(now);
+      startOfMonth.setUTCDate(1);
+      startOfMonth.setUTCHours(0, 0, 0, 0);
+      startDate = startOfMonth;
+      groupBy = { $dayOfMonth: "$createdAt" };
+      const daysInMonth = new Date(
+        now.getUTCFullYear(),
+        now.getUTCMonth() + 1,
+        0
+      ).getDate();
+      dates = Array.from({ length: daysInMonth }, (_, i) => `${i + 1}`);
+      break;
+
+    case "this-year":
+      const startOfYear = new Date(now.getUTCFullYear(), 0, 1);
+      startOfYear.setUTCHours(0, 0, 0, 0);
+      startDate = startOfYear;
+      groupBy = { $month: "$createdAt" };
+      dates = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      break;
+
+    default:
+      throw new Error("Invalid range specified");
+  }
+
+  const data = await Passenger.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: startDate,
+          $lte: now,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: groupBy,
+        count: { $sum: 1 },
+      },
+    },
+    {
+      $sort: { _id: 1 },
+    },
+  ]);
+
+  const formattedData = dates.map((label, index) => {
+    const found = data.find(
+      (item) => item._id === (range === "this-week" ? index + 2 : index + 1)
+    );
+    return {
+      label,
+      count: found ? found.count : 0,
+    };
+  });
+
+  return formattedData;
+}

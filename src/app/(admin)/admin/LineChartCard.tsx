@@ -13,8 +13,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useEffect, useState } from "react";
-import { getPassengerDensity } from "@/lib/api/statistics";
+import { useState } from "react";
 
 export default function LineChartCard({ initData }) {
   const [densityData, setDensityData] = useState<
@@ -24,6 +23,7 @@ export default function LineChartCard({ initData }) {
   const totalPassengers =
     densityData?.reduce((total, day) => total + day.count, 0) || 0;
   const averagePassengers = totalPassengers / 5 || 0;
+  
   return (
     <Card className="flex flex-col w-full lg:w-1/2">
       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2 [&>div]:flex-1">
