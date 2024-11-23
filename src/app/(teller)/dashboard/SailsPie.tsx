@@ -18,8 +18,15 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { format } from "date-fns";
 
-export default function SailsPie({ initData }: any) {
+export default function SailsPie({
+  initData,
+  dateRange,
+}: {
+  initData: any;
+  dateRange: any;
+}) {
   const chartColors = [
     "hsl(var(--chart-1))",
     "hsl(var(--chart-2))",
@@ -65,7 +72,16 @@ export default function SailsPie({ initData }: any) {
     <Card className="flex flex-col lg:w-[40%] w-full">
       <CardHeader className="items-center pb-0">
         <CardTitle>
-          Sails - {new Date().toLocaleString("en-US", { month: "long" })}
+          Sails -{" "}
+          {dateRange === "today"
+            ? format(new Date(), "PP")
+            : dateRange === "this-week"
+              ? "This Week"
+              : dateRange === "this-month"
+                ? new Date().toLocaleString("en-US", { month: "long" })
+                : dateRange === "this-year"
+                  ? new Date().getFullYear()
+                  : new Date().toLocaleString("en-US", { month: "long" })}
         </CardTitle>
         <CardDescription className="px-5 text-center">
           Overview of completed sails and their distribution for this month.

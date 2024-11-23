@@ -26,7 +26,7 @@ const GlobalError = () => {
             width={300}
             height={300}
           />
-          <h1 className="text-3xl font-bold tracking-wide text-primary/70">
+          <h1 className="text-3xl text-center font-bold tracking-wide text-primary/70">
             Something Went Wrong.
           </h1>
           <p className="w-7/12 py-2 text-center text-sm md:text-base">

@@ -282,9 +282,12 @@ export default function QueueHistoryTable({
           <div className="flex items-center justify-between sm:justify-start gap-x-2 flex-1">
             <Popover>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5" />
-                  <p className="sm:block hidden">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <CalendarIcon className="h-4 sm:h-5 w-4 sm:w-5" />
+                  <p className="text-[10px] sm:text-sm">
                     {selectedDate ? format(selectedDate, "PPP") : "Select Date"}
                   </p>
                 </Button>

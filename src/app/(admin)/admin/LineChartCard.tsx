@@ -13,7 +13,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getPassengerDensity } from "@/lib/api/statistics";
+import socket from "@/socket";
 
 export default function LineChartCard({ initData }) {
   const [densityData, setDensityData] = useState<
@@ -23,30 +25,50 @@ export default function LineChartCard({ initData }) {
   const totalPassengers =
     densityData?.reduce((total, day) => total + day.count, 0) || 0;
   const averagePassengers = totalPassengers / 5 || 0;
+
+  useEffect(() => {
+    const fetchInterval = setInterval(() => {
+      fetchData();
+    }, 60000);
+
+    socket.on("boardingRefresh", () => {
+      fetchData();
+    });
+
+    return () => {
+      clearInterval(fetchInterval);
+      socket.off("boardingRefresh");
+    };
+  }, []);
+
+  const fetchData = async () => {
+    const req = await getPassengerDensity();
+    setDensityData(req);
+  };
   
   return (
     <Card className="flex flex-col w-full lg:w-1/2">
       <CardHeader className="flex flex-row items-center gap-4 space-y-0 pb-2 [&>div]:flex-1">
         <div>
-          <CardDescription className="flex flex-col">
+          <CardDescription className="flex flex-col text-sm sm:text-base">
             <span className="text-[10px] font-bold">5 day span</span>
             Total Passengers
           </CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
             {totalPassengers}
-            <span className="text-sm font-normal tracking-normal text-muted-foreground">
+            <span className="text-xs sm:text-sm font-normal tracking-normal text-muted-foreground">
               passengers
             </span>
           </CardTitle>
         </div>
         <div>
-          <CardDescription className="flex flex-col">
+          <CardDescription className="flex flex-col text-sm sm:text-base">
             <span className="text-[10px] font-bold">5 day span</span>
             Average Passengers
           </CardDescription>
           <CardTitle className="flex items-baseline gap-1 text-4xl tabular-nums">
             {averagePassengers}
-            <span className="text-sm font-normal tracking-normal text-muted-foreground">
+            <span className="text-xs sm:text-sm font-normal tracking-normal text-muted-foreground">
               passengers
             </span>
           </CardTitle>

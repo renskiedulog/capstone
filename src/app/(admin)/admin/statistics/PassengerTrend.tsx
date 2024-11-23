@@ -40,7 +40,7 @@ export function PassengerTrend({
           Dynamic trends based on selected range
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-2">
         <ChartContainer config={chartConfig} className="max-h-[200px] w-full">
           <LineChart
             accessibilityLayer

@@ -48,7 +48,7 @@ const NavigationBar = () => {
                 className="text-primary"
               />
             </Link>
-            <div className="flex flex-row sm:flex-col gap-3 items-center w-full">
+            <div className="flex flex-row sm:flex-col gap-1.5 sm:gap-3 items-center w-full">
               {links?.map((link, idx) => (
                 <NavLink
                   key={idx}
@@ -92,7 +92,7 @@ const NavLink = ({ link, icon, name, active }: NavLinkProps) => {
       <TooltipTrigger asChild>
         <Link
           href={link}
-          className={`flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10 ${
+          className={`flex h-9 w-9 min-w-10 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-10 md:w-10 ${
             active && "bg-accent"
           }`}
         >

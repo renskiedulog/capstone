@@ -126,13 +126,13 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
   };
 
   return (
-    <div className="mx-auto p-6">
+    <section>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Statistics</h1>
         <div className="flex items-center space-x-2">
-          <CalendarIcon className="h-5 w-5 text-gray-500" />
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="max-w-[180px]">
+              <CalendarIcon className="h-4 w-4 text-black mr-2" />
               <SelectValue placeholder="Select date range" />
             </SelectTrigger>
             <SelectContent>
@@ -145,7 +145,7 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-6 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Sails</CardTitle>
@@ -228,11 +228,21 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
 
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="sails">Sails</TabsTrigger>
-          <TabsTrigger value="customers">Customers</TabsTrigger>
-          <TabsTrigger value="revenue">Revenue</TabsTrigger>
-          <TabsTrigger value="insights">Insights</TabsTrigger>
+          <TabsTrigger className="text-[11px] sm:text-sm" value="overview">
+            Overview
+          </TabsTrigger>
+          <TabsTrigger className="text-[11px] sm:text-sm" value="sails">
+            Sails
+          </TabsTrigger>
+          <TabsTrigger className="text-[11px] sm:text-sm" value="customers">
+            Customers
+          </TabsTrigger>
+          <TabsTrigger className="text-[11px] sm:text-sm" value="revenue">
+            Revenue
+          </TabsTrigger>
+          <TabsTrigger className="text-[11px] sm:text-sm" value="insights">
+            Insights
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -257,19 +267,7 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
           </div>
         </TabsContent>
         <TabsContent value="sails" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Sail Types Distribution</CardTitle>
-              <CardDescription>
-                Distribution of different types of sails
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div>
-                <SailsPie initData={statistics?.sailsForPie} />
-              </div>
-            </CardContent>
-          </Card>
+          <SailsPie initData={statistics?.sailsForPie} dateRange={dateRange} />
         </TabsContent>
         <TabsContent value="customers" className="space-y-4">
           <Card>
@@ -315,6 +313,6 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
         </TabsContent>
         <TabsContent value="insights" className="space-y-4"></TabsContent>
       </Tabs>
-    </div>
+    </section>
   );
 }

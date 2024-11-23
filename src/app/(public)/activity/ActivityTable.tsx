@@ -253,7 +253,7 @@ export default function ActivityTable({
               defaultValue="all"
               id="typeSelect"
             >
-              <SelectTrigger className="flex-1 max-w-[150px]">
+              <SelectTrigger className="flex-1 max-w-[150px] text-xs sm:text-sm">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
@@ -283,7 +283,7 @@ export default function ActivityTable({
             </Popover>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
+                <Button variant="outline" className="ml-auto text-[10px] sm:text-sm">
                   Columns <ChevronDownIcon className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -311,7 +311,7 @@ export default function ActivityTable({
                 className="flex items-center gap-2"
                 onClick={() => setIsAlertOpen(true)}
               >
-                <TrashIcon className="h-5 w-5" />
+                <TrashIcon className="h-4 sm:h-5 w-4 sm:w-5" />
                 <p className="hidden sm:block">Delete</p>
               </Button>
             )}
