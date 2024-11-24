@@ -3,7 +3,7 @@ import Boat from "@/models/Boats";
 import Queue from "@/models/Queue";
 import Passenger from "@/models/Passenger";
 import { connectMongoDB } from "../db";
-import { getDateRange, getPreviousRange } from "../utils";
+import { formatTime, getDateRange, getPreviousRange } from "../utils";
 
 export const getTotalPassengers = async () => {
   return await Passenger.countDocuments();
@@ -92,6 +92,93 @@ export const getQueueSummary = async () => {
     return {};
   }
 };
+
+export const getQueueSummaryByRange = async (range = "today") => {
+  try {
+    await connectMongoDB();
+
+    const { start, end } = getDateRange(range);
+
+    const startOfDay = new Date(start);
+    const endOfDay = new Date(end);
+
+    const queueSummary = await Queue.aggregate([
+      {
+        $match: {
+          updatedAt: { $gte: startOfDay, $lte: endOfDay },
+        },
+      },
+      {
+        $project: {
+          status: 1,
+          queueTime: {
+            $cond: [
+              { $and: ["$queuedAt", "$boardingAt"] },
+              { $subtract: ["$boardingAt", "$queuedAt"] },
+              null,
+            ],
+          },
+          boardingTime: {
+            $cond: [
+              { $and: ["$boardingAt", "$sailedAt"] },
+              { $subtract: ["$sailedAt", "$boardingAt"] },
+              null,
+            ],
+          },
+          sailingTime: {
+            $cond: [
+              { $and: ["$sailedAt", "$completedAt"] },
+              { $subtract: ["$completedAt", "$sailedAt"] },
+              null,
+            ],
+          },
+          queuedAt: 1,
+          completedAt: 1,
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          averageQueueTime: { $avg: "$queueTime" },
+          averageBoardingTime: { $avg: "$boardingTime" },
+          averageSailingTime: { $avg: "$sailingTime" },
+          totalBoats: { $sum: 1 },
+          longestTime: { $max: { $subtract: ["$completedAt", "$queuedAt"] } },
+          earliestTime: { $min: { $subtract: ["$completedAt", "$queuedAt"] } }, // Earliest time from queued to completed
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          averageQueueTime: { $divide: ["$averageQueueTime", 1000] }, // Convert to seconds
+          averageBoardingTime: { $divide: ["$averageBoardingTime", 1000] }, // Convert to seconds
+          averageSailingTime: { $divide: ["$averageSailingTime", 1000] }, // Convert to seconds
+          totalBoats: 1,
+          longestTime: { $divide: ["$longestTime", 1000] }, // Convert to seconds
+          earliestTime: { $divide: ["$earliestTime", 1000] }, // Convert to seconds
+        },
+      },
+    ]);
+
+    const formattedData = {
+      averageQueueTime:
+        queueSummary.length > 0 ? queueSummary[0].averageQueueTime : 0,
+      averageBoardingTime:
+        queueSummary.length > 0 ? queueSummary[0].averageBoardingTime : 0,
+      averageSailingTime:
+        queueSummary.length > 0 ? queueSummary[0].averageSailingTime : 0,
+      totalBoats: queueSummary.length > 0 ? queueSummary[0].totalBoats : 0,
+      longestTime: queueSummary.length > 0 ? formatTime(queueSummary[0].longestTime) : "N/A",
+      earliestTime: queueSummary.length > 0 ? formatTime(queueSummary[0].earliestTime) : "N/A", // Now it will show the earliest queue-to-completion time
+    };
+
+    return formattedData;
+  } catch (error) {
+    console.error("Error fetching queue summary:", error);
+    return {};
+  }
+};
+
 
 export async function getPassengerDensity() {
   const endDate = new Date();

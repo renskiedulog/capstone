@@ -146,4 +146,6 @@ export interface StatisticsType {
     boatName: string;
     sailCount: number;
   }[];
+  passengerTrend: any;
+  queueSummary: any;
 }

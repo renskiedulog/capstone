@@ -5,6 +5,7 @@ import {
   getAverageQueueTimeByRange,
   getBoatSailCountsByRange,
   getPassengerCountWithPercentage,
+  getQueueSummaryByRange,
   getSailsCountWithPercentage,
   getTotalFareEarnedByRange,
 } from "@/lib/api/statistics";
@@ -20,13 +21,15 @@ const page = async () => {
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access
   if (!session?.user?.isAdmin as boolean) redirect("/dashboard"); //! 3. Avoid Teller From Accessing Admin Page
 
-  const [sails, passengers, fare, queue, sailsForPie] = await Promise.all([
-    getSailsCountWithPercentage("today"),
-    getPassengerCountWithPercentage("today"),
-    getTotalFareEarnedByRange("today"),
-    getAverageQueueTimeByRange("today"),
-    getBoatSailCountsByRange("today"),
-  ]);
+  const [sails, passengers, fare, queue, sailsForPie, queueSummary] =
+    await Promise.all([
+      getSailsCountWithPercentage("today"),
+      getPassengerCountWithPercentage("today"),
+      getTotalFareEarnedByRange("today"),
+      getAverageQueueTimeByRange("today"),
+      getBoatSailCountsByRange("today"),
+      getQueueSummaryByRange("today"),
+    ]);
 
   const initStatistics = { sails, passengers, fare, queue, sailsForPie };
 

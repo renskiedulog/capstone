@@ -3,7 +3,7 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
-const loading = () => {
+const Loading = () => {
   const session = useSession();
   const isAuthenticated = session?.status === "authenticated";
   return (
@@ -27,4 +27,4 @@ const loading = () => {
   );
 };
 
-export default loading;
+export default Loading;

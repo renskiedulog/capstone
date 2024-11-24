@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { CartesianGrid, LabelList, Line, LineChart, XAxis } from "recharts";
 
 import {
@@ -33,7 +32,7 @@ export function PassengerTrend({
   getPercentageColor,
 }: any) {
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-1 md:col-span-2">
       <CardHeader>
         <CardTitle>Passenger Density Trend</CardTitle>
         <CardDescription>

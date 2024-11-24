@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,7 +14,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { CalendarIcon, Ship, Users, DollarSign, Clock } from "lucide-react";
+import { CalendarIcon, Ship } from "lucide-react";
 
 import {
   Card,
@@ -36,12 +36,14 @@ import {
   getBoatSailCountsByRange,
   getPassengerCountWithPercentage,
   getPassengerDensityByRange,
+  getQueueSummaryByRange,
   getSailsCountWithPercentage,
   getTotalFareEarnedByRange,
 } from "@/lib/api/statistics";
 import { StatisticsType } from "@/lib/types";
 import SailsPie from "@/app/(teller)/dashboard/SailsPie";
 import { PassengerTrend } from "./PassengerTrend";
+import SailsTrend from "./SailsTrend";
 
 ChartJS.register(
   CategoryScale,
@@ -65,15 +67,23 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
 
   const fetchData = async () => {
     try {
-      const [sails, passengers, fare, queue, sailsForPie, passengerTrend] =
-        await Promise.all([
-          getSailsCountWithPercentage(dateRange),
-          getPassengerCountWithPercentage(dateRange),
-          getTotalFareEarnedByRange(dateRange),
-          getAverageQueueTimeByRange(dateRange),
-          getBoatSailCountsByRange(dateRange),
-          getPassengerDensityByRange(dateRange),
-        ]);
+      const [
+        sails,
+        passengers,
+        fare,
+        queue,
+        sailsForPie,
+        passengerTrend,
+        queueSummary,
+      ] = await Promise.all([
+        getSailsCountWithPercentage(dateRange),
+        getPassengerCountWithPercentage(dateRange),
+        getTotalFareEarnedByRange(dateRange),
+        getAverageQueueTimeByRange(dateRange),
+        getBoatSailCountsByRange(dateRange),
+        getPassengerDensityByRange(dateRange),
+        getQueueSummaryByRange(dateRange),
+      ]);
       setStatistics({
         sails,
         passengers,
@@ -81,35 +91,11 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
         queue,
         sailsForPie,
         passengerTrend,
+        queueSummary,
       });
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const sailsData = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-    datasets: [
-      {
-        label: "Number of Sails",
-        data: [12, 19, 3, 5, 2, 3, 9],
-        backgroundColor: "rgba(53, 162, 235, 0.5)",
-      },
-    ],
-  };
-
-  const customerTypeData = {
-    labels: ["New", "Returning", "Regular"],
-    datasets: [
-      {
-        data: [300, 150, 100],
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 206, 86, 0.6)",
-        ],
-      },
-    ],
   };
 
   const getPercentageColor = (percentage: number) => {
@@ -226,93 +212,17 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger className="text-[11px] sm:text-sm" value="overview">
-            Overview
-          </TabsTrigger>
-          <TabsTrigger className="text-[11px] sm:text-sm" value="sails">
-            Sails
-          </TabsTrigger>
-          <TabsTrigger className="text-[11px] sm:text-sm" value="customers">
-            Customers
-          </TabsTrigger>
-          <TabsTrigger className="text-[11px] sm:text-sm" value="revenue">
-            Revenue
-          </TabsTrigger>
-          <TabsTrigger className="text-[11px] sm:text-sm" value="insights">
-            Insights
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <PassengerTrend
-              chartData={statistics.passengerTrend as any}
-              trend={statistics.passengers}
-              rangeMapping={rangeMapping}
-              dateRange={dateRange}
-              getPercentageColor={getPercentageColor}
-            />
-            <Card>
-              <CardHeader>
-                <CardTitle>Sails Overview</CardTitle>
-                <CardDescription>
-                  Number of sails per day this week
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <Bar data={sailsData} />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-        <TabsContent value="sails" className="space-y-4">
-          <SailsPie initData={statistics?.sailsForPie} dateRange={dateRange} />
-        </TabsContent>
-        <TabsContent value="customers" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Types</CardTitle>
-              <CardDescription>Distribution of customer types</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <Pie data={customerTypeData} />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="revenue" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Revenue by Sail Type</CardTitle>
-              <CardDescription>
-                Revenue distribution across different sail types
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Bar
-                data={{
-                  labels: [
-                    "Day Sails",
-                    "Sunset Cruises",
-                    "Private Charters",
-                    "Fishing Trips",
-                  ],
-                  datasets: [
-                    {
-                      label: "Revenue",
-                      data: [4000, 3000, 5000, 2000],
-                      backgroundColor: "rgba(75, 192, 192, 0.6)",
-                    },
-                  ],
-                }}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        <TabsContent value="insights" className="space-y-4"></TabsContent>
-      </Tabs>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+        <PassengerTrend
+          chartData={statistics.passengerTrend as any}
+          trend={statistics.passengers}
+          rangeMapping={rangeMapping}
+          dateRange={dateRange}
+          getPercentageColor={getPercentageColor}
+        />
+        <SailsTrend data={statistics.queueSummary} />
+        <SailsPie initData={statistics?.sailsForPie} dateRange={dateRange} />
+      </div>
     </section>
   );
 }

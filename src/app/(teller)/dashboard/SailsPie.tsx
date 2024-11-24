@@ -69,7 +69,7 @@ export default function SailsPie({
   );
 
   return (
-    <Card className="flex flex-col lg:w-[40%] w-full">
+    <Card className="flex flex-col w-full">
       <CardHeader className="items-center pb-0">
         <CardTitle>
           Sails -{" "}
