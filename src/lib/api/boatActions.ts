@@ -168,10 +168,22 @@ export const fetchBoats = async (isDeleted: boolean = false) => {
 };
 
 export const deleteBoatAccount = async (id: string) => {
-  await connectMongoDB();
-  const req = await Boat.deleteOne({ _id: id });
+  try {
+    await connectMongoDB();
 
-  return true;
+    const deleteBoatResult = await Boat.deleteOne({ _id: id });
+
+    if (deleteBoatResult.deletedCount === 0) {
+      return false
+    }
+
+    await Queue.deleteMany({ boatId: id });
+
+    return true;
+  } catch (error) {
+    console.error("Error deleting boat account or related queues:", error);
+    throw false;
+  }
 };
 
 export const fetchBoatImages = async (id: string) => {
@@ -202,7 +214,10 @@ export const checkBoatCode = async (boatCode: string) => {
 export const checkInQueue = async (boatId: string) => {
   try {
     await connectMongoDB();
-    const existingBoatInQueue = await Queue.findOne({ boatId });
+    const existingBoatInQueue = await Queue.findOne({
+      boatId,
+      status: { $ne: "completed" },
+    });
 
     return existingBoatInQueue ? true : false;
   } catch (error) {
