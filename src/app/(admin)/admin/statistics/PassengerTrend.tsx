@@ -88,8 +88,9 @@ export function PassengerTrend({
         <p
           className={`text-xs font-bold ${getPercentageColor(trend.percentageDifference)}`}
         >
-          Current Trend: {(trend.percentageDifference >= 0 ? "+" : "") +
-            trend.percentageDifference.toFixed(2)}
+          Current Trend:{" "}
+          {(trend?.percentageDifference >= 0 ? "+" : "") +
+            trend?.percentageDifference?.toFixed(2)}
           % from {rangeMapping[dateRange] || ""}
         </p>
         <div className="leading-none text-muted-foreground">

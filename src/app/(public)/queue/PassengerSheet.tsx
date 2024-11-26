@@ -18,7 +18,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {  Passenger } from "@/lib/types";
+import { Passenger } from "@/lib/types";
 import { formatDateToReadable } from "@/lib/utils";
 
 interface SheetTypes {

@@ -145,7 +145,7 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
               className={`text-xs ${getPercentageColor(statistics.sails.percentageDifference)}`}
             >
               {(statistics.sails.percentageDifference >= 0 ? "+" : "") +
-                statistics.sails.percentageDifference.toFixed(2)}
+                statistics.sails.percentageDifference?.toFixed(2)}
               % from {rangeMapping[dateRange] || ""}
             </p>
           </CardContent>
@@ -165,7 +165,7 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
               className={`text-xs ${getPercentageColor(statistics.passengers.percentageDifference)}`}
             >
               {(statistics.passengers.percentageDifference >= 0 ? "+" : "") +
-                statistics.passengers.percentageDifference.toFixed(2)}
+                statistics.passengers.percentageDifference?.toFixed(2)}
               % from {rangeMapping[dateRange] || ""}
             </p>
           </CardContent>
@@ -183,7 +183,7 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
               className={`text-xs ${getPercentageColor(statistics.fare.percentageDifference)}`}
             >
               {(statistics.fare.percentageDifference >= 0 ? "+" : "") +
-                statistics.fare.percentageDifference.toFixed(2)}
+                statistics.fare.percentageDifference?.toFixed(2)}
               % from {rangeMapping[dateRange] || ""}
             </p>
           </CardContent>
@@ -205,7 +205,7 @@ export default function Statistics({ initData }: { initData: StatisticsType }) {
               className={`text-xs ${getPercentageColor(statistics.queue.percentageDifference)}`}
             >
               {(statistics.queue.percentageDifference >= 0 ? "+" : "") +
-                statistics.queue.percentageDifference.toFixed(2)}
+                statistics.queue.percentageDifference?.toFixed(2)}
               % from {rangeMapping[dateRange] || ""}
             </p>
           </CardContent>

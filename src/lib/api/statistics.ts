@@ -168,8 +168,14 @@ export const getQueueSummaryByRange = async (range = "today") => {
       averageSailingTime:
         queueSummary.length > 0 ? queueSummary[0].averageSailingTime : 0,
       totalBoats: queueSummary.length > 0 ? queueSummary[0].totalBoats : 0,
-      longestTime: queueSummary.length > 0 ? formatTime(queueSummary[0].longestTime) : "N/A",
-      earliestTime: queueSummary.length > 0 ? formatTime(queueSummary[0].earliestTime) : "N/A", // Now it will show the earliest queue-to-completion time
+      longestTime:
+        queueSummary.length > 0
+          ? formatTime(queueSummary[0]?.longestTime)
+          : "N/A",
+      earliestTime:
+        queueSummary.length > 0
+          ? formatTime(queueSummary[0]?.earliestTime)
+          : "N/A", // Now it will show the earliest queue-to-completion time
     };
 
     return formattedData;
@@ -178,7 +184,6 @@ export const getQueueSummaryByRange = async (range = "today") => {
     return {};
   }
 };
-
 
 export async function getPassengerDensity() {
   const endDate = new Date();

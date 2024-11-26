@@ -66,19 +66,19 @@ export default function SailsTrend({
               {
                 status: "avg. Queue Time",
                 value: data?.averageQueueTime || 0,
-                label: `${data?.averageQueueTime.toFixed(2)} secs`,
+                label: `${data?.averageQueueTime?.toFixed(2)} secs`,
                 fill: "var(--color-avgQueue)",
               },
               {
                 status: "avg. Board Time",
                 value: data?.averageBoardingTime || 0,
-                label: `${data?.averageBoardingTime.toFixed(2)} secs`,
+                label: `${data?.averageBoardingTime?.toFixed(2)} secs`,
                 fill: "var(--color-avgBoard)",
               },
               {
                 status: "avg. Sail Time",
                 value: data?.averageSailingTime || 0,
-                label: `${data?.averageSailingTime.toFixed(2)} secs`,
+                label: `${data?.averageSailingTime?.toFixed(2)} secs`,
                 fill: "var(--color-avgSail)",
               },
             ]}
@@ -123,7 +123,7 @@ export default function SailsTrend({
               Longest Time
             </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              {data?.longestTime || 0}
+              {data?.longestTime || "N/A"}
             </div>
           </div>
           <Separator orientation="vertical" className="mx-2 h-10 w-px" />
@@ -132,7 +132,7 @@ export default function SailsTrend({
               Earliest Time
             </div>
             <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
-              {data?.earliestTime || 0}
+              {data?.earliestTime || "N/A"}
             </div>
           </div>
         </div>
