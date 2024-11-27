@@ -42,7 +42,7 @@ export default function LoginPage() {
       setError("");
       setLoading(true);
 
-      const validRegex = /^[a-zA-Z0-9]{3,30}$/;
+      const validRegex = /^.{3,30}$/;
       const { username, password } = userInputs;
 
       if (!username || !password || !username.trim() || !password.trim()) {
