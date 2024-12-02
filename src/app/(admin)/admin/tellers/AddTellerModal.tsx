@@ -111,7 +111,7 @@ export default function AddTellerModal() {
   };
 
   const handleCheckUsername = async (inputUsername: string) => {
-    const res = await isUsernameTaken(inputUsername);
+    const res = await isUsernameTaken(inputUsername?.toLowerCase());
     if (res) {
       setError("Username already taken.");
     } else {
@@ -156,7 +156,9 @@ export default function AddTellerModal() {
         onConfirm={handleAlertConfirm}
         onCancel={handleAlertCancel}
       />
-      <Button className="text-xs sm:text-base" onClick={handleModal}>Add Teller</Button>
+      <Button className="text-xs sm:text-base" onClick={handleModal}>
+        Add Teller
+      </Button>
       {isModalOpen && (
         <form
           action={formAction}
@@ -247,6 +249,7 @@ export default function AddTellerModal() {
                         required
                         type="text"
                         placeholder="Enter your username"
+                        className={inputs?.username ? "lowercase" : ""}
                         value={inputs.username}
                         onChange={handleInputChange}
                         onBlur={(e) => handleCheckUsername(e.target.value)}

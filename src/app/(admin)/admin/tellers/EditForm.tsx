@@ -186,10 +186,10 @@ export default function EditForm({
             onClick={handleModalClose}
           />
           <CardHeader>
-            <CardTitle className="text-lg sm:text-3xl">
+            <CardTitle className="text-lg sm:text-2xl">
               Edit Teller Account
             </CardTitle>
-            <CardDescription className="text-xs sm:text-xl">
+            <CardDescription className="text-xs sm:text-lg">
               Edit the necessary details for the account. You can leave the
               inputs unchanged.
             </CardDescription>
@@ -282,6 +282,7 @@ export default function EditForm({
                       required
                       type="text"
                       placeholder="Enter your username"
+                      className={inputs?.username ? "lowercase" : ""}
                       value={inputs.username}
                       onChange={handleInputChange}
                       onBlur={(e) => handleCheckUsername(e.target.value)}

@@ -3,7 +3,6 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import { connectMongoDB } from "../db";
 import { checkSession } from "./requests";
-import { revalidatePath } from "next/cache";
 
 export const createTeller = async (prevState: any, formData: FormData) => {
   try {
@@ -17,7 +16,7 @@ export const createTeller = async (prevState: any, formData: FormData) => {
     const hashedPassword = await bcrypt.hash(values.password, 10);
 
     await User.create({
-      username: values.username,
+      username: values.username?.toLowerCase(),
       password: hashedPassword,
       fullName: `${values.firstName} ${values.lastName}`,
       firstName: values.firstName,
@@ -100,6 +99,10 @@ export const editTeller = async (prevState: any, formData: FormData) => {
     const newValues: { [key: string]: any } = {};
     for (const [key, value] of formData.entries() as any) {
       newValues[key] = value;
+    }
+
+    if(newValues.username) {
+      newValues.username = newValues.username?.toLowerCase();
     }
 
     if (newValues.image === undefined) {

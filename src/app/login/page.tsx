@@ -91,10 +91,10 @@ export default function LoginPage() {
             </div>
           </div>
           <CardTitle className="text-2xl font-bold text-center">
-            Welcome Back
+            Welcome Back!
           </CardTitle>
           <CardDescription className="text-center">
-            Enter your username and password.
+            Please enter your credentials to access your account.
           </CardDescription>
         </CardHeader>
         <AnimatePresence>
