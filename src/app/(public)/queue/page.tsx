@@ -6,9 +6,12 @@ import { checkSession } from "@/components/utils/Authenticator";
 import { redirect } from "next/navigation";
 import Sailing from "./Sailing";
 
+
 export const metadata = {
   title: "Queue",
 };
+
+export const revalidate = 5;
 
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
