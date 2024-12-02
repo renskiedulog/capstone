@@ -99,8 +99,8 @@ export const getTodayRange = () => {
 
 export const getWeekRange = () => {
   const start = new Date();
-  const day = start.getDay(); 
-  const diffToMonday = day === 0 ? -6 : 1 - day; 
+  const day = start.getDay();
+  const diffToMonday = day === 0 ? -6 : 1 - day;
   start.setDate(start.getDate() + diffToMonday);
   start.setHours(0, 0, 0, 0);
 
@@ -139,7 +139,9 @@ export const getDateRange = (range: string) => {
     case "this-year":
       return getYearRange();
     default:
-      throw new Error("Invalid range. Use 'today', 'this-week', 'this-month', or 'this-year'.");
+      throw new Error(
+        "Invalid range. Use 'today', 'this-week', 'this-month', or 'this-year'."
+      );
   }
 };
 
@@ -174,10 +176,10 @@ export const getPreviousRange = (range: string) => {
 
 export const formatTime = (seconds: number) => {
   if (seconds < 60) {
-    return `${seconds} secs`;
+    return `${Math.round(seconds)} secs`;
   } else if (seconds < 3600) {
     const minutes = Math.floor(seconds / 60);
-    return `${minutes} min ${seconds % 60} sec`;
+    return `${minutes} min ${Math.round(seconds % 60)} sec`;
   } else if (seconds < 86400) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -185,6 +187,6 @@ export const formatTime = (seconds: number) => {
   } else {
     const days = Math.floor(seconds / 86400);
     const hours = Math.floor((seconds % 86400) / 3600);
-    return `${days} day${days > 1 ? 's' : ''} ${hours} hr`;
+    return `${days} day${days > 1 ? "s" : ""} ${hours} hr`;
   }
 };

@@ -43,6 +43,8 @@ export const options: any = {
 
             const checkUser = await User.findOne({ username });
 
+            console.log(checkUser)
+
             if (!checkUser) {
               console.log("User not found");
               return null;

@@ -81,7 +81,7 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
       case "not-sailable":
         return (
           <Badge
-            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+            className={`uppercase hover:${badgeColor} whitespace-nowrap text-center text-[10px] ${badgeColor}`}
           >
             {status.replace("-", " ")}
           </Badge>
@@ -90,7 +90,7 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
       case "not-checked":
         return (
           <Badge
-            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+            className={`uppercase hover:${badgeColor} whitespace-nowrap text-center text-[10px] ${badgeColor}`}
           >
             {status.replace("-", " ")}
           </Badge>
@@ -98,7 +98,7 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
       case "pending":
         return (
           <Badge
-            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+            className={`uppercase hover:${badgeColor} whitespace-nowrap text-center text-[10px] ${badgeColor}`}
           >
             {status.replace("-", " ")}
           </Badge>
@@ -120,7 +120,7 @@ export default function LastChecked({ boats }: { boats: Boat[] }) {
         }
         return (
           <Badge
-            className={`uppercase whitespace-nowrap text-center text-[10px] ${badgeColor}`}
+            className={`uppercase hover:${badgeColor} whitespace-nowrap text-center text-[10px] ${badgeColor}`}
           >
             On Track
           </Badge>

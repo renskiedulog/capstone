@@ -22,7 +22,7 @@ const page = async ({ params }: ProfileParams) => {
   const session = await checkSession();
   if (!session) return redirect("/login");
 
-  const accountInfo = await getTellerInfo(params.username);
+  const accountInfo = await getTellerInfo(params?.username?.toLocaleLowerCase());
 
   return (
     <Profile
