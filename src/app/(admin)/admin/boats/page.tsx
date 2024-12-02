@@ -7,6 +7,8 @@ export const metadata = {
   title: "Boats",
 };
 
+export const revalidate = 60;
+
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access

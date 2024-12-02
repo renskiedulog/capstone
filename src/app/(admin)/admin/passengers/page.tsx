@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import PassengerTable from "./PassengerTable";
 import { fetchAllPassengers } from "@/lib/api/passenger";
 
+export const revalidate = 60;
+
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access

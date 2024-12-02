@@ -8,7 +8,7 @@ export const metadata = {
   title: "Tellers",
 };
 
-export const revalidate = 5;
+export const revalidate = 20;
 
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session

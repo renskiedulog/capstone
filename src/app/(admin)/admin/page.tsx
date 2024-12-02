@@ -29,6 +29,8 @@ export const metadata = {
   title: "Admin Dashboard",
 };
 
+export const revalidate = 60;
+
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access

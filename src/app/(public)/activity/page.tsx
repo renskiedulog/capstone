@@ -5,6 +5,8 @@ import ActivityTable from "./ActivityTable";
 import { getAllActivities } from "@/lib/api/activity";
 import { ActivityTypes } from "@/lib/types";
 
+export const revalidate = 60;
+
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access

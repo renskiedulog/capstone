@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { checkSession } from "@/components/utils/Authenticator";
 import { Boat } from "@/lib/types";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export async function generateMetadata() {
   return {
