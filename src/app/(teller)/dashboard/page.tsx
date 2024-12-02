@@ -27,6 +27,7 @@ import HorizontalCardChart, {
 } from "@/app/(admin)/admin/HorizontalCardChart";
 import {
   getBoatSailCountsByRange,
+  getQueueInsights,
   getQueueSummary,
 } from "@/lib/api/statistics";
 import Link from "next/link";
@@ -36,6 +37,7 @@ import ActiveSection from "./ActiveSection";
 import LastChecked from "./LastChecked";
 import { getAccounts } from "@/lib/api/tellerActions";
 import { getBoatsApproachingInspection } from "@/lib/api/boatActions";
+import QueueInsightsCard from "./Insights";
 
 export const metadata = {
   title: "Dashboard",
@@ -55,6 +57,7 @@ const page = async () => {
     sailsPie,
     accounts,
     lastCheckedBoats,
+    queueInsights
   ] = await Promise.all([
     getBoatCount(),
     getRecentActivities(),
@@ -62,6 +65,7 @@ const page = async () => {
     getBoatSailCountsByRange("this-month"),
     getAccounts(),
     getBoatsApproachingInspection(),
+    getQueueInsights(),
   ]);
 
   const cards = [
@@ -154,6 +158,7 @@ const page = async () => {
           <LastChecked boats={lastCheckedBoats} />
         </div>
         <div className="md:space-y-0 space-y-2 xl:space-y-2 md:space-x-2 xl:space-x-0 relative md:flex xl:block items-start">
+          <QueueInsightsCard initData={queueInsights} />
           <ActiveSection accounts={accounts} />
           <ActivityTracker initData={recentActivities as ActivityTypes[]} />
         </div>

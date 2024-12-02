@@ -13,12 +13,17 @@ import {
 import Activity from "../../../components/utils/ActivityTracker";
 import { ActivityTypes } from "@/lib/types";
 import HorizontalCardChart, { QueueSummaryData } from "./HorizontalCardChart";
-import { getPassengerDensity, getQueueSummary } from "@/lib/api/statistics";
+import {
+  getPassengerDensity,
+  getQueueInsights,
+  getQueueSummary,
+} from "@/lib/api/statistics";
 import LineChartCard from "./LineChartCard";
 import RecentBoats from "./RecentBoats";
 import { getRecentBoats } from "@/lib/api/boatActions";
 import ActiveSection from "@/app/(teller)/dashboard/ActiveSection";
 import { getAccounts } from "@/lib/api/tellerActions";
+import QueueInsightsCard from "@/app/(teller)/dashboard/Insights";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -39,6 +44,7 @@ const page = async () => {
     recentBoats,
     passengerDensity,
     accounts,
+    queueInsights,
   ] = await Promise.all([
     getTellerCount(),
     getRecentTellers(),
@@ -49,6 +55,7 @@ const page = async () => {
     getRecentBoats(),
     getPassengerDensity(),
     getAccounts(),
+    getQueueInsights(),
   ]);
 
   const cards = [
@@ -95,6 +102,7 @@ const page = async () => {
         </div>
       </div>
       <div className="space-y-2">
+        <QueueInsightsCard initData={queueInsights} />
         <ActiveSection accounts={accounts} />
         <Activity initData={activities as ActivityTypes[]} />
       </div>

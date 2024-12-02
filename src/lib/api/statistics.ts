@@ -478,13 +478,14 @@ export const getBoatSailCountsByRange = async (range: string) => {
 
 export async function getPassengerDensityByRange(range: string) {
   const now = new Date();
+  const timezoneOffset = 9 * 60 * 60 * 1000; // UTC+8 offset in milliseconds
   let startDate, groupBy, dates;
 
   switch (range) {
     case "today":
       startDate = new Date(now);
       startDate.setUTCHours(0, 0, 0, 0);
-      groupBy = { $hour: "$createdAt" };
+      groupBy = { $hour: "$localTime" };
       dates = Array.from({ length: 24 }, (_, i) => `${i}:00`);
       break;
 
@@ -493,8 +494,8 @@ export async function getPassengerDensityByRange(range: string) {
       startOfWeek.setUTCDate(now.getUTCDate() - now.getUTCDay() + 1); // Monday
       startOfWeek.setUTCHours(0, 0, 0, 0);
       startDate = startOfWeek;
-      groupBy = { $dayOfWeek: "$createdAt" };
-      dates = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      groupBy = { $dayOfWeek: "$localTime" };
+      dates = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
       break;
 
     case "this-month":
@@ -502,7 +503,7 @@ export async function getPassengerDensityByRange(range: string) {
       startOfMonth.setUTCDate(1);
       startOfMonth.setUTCHours(0, 0, 0, 0);
       startDate = startOfMonth;
-      groupBy = { $dayOfMonth: "$createdAt" };
+      groupBy = { $dayOfMonth: "$localTime" };
       const daysInMonth = new Date(
         now.getUTCFullYear(),
         now.getUTCMonth() + 1,
@@ -515,7 +516,7 @@ export async function getPassengerDensityByRange(range: string) {
       const startOfYear = new Date(now.getUTCFullYear(), 0, 1);
       startOfYear.setUTCHours(0, 0, 0, 0);
       startDate = startOfYear;
-      groupBy = { $month: "$createdAt" };
+      groupBy = { $month: "$localTime" };
       dates = [
         "January",
         "February",
@@ -546,6 +547,11 @@ export async function getPassengerDensityByRange(range: string) {
       },
     },
     {
+      $addFields: {
+        localTime: { $add: ["$createdAt", timezoneOffset] },
+      },
+    },
+    {
       $group: {
         _id: groupBy,
         count: { $sum: 1 },
@@ -568,3 +574,30 @@ export async function getPassengerDensityByRange(range: string) {
 
   return formattedData;
 }
+
+
+export const getQueueInsights = async () => {
+  const mostVisitedDestination = await Queue.aggregate([
+    { $unwind: "$destination" }, 
+    { $group: { _id: "$destination", count: { $sum: 1 } } }, 
+    { $sort: { count: -1 } }, 
+    { $limit: 1 } 
+  ]);
+
+  const busiestMonth = await Passenger.aggregate([
+    {
+      $group: {
+        _id: { $month: "$createdAt" }, 
+        passengerCount: { $sum: 1 }
+      }
+    },
+    { $sort: { passengerCount: -1 } }, // Sort by the number of passengers in descending order
+    { $limit: 1 } // Get the month with the most passengers
+  ]);
+
+  // Format and return results
+  return {
+    mostVisitedDestination: mostVisitedDestination[0] ? mostVisitedDestination[0]._id : "N/A",
+    busiestMonth: busiestMonth[0] ? busiestMonth[0]._id : "N/A"
+  };
+};
