@@ -457,7 +457,9 @@ export default function BoardingInfo({
                     )}
                     {passengers?.length === 0 && (
                       <div className="w-full text-center pt-4">
-                        No Passengers Boarded Yet.
+                        {completed
+                          ? "No Passengers Found."
+                          : "No Passengers Boarded Yet."}
                       </div>
                     )}
                   </CardContent>
