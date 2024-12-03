@@ -67,6 +67,10 @@ export const editBoat = async (prevState: any, formData: FormData) => {
       newValues[key] = value;
     });
 
+    if (!newValues.mainImage) {
+      newValues.mainImage = "";
+    }
+
     const currentBoat = await Boat.findOne({ _id: newValues.id });
 
     const isExisting = await Boat.findOne({ boatCode: newValues.boatCode });
@@ -174,7 +178,7 @@ export const deleteBoatAccount = async (id: string) => {
     const deleteBoatResult = await Boat.deleteOne({ _id: id });
 
     if (deleteBoatResult.deletedCount === 0) {
-      return false
+      return false;
     }
 
     await Queue.deleteMany({ boatId: id });
