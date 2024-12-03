@@ -140,6 +140,7 @@ export default function BoatEditForm({
   };
 
   const addActivity = async () => {
+    if (session?.data?.user?.isAdmin) return;
     await addNewActivity({
       type: "boat",
       title: "Updated Boat Details",

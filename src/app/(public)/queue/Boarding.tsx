@@ -120,6 +120,7 @@ const BoardingBoat = ({
   }, [boat.passengerIds, boat.capacity]);
 
   const addActivity = async () => {
+    if (session?.data?.user?.isAdmin) return;
     await addNewActivity({
       type: "queue",
       title: "Deleted Boarding Boat",
@@ -185,7 +186,8 @@ const BoardingBoat = ({
                   className={`text-nowrap font-medium ${idx > 0 ? 'before:content-["-"] before:mx-1' : ""}`}
                   key={idx}
                 >
-                  {DestinationOptions?.find((k) => k.value === location)?.label || "Port"}
+                  {DestinationOptions?.find((k) => k.value === location)
+                    ?.label || "Port"}
                 </span>
               ))}
             </p>
