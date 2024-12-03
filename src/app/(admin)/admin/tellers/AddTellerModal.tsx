@@ -142,7 +142,9 @@ export default function AddTellerModal() {
           "You can edit, delete and view this account by clicking the actions tab.",
       });
     } else if (!state?.success && state?.message) {
-      setError("Something went wrong, please enter valid inputs.");
+      setError(
+        state?.message || "Something went wrong, please enter valid inputs."
+      );
     }
   }, [state]);
 

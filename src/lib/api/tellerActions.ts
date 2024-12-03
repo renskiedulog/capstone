@@ -11,6 +11,14 @@ export const createTeller = async (prevState: any, formData: FormData) => {
       values[key] = value;
     }
 
+    const existingUser = await User.findOne({ email: values.email });
+    if (existingUser) {
+      return {
+        success: false,
+        message: "Email already taken.",
+      };
+    }
+
     await connectMongoDB();
 
     const hashedPassword = await bcrypt.hash(values.password, 10);
@@ -101,7 +109,7 @@ export const editTeller = async (prevState: any, formData: FormData) => {
       newValues[key] = value;
     }
 
-    if(newValues.username) {
+    if (newValues.username) {
       newValues.username = newValues.username?.toLowerCase();
     }
 
@@ -122,6 +130,14 @@ export const editTeller = async (prevState: any, formData: FormData) => {
       return {
         success: false,
         message: "Teller account not found. Please try again.",
+      };
+    }
+
+    const checkUsers = await User.findOne({ email: newValues.email });
+    if (checkUsers && checkUsers?.email !== existingUser?.email) {
+      return {
+        success: false,
+        message: "Email already taken.",
       };
     }
 
