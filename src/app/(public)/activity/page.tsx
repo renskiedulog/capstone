@@ -5,6 +5,10 @@ import ActivityTable from "./ActivityTable";
 import { getAllActivities } from "@/lib/api/activity";
 import { ActivityTypes } from "@/lib/types";
 
+export const metadata = {
+  title: "Activity",
+};
+
 export const revalidate = 60;
 
 const page = async () => {

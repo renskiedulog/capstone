@@ -3,6 +3,10 @@ import { redirect } from "next/navigation";
 import PassengerTable from "./PassengerTable";
 import { fetchAllPassengers } from "@/lib/api/passenger";
 
+export const metadata = {
+  title: "Passengers",
+};
+
 export const revalidate = 60;
 
 const page = async () => {

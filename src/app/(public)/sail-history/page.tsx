@@ -4,6 +4,10 @@ import QueueHistoryTable from "./QueueHistoryTable";
 import { fetchRecentSails } from "@/lib/api/queue";
 import { Queue } from "@/lib/types";
 
+export const metadata = {
+  title: "Sail History",
+};
+
 const page = async () => {
   let session = await checkSession(); //! 1. Validate Session
   if (!session) return redirect("/login"); //! 2. Avoid Any Unauthenticated Access

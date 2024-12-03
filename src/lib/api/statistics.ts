@@ -575,29 +575,43 @@ export async function getPassengerDensityByRange(range: string) {
   return formattedData;
 }
 
-
 export const getQueueInsights = async () => {
+  // Most visited destination
   const mostVisitedDestination = await Queue.aggregate([
-    { $unwind: "$destination" }, 
-    { $group: { _id: "$destination", count: { $sum: 1 } } }, 
-    { $sort: { count: -1 } }, 
-    { $limit: 1 } 
+    { $unwind: "$destination" },
+    { $group: { _id: "$destination", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 1 },
   ]);
 
-  const busiestMonth = await Passenger.aggregate([
+  // Busiest month (based on completed queues)
+  const busiestMonth = await Queue.aggregate([
+    { $match: { status: "completed" } }, // Only completed queues
+    {
+      $addFields: {
+        localCompletedAt: {
+          $dateToParts: {
+            date: "$completedAt",
+            timezone: "Asia/Singapore", // UTC+8 timezone
+          },
+        },
+      },
+    },
     {
       $group: {
-        _id: { $month: "$createdAt" }, 
-        passengerCount: { $sum: 1 }
-      }
+        _id: "$localCompletedAt.month", // Group by month
+        queueCount: { $sum: 1 },
+      },
     },
-    { $sort: { passengerCount: -1 } }, // Sort by the number of passengers in descending order
-    { $limit: 1 } // Get the month with the most passengers
+    { $sort: { queueCount: -1 } }, // Sort by queue count
+    { $limit: 1 }, // Get the busiest month
   ]);
 
-  // Format and return results
+  // Return results
   return {
-    mostVisitedDestination: mostVisitedDestination[0] ? mostVisitedDestination[0]._id : "N/A",
-    busiestMonth: busiestMonth[0] ? busiestMonth[0]._id : "N/A"
+    mostVisitedDestination: mostVisitedDestination[0]
+      ? mostVisitedDestination[0]._id
+      : "N/A",
+    busiestMonth: busiestMonth[0] ? busiestMonth[0]._id : "N/A",
   };
 };
