@@ -150,7 +150,7 @@ export default function EditForm({
       if (accountDetails.username !== inputs.username && isProfile)
         router.push(`/profile/${inputs.username}`);
     } else {
-      setError(state?.message || "Something went wrong. Try again.");
+      setError(state?.message || "");
     }
   }, [state?.success]);
 
